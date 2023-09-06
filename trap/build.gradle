@@ -36,11 +36,6 @@ kotlin {
             buildConfig = true
         }
 
-        tasks.named("dokkaHtml") {
-            suppressInheritedMembers = true
-            outputDirectory.set(buildDir.toPath().resolve("../../public").toFile())
-        }
-
         buildTypes {
             release { }
         }
@@ -49,6 +44,11 @@ kotlin {
             unitTests.all {
                 useJUnitPlatform()
             }
+        }
+
+        tasks.named("dokkaHtml") {
+            suppressInheritedMembers = true
+            outputDirectory.set(buildDir.toPath().resolve("../../public").toFile())
         }
 
         publishing {
@@ -94,5 +94,5 @@ dependencies {
     androidTestImplementation "io.mockk:mockk-android:1.13.7"
 
     //noinspection GradleDynamicVersion
-    dokkaPlugin 'org.jetbrains.dokka:android-documentation-plugin:+'
+    dokkaPlugin 'org.jetbrains.dokka:android-documentation-plugin:1.9.0'
 }
