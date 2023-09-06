@@ -1,4 +1,4 @@
-# Mobile Data Collection Platform for Android
+# Trap Library for Android
 This library can collect various device and user data, forwarding it to a specified endpoint. The following data collectors are bundled with this version:
 
 * Accelerometer
