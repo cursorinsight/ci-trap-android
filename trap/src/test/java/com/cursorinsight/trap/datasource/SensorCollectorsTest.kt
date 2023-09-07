@@ -17,6 +17,7 @@ import com.cursorinsight.trap.util.TrapTime
 import io.mockk.CapturingSlot
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
 import io.mockk.mockkClass
 import io.mockk.mockkStatic
 import io.mockk.slot
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 class SensorCollectorsTest {
 
     private lateinit var handler: CapturingSlot<SensorEventListener>
+    private lateinit var unhandler: CapturingSlot<SensorEventListener>
 
     private var activity: Activity = run {
         val activity = mockkClass(Activity::class)
@@ -53,6 +55,12 @@ class SensorCollectorsTest {
                     any()
                 )
             } returns true
+            every {
+                sensorManager.unregisterListener(
+                    capture(this@SensorCollectorsTest.unhandler)
+                )
+            } returns Unit
+
             sensorManager
         }
         activity
@@ -61,6 +69,7 @@ class SensorCollectorsTest {
     @BeforeEach
     fun setUp() {
         handler = slot()
+        unhandler = slot()
     }
 
     private fun getEvent(timestamp: Long, x: Float, y: Float, z: Float): SensorEvent {
@@ -69,7 +78,6 @@ class SensorCollectorsTest {
         timestampField.set(event, timestamp)
         val valuesField = event.javaClass.getField("values")
         valuesField.set(event, floatArrayOf(x, y, z))
-
 
         return event
     }
@@ -98,6 +106,11 @@ class SensorCollectorsTest {
         assert(el2.getDouble(2) == 3.0)
         assert(el2.getDouble(3) == 4.0)
         assert(el2.getDouble(4) == -4.0)
+
+        handler.captured.onAccuracyChanged(mockk(), 0)
+
+        collector.stop(activity)
+        assert(unhandler.isCaptured)
     }
 
     @Test
@@ -124,6 +137,11 @@ class SensorCollectorsTest {
         assert(el2.getDouble(2) == 3.0)
         assert(el2.getDouble(3) == 4.0)
         assert(el2.getDouble(4) == -4.0)
+
+        handler.captured.onAccuracyChanged(mockk(), 0)
+
+        collector.stop(activity)
+        assert(unhandler.isCaptured)
     }
 
     @Test
@@ -150,6 +168,11 @@ class SensorCollectorsTest {
         assert(el2.getDouble(2) == 3.0)
         assert(el2.getDouble(3) == 4.0)
         assert(el2.getDouble(4) == -4.0)
+
+        handler.captured.onAccuracyChanged(mockk(), 0)
+
+        collector.stop(activity)
+        assert(unhandler.isCaptured)
     }
 
     @Test
@@ -176,6 +199,11 @@ class SensorCollectorsTest {
         assert(el2.getDouble(2) == 3.0)
         assert(el2.getDouble(3) == 4.0)
         assert(el2.getDouble(4) == -4.0)
+
+        handler.captured.onAccuracyChanged(mockk(), 0)
+
+        collector.stop(activity)
+        assert(unhandler.isCaptured)
     }
 
     companion object {
