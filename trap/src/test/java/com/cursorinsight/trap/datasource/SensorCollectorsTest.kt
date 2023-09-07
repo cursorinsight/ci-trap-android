@@ -10,6 +10,9 @@ import android.hardware.SensorManager
 import android.util.Log
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.datasource.sensor.TrapAccelerometerCollector
+import com.cursorinsight.trap.datasource.sensor.TrapGravityCollector
+import com.cursorinsight.trap.datasource.sensor.TrapGyroscopeCollector
+import com.cursorinsight.trap.datasource.sensor.TrapMagnetometerCollector
 import com.cursorinsight.trap.util.TrapTime
 import io.mockk.CapturingSlot
 import io.mockk.every
@@ -91,6 +94,84 @@ class SensorCollectorsTest {
         assert(storage.size == 2)
         val el2 = storage.elementAt(1)
         assert(el2.getInt(0) == 103)
+        assert(el2.getLong(1) == TrapTime.normalizeNanosecondTime(3L))
+        assert(el2.getDouble(2) == 3.0)
+        assert(el2.getDouble(3) == 4.0)
+        assert(el2.getDouble(4) == -4.0)
+    }
+
+    @Test
+    fun `test gravity data is collected`() {
+        val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
+        val collector = TrapGravityCollector(storage, TrapConfig())
+        collector.start(activity)
+        assert(handler.isCaptured)
+
+        handler.captured.onSensorChanged(getEvent(-1L, 1.0F, 2.0F, -2.0F))
+        assert(storage.size == 1)
+        val el = storage.elementAt(0)
+        assert(el.getInt(0) == 105)
+        assert(el.getLong(1) == TrapTime.normalizeNanosecondTime(1L))
+        assert(el.getDouble(2) == 1.0)
+        assert(el.getDouble(3) == 2.0)
+        assert(el.getDouble(4) == -2.0)
+
+        handler.captured.onSensorChanged(getEvent(-3L, 3.0F, 4.0F, -4.0F))
+        assert(storage.size == 2)
+        val el2 = storage.elementAt(1)
+        assert(el2.getInt(0) == 105)
+        assert(el2.getLong(1) == TrapTime.normalizeNanosecondTime(3L))
+        assert(el2.getDouble(2) == 3.0)
+        assert(el2.getDouble(3) == 4.0)
+        assert(el2.getDouble(4) == -4.0)
+    }
+
+    @Test
+    fun `test gyroscope data is collected`() {
+        val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
+        val collector = TrapGyroscopeCollector(storage, TrapConfig())
+        collector.start(activity)
+        assert(handler.isCaptured)
+
+        handler.captured.onSensorChanged(getEvent(-1L, 1.0F, 2.0F, -2.0F))
+        assert(storage.size == 1)
+        val el = storage.elementAt(0)
+        assert(el.getInt(0) == 104)
+        assert(el.getLong(1) == TrapTime.normalizeNanosecondTime(1L))
+        assert(el.getDouble(2) == 1.0)
+        assert(el.getDouble(3) == 2.0)
+        assert(el.getDouble(4) == -2.0)
+
+        handler.captured.onSensorChanged(getEvent(-3L, 3.0F, 4.0F, -4.0F))
+        assert(storage.size == 2)
+        val el2 = storage.elementAt(1)
+        assert(el2.getInt(0) == 104)
+        assert(el2.getLong(1) == TrapTime.normalizeNanosecondTime(3L))
+        assert(el2.getDouble(2) == 3.0)
+        assert(el2.getDouble(3) == 4.0)
+        assert(el2.getDouble(4) == -4.0)
+    }
+
+    @Test
+    fun `test magnetometer data is collected`() {
+        val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
+        val collector = TrapMagnetometerCollector(storage, TrapConfig())
+        collector.start(activity)
+        assert(handler.isCaptured)
+
+        handler.captured.onSensorChanged(getEvent(-1L, 1.0F, 2.0F, -2.0F))
+        assert(storage.size == 1)
+        val el = storage.elementAt(0)
+        assert(el.getInt(0) == 106)
+        assert(el.getLong(1) == TrapTime.normalizeNanosecondTime(1L))
+        assert(el.getDouble(2) == 1.0)
+        assert(el.getDouble(3) == 2.0)
+        assert(el.getDouble(4) == -2.0)
+
+        handler.captured.onSensorChanged(getEvent(-3L, 3.0F, 4.0F, -4.0F))
+        assert(storage.size == 2)
+        val el2 = storage.elementAt(1)
+        assert(el2.getInt(0) == 106)
         assert(el2.getLong(1) == TrapTime.normalizeNanosecondTime(3L))
         assert(el2.getDouble(2) == 3.0)
         assert(el2.getDouble(3) == 4.0)
