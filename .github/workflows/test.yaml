@@ -40,4 +40,7 @@ jobs:
           java-version: '17'
 
       - name: Run tests
-        run: ./gradlew test
+        run: ./gradlew clean trap:testDebugUnitTest
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
