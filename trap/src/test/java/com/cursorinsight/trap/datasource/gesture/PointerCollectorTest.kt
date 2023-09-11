@@ -1,18 +1,17 @@
-package com.cursorinsight.trap.datasource.gesture.internal
+package com.cursorinsight.trap.datasource.gesture
 
 import android.app.Activity
 import android.util.Log
 import android.view.MotionEvent
-import android.view.MotionEvent.BUTTON_PRIMARY
-import android.view.MotionEvent.BUTTON_SECONDARY
 import android.view.MotionEvent.BUTTON_TERTIARY
 import android.view.Window
 import com.cursorinsight.trap.TrapConfig
-import com.cursorinsight.trap.datasource.gesture.TrapPointerCollector
+import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
 import com.cursorinsight.trap.util.TrapBackgroundExecutor
 import com.cursorinsight.trap.util.TrapTime
 import io.mockk.CapturingSlot
 import io.mockk.every
+import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkClass
 import io.mockk.mockkObject
@@ -25,7 +24,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@Suppress("SameParameterValue")
+@ExtendWith(MockKExtension::class)
 class PointerCollectorTest {
     private var initialWindowCallback: Window.Callback = run {
         val callback = mockk<Window.Callback>()
@@ -84,7 +86,7 @@ class PointerCollectorTest {
                 MotionEvent.ACTION_DOWN,
                 15.0F,
                 35.0F,
-                BUTTON_PRIMARY,
+                BUTTON_TERTIARY,
             )
         )
 
@@ -96,7 +98,7 @@ class PointerCollectorTest {
         assertEquals(el.getLong(1), TrapTime.normalizeMillisecondTime(1L))
         assert(el.getDouble(2) == 15.0)
         assert(el.getDouble(3) == 35.0)
-        assertEquals(el.getInt(4), 0)
+        assertEquals(el.getInt(4), 2)
 
         windowCallback.dispatchTouchEvent(
             getEvent(
@@ -104,7 +106,7 @@ class PointerCollectorTest {
                 MotionEvent.ACTION_MOVE,
                 115.0F,
                 135.0F,
-                BUTTON_SECONDARY,
+                BUTTON_TERTIARY,
             )
         )
 
@@ -116,7 +118,7 @@ class PointerCollectorTest {
         assertEquals(el2.getLong(1), TrapTime.normalizeMillisecondTime(11L))
         assertEquals(el2.getDouble(2), 115.0)
         assertEquals(el2.getDouble(3), 135.0)
-        assertEquals(el2.getInt(4), 1)
+        assertEquals(el2.getInt(4), 2)
 
         windowCallback.dispatchTouchEvent(
             getEvent(

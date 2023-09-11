@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
+import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
 
@@ -55,7 +56,7 @@ class TrapGestureCollector(
     override fun onSingleTapUp(p0: MotionEvent): Boolean {
         with(JSONArray()) {
             put(tapEventType)
-            put(p0.eventTime)
+            put(TrapTime.normalizeMillisecondTime(p0.eventTime))
             put(p0.rawX)
             put(p0.rawY)
         }.let {
