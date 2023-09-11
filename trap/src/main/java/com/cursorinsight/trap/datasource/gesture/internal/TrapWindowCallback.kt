@@ -50,7 +50,6 @@ class TrapWindowCallback internal constructor(
         TrapBackgroundExecutor.run {
             touchHandlers.forEach { it(event) }
         }
-        underlying.dispatchTouchEvent(event)
 
         return underlying.dispatchTouchEvent(event)
     }

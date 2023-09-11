@@ -1,6 +1,5 @@
 package com.cursorinsight.trap.util
 
-import android.util.Log
 import java.io.File
 import java.util.UUID
 
@@ -25,8 +24,6 @@ internal class TrapFileCache(
 
     init {
         cacheDir.mkdir()
-
-        Log.d(TrapFileCache::class.simpleName, "Cache dir is $cacheDir")
     }
 
     /**
