@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.TrapManager
 import com.cursorinsight.trap.util.TrapPermissionActivity
+import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
 
@@ -98,7 +99,7 @@ class TrapWiFiCollector(
         val results = wifiManager?.scanResults
         with(JSONArray()) {
             put(wifiEventType)
-            put(System.currentTimeMillis())
+            put(TrapTime.getCurrentTime())
             put(with(JSONArray()) {
                 results?.forEach {result ->
                     put(with(JSONArray()) {

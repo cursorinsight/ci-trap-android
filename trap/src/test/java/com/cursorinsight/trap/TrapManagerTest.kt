@@ -3,11 +3,13 @@ package com.cursorinsight.trap
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import android.view.Window
 import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.datasource.sensor.TrapGravityCollector
 import com.cursorinsight.trap.transport.TrapReporter
+import com.cursorinsight.trap.util.TrapTime
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -32,6 +34,10 @@ class TrapManagerTest {
 
     @BeforeEach
     fun setUp() {
+        mockkStatic(SystemClock::class)
+        every { SystemClock.elapsedRealtime() } returns 0
+        every { SystemClock.uptimeMillis() } returns 0
+
         // We only test the TrapManager, no need to mock out everything
         mockkConstructor(TrapReporter::class)
         every { anyConstructed<TrapReporter>().start() } returns Unit

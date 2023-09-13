@@ -39,7 +39,7 @@ class TrapPointerCollector(
                 ACTION_POINTER_DOWN, ACTION_DOWN -> {
                     val frame = JSONArray()
                     frame.put(PointerState.START.state)
-                    frame.put(TrapTime.normalizeMillisecondTime(event.eventTime))
+                    frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
                     frame.put(event.rawX)
                     frame.put(event.rawY)
                     frame.put(
@@ -57,7 +57,7 @@ class TrapPointerCollector(
                     for (pos in 0..<event.historySize) {
                         val frame = JSONArray()
                         frame.put(PointerState.MOVE.state)
-                        frame.put(TrapTime.normalizeMillisecondTime(event.getHistoricalEventTime(pos)))
+                        frame.put(TrapTime.normalizeUptimeMillisecond(event.getHistoricalEventTime(pos)))
                         frame.put(event.getHistoricalX(pos))
                         frame.put(event.getHistoricalY(pos))
                         frame.put(
@@ -75,7 +75,7 @@ class TrapPointerCollector(
                 ACTION_POINTER_UP, ACTION_UP, ACTION_OUTSIDE, ACTION_CANCEL -> {
                     val frame = JSONArray()
                     frame.put(PointerState.END.state)
-                    frame.put(TrapTime.normalizeMillisecondTime(event.eventTime))
+                    frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
                     frame.put(event.rawX)
                     frame.put(event.rawY)
                     frame.put(

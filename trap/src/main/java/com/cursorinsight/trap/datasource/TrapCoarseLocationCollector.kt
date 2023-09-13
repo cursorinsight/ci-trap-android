@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapBackgroundExecutor
 import com.cursorinsight.trap.util.TrapPermissionActivity
+import com.cursorinsight.trap.util.TrapTime
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -60,7 +61,7 @@ class TrapCoarseLocationCollector(
             locationResult.locations.forEach {
                 with(JSONArray()) {
                     put(locationEventType)
-                    put(System.currentTimeMillis())
+                    put(TrapTime.getCurrentTime())
                     put(it.latitude)
                     put(it.longitude)
                     put(it.accuracy)

@@ -84,7 +84,7 @@ class GestureCollectorTest {
         assertEquals(storage.size, 1)
         val el = storage.elementAt(0)
         assertEquals(el.getInt(0), 122)
-        assertEquals(el.getLong(1), TrapTime.normalizeMillisecondTime(111L))
+        assertEquals(el.getLong(1), TrapTime.normalizeUptimeMillisecond(111L))
         assertEquals(el.getDouble(2), 55.0)
         assertEquals(el.getDouble(3), 135.0)
 

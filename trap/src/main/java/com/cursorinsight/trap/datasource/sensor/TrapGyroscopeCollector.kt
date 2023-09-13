@@ -36,7 +36,7 @@ class TrapGyroscopeCollector(
             try {
                 val frame = JSONArray()
                 frame.put(gyroscopeEventType)
-                frame.put(TrapTime.normalizeNanosecondTime(event?.timestamp ?: 0))
+                frame.put(TrapTime.normalizeRealTimeNanosecond(event?.timestamp ?: 0))
                 frame.put(event?.values?.get(0))
                 frame.put(event?.values?.get(1))
                 frame.put(event?.values?.get(2))

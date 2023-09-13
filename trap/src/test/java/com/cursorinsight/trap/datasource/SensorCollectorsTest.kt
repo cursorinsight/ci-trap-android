@@ -7,6 +7,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.SystemClock
 import android.util.Log
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.datasource.sensor.TrapAccelerometerCollector
@@ -72,6 +73,10 @@ class SensorCollectorsTest {
     fun setUp() {
         handler = slot()
         unhandler = slot()
+
+        mockkStatic(SystemClock::class)
+        every { SystemClock.elapsedRealtime() } returns 0
+        every { SystemClock.uptimeMillis() } returns 0
     }
 
     @AfterEach
@@ -100,7 +105,7 @@ class SensorCollectorsTest {
         assert(storage.size == 1)
         val el = storage.elementAt(0)
         assert(el.getInt(0) == 103)
-        assert(el.getLong(1) == TrapTime.normalizeNanosecondTime(1L))
+        assert(el.getLong(1) == TrapTime.normalizeRealTimeNanosecond(1L))
         assert(el.getDouble(2) == 1.0)
         assert(el.getDouble(3) == 2.0)
         assert(el.getDouble(4) == -2.0)
@@ -109,7 +114,7 @@ class SensorCollectorsTest {
         assert(storage.size == 2)
         val el2 = storage.elementAt(1)
         assert(el2.getInt(0) == 103)
-        assert(el2.getLong(1) == TrapTime.normalizeNanosecondTime(3L))
+        assert(el2.getLong(1) == TrapTime.normalizeRealTimeNanosecond(3L))
         assert(el2.getDouble(2) == 3.0)
         assert(el2.getDouble(3) == 4.0)
         assert(el2.getDouble(4) == -4.0)
@@ -131,7 +136,7 @@ class SensorCollectorsTest {
         assert(storage.size == 1)
         val el = storage.elementAt(0)
         assert(el.getInt(0) == 105)
-        assert(el.getLong(1) == TrapTime.normalizeNanosecondTime(1L))
+        assert(el.getLong(1) == TrapTime.normalizeRealTimeNanosecond(1L))
         assert(el.getDouble(2) == 1.0)
         assert(el.getDouble(3) == 2.0)
         assert(el.getDouble(4) == -2.0)
@@ -140,7 +145,7 @@ class SensorCollectorsTest {
         assert(storage.size == 2)
         val el2 = storage.elementAt(1)
         assert(el2.getInt(0) == 105)
-        assert(el2.getLong(1) == TrapTime.normalizeNanosecondTime(3L))
+        assert(el2.getLong(1) == TrapTime.normalizeRealTimeNanosecond(3L))
         assert(el2.getDouble(2) == 3.0)
         assert(el2.getDouble(3) == 4.0)
         assert(el2.getDouble(4) == -4.0)
@@ -162,7 +167,7 @@ class SensorCollectorsTest {
         assert(storage.size == 1)
         val el = storage.elementAt(0)
         assert(el.getInt(0) == 104)
-        assert(el.getLong(1) == TrapTime.normalizeNanosecondTime(1L))
+        assert(el.getLong(1) == TrapTime.normalizeRealTimeNanosecond(1L))
         assert(el.getDouble(2) == 1.0)
         assert(el.getDouble(3) == 2.0)
         assert(el.getDouble(4) == -2.0)
@@ -171,7 +176,7 @@ class SensorCollectorsTest {
         assert(storage.size == 2)
         val el2 = storage.elementAt(1)
         assert(el2.getInt(0) == 104)
-        assert(el2.getLong(1) == TrapTime.normalizeNanosecondTime(3L))
+        assert(el2.getLong(1) == TrapTime.normalizeRealTimeNanosecond(3L))
         assert(el2.getDouble(2) == 3.0)
         assert(el2.getDouble(3) == 4.0)
         assert(el2.getDouble(4) == -4.0)
@@ -193,7 +198,7 @@ class SensorCollectorsTest {
         assert(storage.size == 1)
         val el = storage.elementAt(0)
         assert(el.getInt(0) == 106)
-        assert(el.getLong(1) == TrapTime.normalizeNanosecondTime(1L))
+        assert(el.getLong(1) == TrapTime.normalizeRealTimeNanosecond(1L))
         assert(el.getDouble(2) == 1.0)
         assert(el.getDouble(3) == 2.0)
         assert(el.getDouble(4) == -2.0)
@@ -202,7 +207,7 @@ class SensorCollectorsTest {
         assert(storage.size == 2)
         val el2 = storage.elementAt(1)
         assert(el2.getInt(0) == 106)
-        assert(el2.getLong(1) == TrapTime.normalizeNanosecondTime(3L))
+        assert(el2.getLong(1) == TrapTime.normalizeRealTimeNanosecond(3L))
         assert(el2.getDouble(2) == 3.0)
         assert(el2.getDouble(3) == 4.0)
         assert(el2.getDouble(4) == -4.0)

@@ -38,7 +38,7 @@ class TrapStylusCollector(
                 ACTION_POINTER_DOWN, ACTION_DOWN -> {
                     val frame = JSONArray()
                     frame.put(StylusState.START.state)
-                    frame.put(TrapTime.normalizeMillisecondTime(event.eventTime))
+                    frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
                     frame.put(event.rawX)
                     frame.put(event.rawY)
                     frame.put(event.pressure)
@@ -50,7 +50,7 @@ class TrapStylusCollector(
                     for (pos in 0..<event.historySize) {
                         val frame = JSONArray()
                         frame.put(StylusState.MOVE.state)
-                        frame.put(TrapTime.normalizeMillisecondTime(event.getHistoricalEventTime(pos)))
+                        frame.put(TrapTime.normalizeUptimeMillisecond(event.getHistoricalEventTime(pos)))
                         frame.put(event.getHistoricalX(pos))
                         frame.put(event.getHistoricalY(pos))
                         frame.put(event.getHistoricalPressure(pos))
@@ -62,7 +62,7 @@ class TrapStylusCollector(
                 ACTION_POINTER_UP, ACTION_UP, ACTION_OUTSIDE, ACTION_CANCEL -> {
                     val frame = JSONArray()
                     frame.put(StylusState.END.state)
-                    frame.put(TrapTime.normalizeMillisecondTime(event.eventTime))
+                    frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
                     frame.put(event.rawX)
                     frame.put(event.rawY)
                     frame.put(event.pressure)

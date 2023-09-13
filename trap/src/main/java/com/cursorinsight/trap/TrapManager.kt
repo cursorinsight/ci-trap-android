@@ -7,7 +7,7 @@ import android.util.Log
 import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
 import com.cursorinsight.trap.transport.TrapReporter
-import com.cursorinsight.trap.util.TrapBackgroundExecutor
+import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.CircularFifoQueue
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
@@ -186,6 +186,7 @@ class TrapManager internal constructor(
     }
 
     override fun onActivityResumed(activity: Activity) {
+        TrapTime.updateTimeDiff()
         currentActivity = WeakReference(activity)
         runAll(activity)
     }

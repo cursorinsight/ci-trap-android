@@ -6,6 +6,7 @@ import android.util.Log
 import com.cursorinsight.trap.BuildConfig
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapBackgroundExecutor
+import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
 import org.json.JSONObject
@@ -147,7 +148,7 @@ internal class TrapReporter(
         val headerEventType = -1
         return with(JSONArray()) {
             put(headerEventType)
-            put(System.currentTimeMillis())
+            put(TrapTime.getCurrentTime())
             put(sessionId.toString())
             put(streamId.toString())
             put(sequenceId++)
@@ -169,7 +170,7 @@ internal class TrapReporter(
         val metadataEventType = 11
         return with(JSONArray()) {
             put(metadataEventType)
-            put(System.currentTimeMillis())
+            put(TrapTime.getCurrentTime())
             put(with(JSONObject()) {
                 put("architecture", System.getProperty("os.arch"))
                 put("family", Build.DEVICE)

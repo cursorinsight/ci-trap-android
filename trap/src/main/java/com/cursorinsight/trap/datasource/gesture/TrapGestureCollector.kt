@@ -69,7 +69,7 @@ class TrapGestureCollector(
     override fun onSingleTapUp(p0: MotionEvent): Boolean {
         with(JSONArray()) {
             put(tapEventType)
-            put(TrapTime.normalizeMillisecondTime(p0.eventTime))
+            put(TrapTime.normalizeUptimeMillisecond(p0.eventTime))
             put(p0.rawX)
             put(p0.rawY)
         }.let {

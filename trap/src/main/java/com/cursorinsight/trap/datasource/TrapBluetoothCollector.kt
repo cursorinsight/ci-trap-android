@@ -25,6 +25,7 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapPermissionActivity
+import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
 import java.lang.reflect.Method
@@ -65,7 +66,7 @@ class TrapBluetoothCollector(
 
                         with(JSONArray()) {
                             put(bluetoothEventType)
-                            put(System.currentTimeMillis())
+                            put(TrapTime.getCurrentTime())
                             put(with(JSONArray()) {
                                 put(with(JSONArray()) {
                                     put(device?.name)

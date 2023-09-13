@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.SystemClock
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.cursorinsight.trap.TrapConfig
@@ -32,11 +33,20 @@ import org.json.JSONArray
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class TrapCoarseLocationCollectorTest {
+
+    @BeforeEach
+    fun setUp() {
+        mockkStatic(SystemClock::class)
+        every { SystemClock.elapsedRealtime() } returns 0
+        every { SystemClock.uptimeMillis() } returns 0
+    }
+
     @AfterEach
     fun tearDown() {
         unmockkAll()

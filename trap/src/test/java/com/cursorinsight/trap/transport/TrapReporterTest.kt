@@ -1,6 +1,7 @@
 package com.cursorinsight.trap.transport
 
 import android.content.Context
+import android.os.SystemClock
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapBackgroundExecutor
 import com.cursorinsight.trap.util.TrapFileCache
@@ -35,6 +36,10 @@ class TrapReporterTest {
     fun setUp() {
         val cache = TrapFileCache(File(tempDir), 128)
         cache.clear()
+
+        mockkStatic(SystemClock::class)
+        every { SystemClock.elapsedRealtime() } returns 0
+        every { SystemClock.uptimeMillis() } returns 0
     }
 
     @AfterEach

@@ -9,6 +9,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
+import android.os.SystemClock
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.cursorinsight.trap.TrapConfig
@@ -29,11 +30,20 @@ import org.json.JSONArray
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class TrapWifiCollectorTest {
+
+    @BeforeEach
+    fun setUp() {
+        mockkStatic(SystemClock::class)
+        every { SystemClock.elapsedRealtime() } returns 0
+        every { SystemClock.uptimeMillis() } returns 0
+    }
+
     @AfterEach
     fun tearDown() {
         unmockkAll()

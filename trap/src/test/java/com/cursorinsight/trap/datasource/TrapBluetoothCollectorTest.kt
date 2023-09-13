@@ -9,9 +9,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Paint.Cap
+import android.os.SystemClock
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.cursorinsight.trap.TrapConfig
+import com.cursorinsight.trap.util.TrapTime
 import io.mockk.CapturingSlot
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -29,11 +31,20 @@ import org.json.JSONArray
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class TrapBluetoothCollectorTest {
+
+    @BeforeEach
+    fun setUp() {
+        mockkStatic(SystemClock::class)
+        every { SystemClock.elapsedRealtime() } returns 0
+        every { SystemClock.uptimeMillis() } returns 0
+    }
+
     @AfterEach
     fun tearDown() {
         unmockkAll()
