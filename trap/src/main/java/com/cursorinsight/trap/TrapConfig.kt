@@ -6,6 +6,7 @@ import com.cursorinsight.trap.datasource.TrapWiFiCollector
 import com.cursorinsight.trap.datasource.gesture.TrapPointerCollector
 import com.cursorinsight.trap.datasource.gesture.TrapStylusCollector
 import com.cursorinsight.trap.datasource.gesture.TrapTouchCollector
+import com.cursorinsight.trap.datasource.hardware.TrapBatteryCollector
 import com.cursorinsight.trap.datasource.sensor.TrapAccelerometerCollector
 import com.cursorinsight.trap.datasource.sensor.TrapGravityCollector
 import com.cursorinsight.trap.datasource.sensor.TrapGyroscopeCollector
@@ -101,6 +102,7 @@ data class TrapConfig(
         TrapStylusCollector::class,
         TrapTouchCollector::class,
         TrapWiFiCollector::class,
+        TrapBatteryCollector::class,
     ),
 ) {
 
