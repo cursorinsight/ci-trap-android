@@ -102,26 +102,33 @@ class TrapBluetoothCollector(
             val bluetoothManager = activity.getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
 
             val bondedDevices = bluetoothManager.adapter.bondedDevices.toList()
-            with(JSONArray()) {
-                put(bluetoothEventType)
-                put(System.currentTimeMillis())
-                put(with(JSONArray()) {
-                    bondedDevices.forEach { device ->
-                        put(with(JSONArray()) {
-                            put(device?.name ?: "<unknown>")
-                            put(device?.address)
-                            put(if (isConnected(device)) { 3 } else { 2 })
-                            this
-                        })
+            if (bondedDevices.size > 0) {
+                with(JSONArray()) {
+                    put(bluetoothEventType)
+                    put(TrapTime.getCurrentTime())
+                    put(with(JSONArray()) {
+                        bondedDevices.forEach { device ->
+                            put(with(JSONArray()) {
+                                put(device?.name ?: "<unknown>")
+                                put(device?.address)
+                                put(
+                                    if (isConnected(device)) {
+                                        3
+                                    } else {
+                                        2
+                                    }
+                                )
+                                this
+                            })
+                        }
+                        this
+                    })
+                }.let {
+                    if (it.length() > 0) {
+                        storage.add(it)
                     }
-                    this
-                })
-            }.let {
-                if (it.length() > 0) {
-                    storage.add(it)
                 }
             }
-
             activity.registerReceiver(receiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
             registered = true
 

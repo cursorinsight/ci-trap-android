@@ -130,6 +130,53 @@ class TrapBluetoothCollectorTest {
     }
 
     @Test
+    fun `test No event when no device`() {
+        mockkStatic(ContextCompat::class)
+        every {
+            ContextCompat.checkSelfPermission(
+                any(),
+                any()
+            )
+        } returns PackageManager.PERMISSION_GRANTED
+
+        var receiver: CapturingSlot<BroadcastReceiver> = slot()
+        var activity = mockkClass(Activity::class)
+        every {
+            activity.registerReceiver(
+                capture(receiver),
+                any(IntentFilter::class)
+            )
+        } returns mockk()
+        every { activity.unregisterReceiver(any(BroadcastReceiver::class)) } returns Unit
+        every { activity.packageManager } answers {
+            val packageManager = mockkClass(PackageManager::class)
+            every { packageManager.hasSystemFeature(any()) } returns true
+            packageManager
+        }
+        every { activity.getSystemService(any(String::class)) } answers {
+            val manager = mockkClass(BluetoothManager::class)
+            every { manager.adapter } answers {
+                val adapter = mockkClass(BluetoothAdapter::class)
+                every { adapter.startDiscovery() } returns true
+                every { adapter.isDiscovering } returns true
+                every { adapter.cancelDiscovery() } returns true
+                every { adapter.bondedDevices } answers {
+                    mutableSetOf<BluetoothDevice>()
+                }
+                adapter
+            }
+            manager
+        }
+
+        val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
+        val collector = TrapBluetoothCollector(storage, TrapConfig())
+
+        collector.start(activity)
+        assertSame(storage.size, 0)
+        collector.stop(activity)
+    }
+
+    @Test
     fun `test permission check`(@MockK activity: Activity) {
         mockkStatic(ContextCompat::class)
         every {
