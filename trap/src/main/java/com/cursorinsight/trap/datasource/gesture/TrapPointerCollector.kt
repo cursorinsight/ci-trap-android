@@ -30,7 +30,7 @@ import org.json.JSONArray
  */
 class TrapPointerCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    private val config: TrapConfig,
 ): TrapMotionEventCollector(storage, config) {
     @OptIn(ExperimentalStdlibApi::class)
     override fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent) {
@@ -54,12 +54,35 @@ class TrapPointerCollector(
                 }
 
                 ACTION_MOVE -> {
-                    for (pos in 0..<event.historySize) {
+                    if (config.collectCoalescedPointerEvents) {
+                        for (pos in 0..<event.historySize) {
+                            val frame = JSONArray()
+                            frame.put(PointerState.MOVE.state)
+                            frame.put(
+                                TrapTime.normalizeUptimeMillisecond(
+                                    event.getHistoricalEventTime(
+                                        pos
+                                    )
+                                )
+                            )
+                            frame.put(event.getHistoricalX(pos))
+                            frame.put(event.getHistoricalY(pos))
+                            frame.put(
+                                when {
+                                    event.isButtonPressed(BUTTON_PRIMARY) -> 0
+                                    event.isButtonPressed(BUTTON_SECONDARY) -> 1
+                                    event.isButtonPressed(BUTTON_TERTIARY) -> 2
+                                    else -> 999
+                                }
+                            )
+                            frames.add(frame)
+                        }
+                    } else {
                         val frame = JSONArray()
                         frame.put(PointerState.MOVE.state)
-                        frame.put(TrapTime.normalizeUptimeMillisecond(event.getHistoricalEventTime(pos)))
-                        frame.put(event.getHistoricalX(pos))
-                        frame.put(event.getHistoricalY(pos))
+                        frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
+                        frame.put(event.rawX)
+                        frame.put(event.rawY)
                         frame.put(
                             when {
                                 event.isButtonPressed(BUTTON_PRIMARY) -> 0

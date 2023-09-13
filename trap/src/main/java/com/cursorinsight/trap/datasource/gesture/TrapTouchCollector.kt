@@ -26,7 +26,7 @@ import org.json.JSONArray
  */
 class TrapTouchCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    private val config: TrapConfig,
 ) : TrapMotionEventCollector(storage, config) {
     @OptIn(ExperimentalStdlibApi::class)
     override fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent) {
@@ -61,15 +61,29 @@ class TrapTouchCollector(
                 ACTION_MOVE -> {
                     for (idx in 0..<event.pointerCount) {
                         val fingerId = event.getPointerId(idx)
-                        for (pos in 0..<event.historySize) {
+                        if (config.collectCoalescedTouchEvents) {
+                            for (pos in 0..<event.historySize) {
+                                val frame = JSONArray()
+                                frame.put(TouchState.MOVE.state)
+                                frame.put(TrapTime.normalizeUptimeMillisecond(
+                                    event.getHistoricalEventTime(pos))
+                                )
+                                frame.put(fingerId)
+                                frame.put(event.getHistoricalX(idx, pos))
+                                frame.put(event.getHistoricalY(idx, pos))
+                                frame.put(event.getHistoricalPressure(idx, pos))
+                                frame.put(event.getHistoricalTouchMajor(idx, pos))
+                                frames.add(frame)
+                            }
+                        } else {
                             val frame = JSONArray()
                             frame.put(TouchState.MOVE.state)
                             frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
                             frame.put(fingerId)
-                            frame.put(event.getHistoricalX(idx, pos))
-                            frame.put(event.getHistoricalY(idx, pos))
-                            frame.put(event.getHistoricalPressure(idx, pos))
-                            frame.put(event.getHistoricalTouchMajor(idx, pos))
+                            frame.put(event.getX(idx))
+                            frame.put(event.getY(idx))
+                            frame.put(event.getPressure(idx))
+                            frame.put(event.getTouchMajor(idx))
                             frames.add(frame)
                         }
                     }

@@ -1,6 +1,7 @@
 package com.cursorinsight.trap.datasource.gesture
 
 import android.app.Activity
+import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.BUTTON_TERTIARY
@@ -27,6 +28,8 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 @Suppress("SameParameterValue")
 @ExtendWith(MockKExtension::class)
@@ -43,6 +46,20 @@ class PointerCollectorTest {
     @BeforeEach
     fun setUp() {
         windowCallback = TrapWindowCallback(initialWindowCallback)
+
+        mockkStatic(SystemClock::class)
+        every { SystemClock.elapsedRealtime() } returns 0
+        every { SystemClock.uptimeMillis() } returns 0
+
+        mockkStatic(Log::class)
+        every { Log.v(any(), any()) } returns 0
+        every { Log.d(any(), any()) } returns 0
+        every { Log.i(any(), any()) } returns 0
+        every { Log.e(any(), any()) } returns 0
+        every { Log.w(ofType(String::class), ofType(String::class)) } returns 0
+
+        mockkObject(TrapBackgroundExecutor)
+        every { TrapBackgroundExecutor.run(capture(command)) } returns Unit
     }
 
     @AfterEach
@@ -68,6 +85,7 @@ class PointerCollectorTest {
         every { event.isButtonPressed(capture(pressed)) } answers {
             button == pressed.captured
         }
+
         every { event.getHistoricalEventTime(any()) } returns time
         every { event.getHistoricalX(any()) } returns x
         every { event.getHistoricalX(any(), any()) } returns x
@@ -76,16 +94,22 @@ class PointerCollectorTest {
 
         every { event.getX(any()) } returns x
         every { event.getY(any()) } returns y
-        every { event.historySize } returns 1
+        every { event.historySize } returns 2
 
         return event
     }
 
-    @Test
-    fun `test pointer data is collected`() {
+    @ParameterizedTest
+    @CsvSource(
+        "true",
+        "false"
+    )
+    fun `test pointer data is collected`(captureCoalescedEvents: Boolean) {
         val activity: Activity = mockk()
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapPointerCollector(storage, TrapConfig())
+        val config = TrapConfig()
+        config.collectCoalescedPointerEvents = captureCoalescedEvents
+        val collector = TrapPointerCollector(storage, config)
         collector.start(activity)
 
         windowCallback.dispatchTouchEvent(
@@ -120,7 +144,7 @@ class PointerCollectorTest {
 
         assert(command.isCaptured)
         command.captured()
-        assertEquals(storage.size, 2)
+        assertEquals(storage.size, if (captureCoalescedEvents) 3 else  2)
         val el2 = storage.elementAt(1)
         assertEquals(el2.getInt(0), 5)
         assertEquals(el2.getLong(1), TrapTime.normalizeUptimeMillisecond(11L))
@@ -140,8 +164,8 @@ class PointerCollectorTest {
 
         assert(command.isCaptured)
         command.captured()
-        assertEquals(storage.size, 3)
-        val el3 = storage.elementAt(2)
+        assertEquals(storage.size, if (captureCoalescedEvents) 4 else  3)
+        val el3 = storage.elementAt(if (captureCoalescedEvents) 3 else  2)
         assertEquals(el3.getInt(0), 6)
         assertEquals(el3.getLong(1), TrapTime.normalizeUptimeMillisecond(111L))
         assertEquals(el3.getDouble(2), 1115.0)
@@ -153,19 +177,5 @@ class PointerCollectorTest {
 
     companion object {
         var command: CapturingSlot<() -> Unit> = slot()
-
-        @BeforeAll
-        @JvmStatic
-        fun beforeAll() {
-            mockkStatic(Log::class)
-            every { Log.v(any(), any()) } returns 0
-            every { Log.d(any(), any()) } returns 0
-            every { Log.i(any(), any()) } returns 0
-            every { Log.e(any(), any()) } returns 0
-            every { Log.w(ofType(String::class), ofType(String::class)) } returns 0
-
-            mockkObject(TrapBackgroundExecutor)
-            every { TrapBackgroundExecutor.run(capture(command)) } returns Unit
-        }
     }
 }

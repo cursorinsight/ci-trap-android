@@ -73,6 +73,21 @@ data class TrapConfig(
     var gravityMaxReportLatencyMs: Int = 200,
 
     /**
+     * Collect coalesced pointer events
+     */
+    var collectCoalescedPointerEvents: Boolean = true,
+
+    /**
+     * Collect coalesced stylus events
+     */
+    var collectCoalescedStylusEvents: Boolean = true,
+
+    /**
+     * Collect coalesced touch events
+     */
+    var collectCoalescedTouchEvents: Boolean = true,
+
+    /**
      * The list of collectors to start at initialization.
      */
     var collectors: List<KClass<*>> = mutableListOf(

@@ -29,7 +29,7 @@ import org.json.JSONArray
  */
 class TrapStylusCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    private val config: TrapConfig,
 ): TrapMotionEventCollector(storage, config) {
     @OptIn(ExperimentalStdlibApi::class)
     override fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent) {
@@ -47,15 +47,33 @@ class TrapStylusCollector(
                     frames.add(frame)
                 }
                 ACTION_MOVE -> {
-                    for (pos in 0..<event.historySize) {
+                    if (config.collectCoalescedStylusEvents) {
+                        for (pos in 0..<event.historySize) {
+                            val frame = JSONArray()
+                            frame.put(StylusState.MOVE.state)
+                            frame.put(
+                                TrapTime.normalizeUptimeMillisecond(
+                                    event.getHistoricalEventTime(
+                                        pos
+                                    )
+                                )
+                            )
+                            frame.put(event.getHistoricalX(pos))
+                            frame.put(event.getHistoricalY(pos))
+                            frame.put(event.getHistoricalPressure(pos))
+                            frame.put(event.getHistoricalAxisValue(AXIS_TILT, pos))
+                            frame.put(event.getHistoricalOrientation(pos))
+                            frames.add(frame)
+                        }
+                    } else {
                         val frame = JSONArray()
                         frame.put(StylusState.MOVE.state)
-                        frame.put(TrapTime.normalizeUptimeMillisecond(event.getHistoricalEventTime(pos)))
-                        frame.put(event.getHistoricalX(pos))
-                        frame.put(event.getHistoricalY(pos))
-                        frame.put(event.getHistoricalPressure(pos))
-                        frame.put(event.getHistoricalAxisValue(AXIS_TILT, pos))
-                        frame.put(event.getHistoricalOrientation(pos))
+                        frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
+                        frame.put(event.rawX)
+                        frame.put(event.rawY)
+                        frame.put(event.pressure)
+                        frame.put(event.getAxisValue(AXIS_TILT))
+                        frame.put(event.orientation)
                         frames.add(frame)
                     }
                 }
