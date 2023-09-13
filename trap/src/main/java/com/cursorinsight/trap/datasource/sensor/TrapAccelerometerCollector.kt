@@ -27,7 +27,7 @@ import org.json.JSONArray
  */
 class TrapAccelerometerCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    config: TrapConfig,
+    private val config: TrapConfig,
 ) : TrapDatasource {
     private val accelerometerEventType = 103
     private val logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
@@ -59,7 +59,11 @@ class TrapAccelerometerCollector(
             val sensorManager = activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
             val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
             sensor?.let {
-                sensorManager.registerListener(handler, it, SensorManager.SENSOR_DELAY_GAME)
+                sensorManager.registerListener(
+                    handler,
+                    it,
+                    config.accelerationSamplingPeriodMs * 1000,
+                    config.accelerationMaxReportLatencyMs * 1000)
             }
         }
     }

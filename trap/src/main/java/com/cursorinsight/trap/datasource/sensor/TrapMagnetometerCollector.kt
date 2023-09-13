@@ -25,7 +25,7 @@ import org.json.JSONArray
  */
 class TrapMagnetometerCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    private val config: TrapConfig,
 ) : TrapDatasource {
     private val magneticEventType = 106
     private val logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
@@ -55,7 +55,13 @@ class TrapMagnetometerCollector(
     override fun start(activity: Activity) {
         val sensorManager = activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
-        sensor?.let { sensorManager.registerListener(handler, it, SensorManager.SENSOR_DELAY_GAME) }
+        sensor?.let {
+            sensorManager.registerListener(
+                handler,
+                it,
+                config.magnetometerSamplingPeriodMs * 1000,
+                config.magnetometerMaxReportLatencyMs * 1000)
+        }
     }
 
     override fun stop(activity: Activity) {

@@ -26,7 +26,7 @@ import org.json.JSONArray
  */
 class TrapGravityCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    private val config: TrapConfig,
 ): TrapDatasource {
     private val gravityEventType = 105
     private val logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
@@ -58,7 +58,11 @@ class TrapGravityCollector(
             val sensorManager = activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
             val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY)
             sensor?.let {
-                sensorManager.registerListener(handler, it, SensorManager.SENSOR_DELAY_GAME)
+                sensorManager.registerListener(
+                    handler,
+                    it,
+                    config.gravitySamplingPeriodMs * 1000,
+                    config.gravityMaxReportLatencyMs * 1000)
             }
         }
     }

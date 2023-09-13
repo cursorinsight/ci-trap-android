@@ -26,7 +26,7 @@ import org.json.JSONArray
  */
 class TrapGyroscopeCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    private val config: TrapConfig,
 ): TrapDatasource {
     private val gyroscopeEventType = 104
     private val logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
@@ -58,7 +58,11 @@ class TrapGyroscopeCollector(
             val sensorManager = activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
             val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
             sensor?.let {
-                sensorManager.registerListener(handler, it, SensorManager.SENSOR_DELAY_GAME)
+                sensorManager.registerListener(
+                    handler,
+                    it,
+                    config.gyroscopeSamplingPeriodMs * 1000,
+                    config.gyroscopeMaxReportLatencyMs * 1000)
             }
         }
     }

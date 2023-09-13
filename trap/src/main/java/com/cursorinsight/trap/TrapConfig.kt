@@ -33,6 +33,46 @@ data class TrapConfig(
     var maxNumberOfLogMessagesPerMinute: Int = 100,
 
     /**
+     * How frequent the sampling of the given sensor should be.
+     */
+    var accelerationSamplingPeriodMs: Int = 10,
+
+    /**
+     * How long the sensor can cache reported events.
+     */
+    var accelerationMaxReportLatencyMs: Int = 200,
+
+    /**
+     * How frequent the sampling of the given sensor should be.
+     */
+    var gyroscopeSamplingPeriodMs: Int = 10,
+
+    /**
+     * How long the sensor can cache reported events.
+     */
+    var gyroscopeMaxReportLatencyMs: Int = 200,
+
+    /**
+     * How frequent the sampling of the given sensor should be.
+     */
+    var magnetometerSamplingPeriodMs: Int = 10,
+
+    /**
+     * How long the sensor can cache reported events.
+     */
+    var magnetometerMaxReportLatencyMs: Int = 200,
+
+    /**
+     * How frequent the sampling of the given sensor should be.
+     */
+    var gravitySamplingPeriodMs: Int = 10,
+
+    /**
+     * How long the sensor can cache reported events.
+     */
+    var gravityMaxReportLatencyMs: Int = 200,
+
+    /**
      * The list of collectors to start at initialization.
      */
     var collectors: List<KClass<*>> = mutableListOf(

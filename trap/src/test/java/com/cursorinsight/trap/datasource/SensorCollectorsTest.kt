@@ -55,7 +55,8 @@ class SensorCollectorsTest {
                 sensorManager.registerListener(
                     capture(this@SensorCollectorsTest.handler),
                     any(),
-                    any()
+                    any<Int>(),
+                    any<Int>()
                 )
             } returns true
             every {
