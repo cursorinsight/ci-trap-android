@@ -19,6 +19,8 @@ import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.unmockkAll
 import io.mockk.verify
+import org.apache.commons.collections4.queue.CircularFifoQueue
+import org.json.JSONArray
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.BeforeAll
@@ -42,6 +44,9 @@ class TrapManagerTest {
         mockkConstructor(TrapReporter::class)
         every { anyConstructed<TrapReporter>().start() } returns Unit
         every { anyConstructed<TrapReporter>().stop() } returns Unit
+
+        mockkConstructor(CircularFifoQueue::class)
+        every { anyConstructed<CircularFifoQueue<JSONArray>>().add(any()) } returns true
 
         application = spyk(Application())
         every { application.cacheDir }  answers { File("/test/cache/dir") }
@@ -91,6 +96,10 @@ class TrapManagerTest {
 
         verify(exactly = 1) { collector invoke "start" withArguments listOf(activity) }
         verify(exactly = 2) { anyConstructed<TrapReporter>().start() }
+        verify(exactly = 1) { anyConstructed<CircularFifoQueue<JSONArray>>().add(withArg {
+            assert(it.getInt(0) == 130)
+            assert(it.getLong(1) > 0)
+        }) }
     }
 
     @Test
@@ -141,6 +150,10 @@ class TrapManagerTest {
 
         verify(exactly = 1) { anyConstructed<TrapGravityCollector>().stop(activity) }
         verify(exactly = 1) { anyConstructed<TrapReporter>().stop() }
+        verify(exactly = 1) { anyConstructed<CircularFifoQueue<JSONArray>>().add(withArg {
+            assert(it.getInt(0) == 131)
+            assert(it.getLong(1) > 0)
+        }) }
     }
 
     @Test

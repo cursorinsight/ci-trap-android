@@ -134,7 +134,6 @@ internal class TrapReporter(
     fun stop() {
         task?.cancel(true)
         task = null
-
         transport?.stop()
     }
 

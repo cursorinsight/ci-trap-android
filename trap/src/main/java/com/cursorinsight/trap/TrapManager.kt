@@ -146,6 +146,7 @@ class TrapManager internal constructor(
             for (collector in collectors.values) {
                 collector.start(activity)
             }
+            buffer.add(startMessage())
         } catch (ex: Exception) {
             Log.e(
                 TrapManager::class.simpleName,
@@ -163,6 +164,7 @@ class TrapManager internal constructor(
             for (collector in collectors.values) {
                 collector.stop(activity)
             }
+            buffer.add(stopMessage())
             reporter.stop()
         } catch (ex: Exception) {
             Log.e(
@@ -170,6 +172,34 @@ class TrapManager internal constructor(
                 "Stopping collectors and reporter in haltAll() failed",
                 ex
             )
+        }
+    }
+
+    /**
+     * Generates the start frame
+     *
+     * @return The start data frame.
+     */
+    private fun startMessage(): JSONArray {
+        val startEventType = 130
+        return with(JSONArray()) {
+            put(startEventType)
+            put(TrapTime.getCurrentTime())
+            this
+        }
+    }
+
+    /**
+     * Generates the stop frame
+     *
+     * @return The stop data frame.
+     */
+    private fun stopMessage(): JSONArray {
+        val stopEventType = 131
+        return with(JSONArray()) {
+            put(stopEventType)
+            put(TrapTime.getCurrentTime())
+            this
         }
     }
 
