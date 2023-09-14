@@ -54,13 +54,20 @@ open class TrapApplication : Application() {
          * @param application The global android Application instance.
          * @return The singletonTrapManager instance.
          */
-        fun initialize(application: Application): TrapManager {
-            if (TrapApplication.application.get() == null) {
-                TrapApplication.application = WeakReference(application)
-                trapManager = TrapManager.getInstance(application, getConfig(application))
-            }
-
-            return trapManager
+        fun initialize(application: Application) {
+            Thread {
+                try {
+                    if (TrapApplication.application.get() == null) {
+                        TrapApplication.application = WeakReference(application)
+                        trapManager = TrapManager.getInstance(application, getConfig(application))
+                    }
+                } catch (e: Exception) {
+                    Log.e(
+                        TrapApplication::class.simpleName,
+                        "Could not initialize the application"
+                    )
+                }
+            }.start()
         }
 
         /**
