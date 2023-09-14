@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.core.content.getSystemService
 import com.cursorinsight.trap.datasource.TrapDatasource
+import com.cursorinsight.trap.datasource.TrapMetaDataCollector
 import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
 import com.cursorinsight.trap.transport.TrapReporter
 import com.cursorinsight.trap.util.TrapTime
@@ -205,6 +206,38 @@ class TrapManager internal constructor(
                 ex
             )
         }
+    }
+
+    /**
+     * Adds a custom key-value to the metadata event.
+     */
+    @Suppress("unused")
+    fun addCustomMetadata(key: String, value: String) {
+        val metaDataCollector = collectors[TrapMetaDataCollector::class.qualifiedName] as TrapMetaDataCollector?
+        metaDataCollector?.addCustom(key, value)
+    }
+
+    /**
+     * Removes a custom key-value from the metadata event.
+     */
+    @Suppress("unused")
+    fun removeCustomMetadata(key: String) {
+        val metaDataCollector = collectors[TrapMetaDataCollector::class.qualifiedName] as TrapMetaDataCollector?
+        metaDataCollector?.removeCustom(key)
+    }
+
+    /**
+     * Adds a custom event to the event stream.
+     */
+    @Suppress("unused")
+    fun addCustomEvent(custom: Any) {
+        val customEventType = 132
+        buffer.add(with(JSONArray()) {
+            put(customEventType)
+            put(TrapTime.getCurrentTime())
+            put(custom)
+            this
+        })
     }
 
     /**

@@ -2,6 +2,7 @@ package com.cursorinsight.trap
 
 import com.cursorinsight.trap.datasource.TrapBluetoothCollector
 import com.cursorinsight.trap.datasource.TrapCoarseLocationCollector
+import com.cursorinsight.trap.datasource.TrapMetaDataCollector
 import com.cursorinsight.trap.datasource.TrapWiFiCollector
 import com.cursorinsight.trap.datasource.gesture.TrapPointerCollector
 import com.cursorinsight.trap.datasource.gesture.TrapStylusCollector
@@ -36,6 +37,7 @@ data class TrapConfig(
         collectCoalescedStylusEvents = false,
         collectCoalescedTouchEvents = false,
         collectors = mutableListOf(
+            TrapMetaDataCollector::class.qualifiedName,
             TrapCoarseLocationCollector::class.qualifiedName,
             TrapPointerCollector::class.qualifiedName,
             TrapStylusCollector::class.qualifiedName,
@@ -51,6 +53,7 @@ data class TrapConfig(
         collectCoalescedStylusEvents = false,
         collectCoalescedTouchEvents = false,
         collectors = mutableListOf(
+            TrapMetaDataCollector::class.qualifiedName,
             TrapCoarseLocationCollector::class.qualifiedName,
             TrapPointerCollector::class.qualifiedName,
             TrapStylusCollector::class.qualifiedName,
@@ -179,6 +182,11 @@ data class TrapConfig(
         var collectCoalescedTouchEvents: Boolean = true,
 
         /**
+         * The time interval metadata events are reported.
+         */
+        var metadataSubmissionInterval: Long = 60_000,
+
+        /**
          * The list of collectors to start at initialization.
          */
         var collectors: List<String> = mutableListOf(
@@ -193,6 +201,7 @@ data class TrapConfig(
             TrapTouchCollector::class.qualifiedName,
             TrapWiFiCollector::class.qualifiedName,
             TrapBatteryCollector::class.qualifiedName,
+            TrapMetaDataCollector::class.qualifiedName,
         ).filterNotNull(),
     )
 }

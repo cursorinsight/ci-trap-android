@@ -2,6 +2,7 @@ package com.cursorinsight.trap
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
@@ -17,6 +18,7 @@ import com.cursorinsight.trap.util.TrapTime
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
 import io.mockk.mockkClass
 import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
@@ -63,6 +65,8 @@ class TrapManagerTest {
             every { manager.unregisterNetworkCallback(any(ConnectivityManager.NetworkCallback::class)) } returns Unit
             manager
         }
+        every {application.applicationContext} returns mockkClass(Context::class)
+
         val networkRequestBuilder = mockkClass(NetworkRequest.Builder::class)
         val networkRequest = mockkClass(NetworkRequest::class)
         mockkConstructor(NetworkRequest.Builder::class)
