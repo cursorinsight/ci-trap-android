@@ -97,9 +97,9 @@ publishing {
 
 // Signing artifacts. Signing.* extra properties values will be used
 signing {
-    val signingKeyId = findProperty("signing.keyId") as String
-    val signingKey = findProperty("signing.key") as String
-    val signingPassword = findProperty("signing.password") as String
+    val signingKeyId = findProperty("signing.keyId") as String?
+    val signingKey = findProperty("signing.key") as String?
+    val signingPassword = findProperty("signing.password") as String?
     useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign(publishing.publications)
 }
