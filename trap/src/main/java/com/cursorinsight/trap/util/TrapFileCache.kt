@@ -68,6 +68,16 @@ internal class TrapFileCache(
     }
 
     /**
+     * Clears the file system cache completely.
+     */
+    fun clear() {
+        val files = cacheDir.listFiles()?.sortedByDescending { it.lastModified() } ?: emptyList()
+        for (file in files) {
+            Record(file).delete()
+        }
+    }
+
+    /**
      * Represents a cache record abstracted away
      * from the file system.
      *
