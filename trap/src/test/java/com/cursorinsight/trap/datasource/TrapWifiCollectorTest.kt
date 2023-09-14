@@ -81,9 +81,9 @@ class TrapWifiCollectorTest {
         }
 
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapWiFiCollector(storage, TrapConfig())
+        val collector = TrapWiFiCollector(storage)
 
-        collector.start(activity)
+        collector.start(activity, TrapConfig.DataCollection())
         Assertions.assertSame(storage.size, 1)
         val record1 = storage.first()
         assert(record1.getInt(0) == 107)

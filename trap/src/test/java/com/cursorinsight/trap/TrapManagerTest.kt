@@ -2,6 +2,10 @@ package com.cursorinsight.trap
 
 import android.app.Activity
 import android.app.Application
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -51,6 +55,25 @@ class TrapManagerTest {
         application = spyk(Application())
         every { application.cacheDir }  answers { File("/test/cache/dir") }
         every { application.registerActivityLifecycleCallbacks(any()) } returns Unit
+        every { application.registerReceiver(any(), any()) } returns Intent()
+
+        every { application.getSystemService("connectivity") } answers {
+            val manager = mockkClass(ConnectivityManager::class)
+            every { manager.registerNetworkCallback(any(), any<ConnectivityManager.NetworkCallback>()) } returns Unit
+            every { manager.unregisterNetworkCallback(any(ConnectivityManager.NetworkCallback::class)) } returns Unit
+            manager
+        }
+        val networkRequestBuilder = mockkClass(NetworkRequest.Builder::class)
+        val networkRequest = mockkClass(NetworkRequest::class)
+        mockkConstructor(NetworkRequest.Builder::class)
+
+        every { anyConstructed<NetworkRequest.Builder>().addCapability(any()) } returns networkRequestBuilder
+        every { networkRequestBuilder.addTransportType(any()) } returns networkRequestBuilder
+        every { networkRequestBuilder.build() } returns networkRequest
+        mockkStatic(NetworkRequest.Builder::class)
+
+        mockkConstructor(IntentFilter::class)
+        every { anyConstructed<IntentFilter>().addAction(any()) } returns Unit
     }
 
     @AfterEach
@@ -62,11 +85,12 @@ class TrapManagerTest {
     fun `test incorrect data collector is reported`() {
         mockkConstructor(TrapDatasource::class)
         val config = TrapConfig()
-        config.collectors = mutableListOf(TrapDatasource::class)
+        config.defaultDataCollection.collectors = mutableListOf(TrapDatasource::class.qualifiedName)
+            .filterNotNull()
 
         TrapManager(application, config)
 
-        verify(exactly = 0) { anyConstructed<TrapDatasource>().start(any()) }
+        verify(exactly = 0) { anyConstructed<TrapDatasource>().start(any(), any()) }
     }
 
     @Test
@@ -84,17 +108,18 @@ class TrapManagerTest {
     @Test
     fun `test run adds collector and starts reporter`(@MockK activity: Activity) {
         val collector = mockkClass(TrapDatasource::class)
-        every { collector.start(any()) } returns Unit
+        every { collector.start(any(), any()) } returns Unit
+        every { collector.getName() } returns (TrapDatasource::class.qualifiedName ?: "")
 
         val config = TrapConfig()
-        config.collectors = mutableListOf()
+        config.defaultDataCollection.collectors = mutableListOf()
 
         val trapManager = TrapManager(application, config)
 
         trapManager.onActivityResumed(activity)
         trapManager.run(collector)
 
-        verify(exactly = 1) { collector invoke "start" withArguments listOf(activity) }
+        verify(exactly = 1) { collector invoke "start" withArguments listOf(activity, config.defaultDataCollection) }
         verify(exactly = 2) { anyConstructed<TrapReporter>().start() }
         verify(exactly = 1) { anyConstructed<CircularFifoQueue<JSONArray>>().add(withArg {
             assert(it.getInt(0) == 130)
@@ -105,11 +130,12 @@ class TrapManagerTest {
     @Test
     fun `test halt stops collector and reporter`(@MockK activity: Activity) {
         val collector = mockkClass(TrapDatasource::class)
-        every { collector.start(any()) } returns Unit
+        every { collector.start(any(), any()) } returns Unit
         every { collector.stop(any()) } returns Unit
+        every { collector.getName() } returns (TrapDatasource::class.qualifiedName ?: "")
 
         val config = TrapConfig()
-        config.collectors = mutableListOf()
+        config.defaultDataCollection.collectors = mutableListOf()
 
         val trapManager = TrapManager.getInstance(application, config)
         trapManager.onActivityResumed(activity)
@@ -123,27 +149,29 @@ class TrapManagerTest {
     @Test
     fun `test onActivityResumed runs all collectors`(@MockK activity: Activity) {
         mockkConstructor(TrapGravityCollector::class)
-        every { anyConstructed<TrapGravityCollector>().start(activity) } returns Unit
+        every { anyConstructed<TrapGravityCollector>().start(activity, any()) } returns Unit
         every { anyConstructed<TrapGravityCollector>().stop(activity) } returns Unit
 
         val config = TrapConfig()
-        config.collectors = mutableListOf(TrapGravityCollector::class)
+        config.defaultDataCollection.collectors = mutableListOf(TrapGravityCollector::class.qualifiedName)
+            .filterNotNull()
 
         val trapManager = TrapManager(application, config)
         trapManager.onActivityResumed(activity)
 
-        verify(exactly = 1) { anyConstructed<TrapGravityCollector>().start(activity) }
+        verify(exactly = 1) { anyConstructed<TrapGravityCollector>().start(activity, config.defaultDataCollection) }
         verify(exactly = 1) { anyConstructed<TrapReporter>().start() }
     }
 
     @Test
     fun `test onActivityPaused halts all collectors`(@MockK activity: Activity) {
         mockkConstructor(TrapGravityCollector::class)
-        every { anyConstructed<TrapGravityCollector>().start(activity) } returns Unit
+        every { anyConstructed<TrapGravityCollector>().start(activity, any()) } returns Unit
         every { anyConstructed<TrapGravityCollector>().stop(activity) } returns Unit
 
         val config = TrapConfig()
-        config.collectors = mutableListOf(TrapGravityCollector::class)
+        config.defaultDataCollection.collectors = mutableListOf(TrapGravityCollector::class.qualifiedName)
+            .filterNotNull()
 
         val trapManager = TrapManager(application, config)
         trapManager.onActivityPaused(activity)
@@ -166,7 +194,7 @@ class TrapManagerTest {
         every { activity.window } answers { window }
 
         val config = TrapConfig()
-        config.collectors = mutableListOf()
+        config.defaultDataCollection.collectors = mutableListOf()
 
         val trapManager = TrapManager(application, config)
         trapManager.onActivityCreated(activity, null)
@@ -177,7 +205,7 @@ class TrapManagerTest {
     @Test
     fun `test additional methods`(@MockK activity: Activity) {
         val config = TrapConfig()
-        config.collectors = mutableListOf()
+        config.defaultDataCollection.collectors = mutableListOf()
 
         val trapManager = TrapManager(application, config)
 

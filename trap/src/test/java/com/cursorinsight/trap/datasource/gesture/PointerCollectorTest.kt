@@ -107,10 +107,10 @@ class PointerCollectorTest {
     fun `test pointer data is collected`(captureCoalescedEvents: Boolean) {
         val activity: Activity = mockk()
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val config = TrapConfig()
+        val config = TrapConfig.DataCollection()
         config.collectCoalescedPointerEvents = captureCoalescedEvents
-        val collector = TrapPointerCollector(storage, config)
-        collector.start(activity)
+        val collector = TrapPointerCollector(storage)
+        collector.start(activity, config)
 
         windowCallback.dispatchTouchEvent(
             getEvent(

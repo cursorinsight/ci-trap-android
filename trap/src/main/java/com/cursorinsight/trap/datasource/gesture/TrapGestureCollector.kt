@@ -26,10 +26,9 @@ import org.json.JSONArray
 @Suppress("unused")
 class TrapGestureCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    config: TrapConfig,
 ) : TrapDatasource, GestureDetector.OnGestureListener {
     private val tapEventType = 122
-    private val logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
+    private lateinit var logger: TrapLogger
     private lateinit var gestureHandler: GestureDetector
 
     private val handler = { event: MotionEvent? ->
@@ -51,7 +50,8 @@ class TrapGestureCollector(
 
     }
 
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
+        logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
         gestureHandler = GestureDetector(activity, this)
         TrapWindowCallback.addTouchHandler(handler)
     }

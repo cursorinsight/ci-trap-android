@@ -20,12 +20,12 @@ import org.json.JSONArray
  * @param config The library config instance.
  */
 abstract class TrapMotionEventCollector(
-    private val storage: SynchronizedQueue<JSONArray>,
-    config: TrapConfig,
+    private val storage: SynchronizedQueue<JSONArray>
 ): TrapDatasource {
-    @OptIn(ExperimentalStdlibApi::class)
-    private val logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
+    protected var config: TrapConfig.DataCollection? = null;
+    internal lateinit var logger: TrapLogger
 
+    @OptIn(ExperimentalStdlibApi::class)
     val handler = { event: MotionEvent? ->
         try {
             if (event != null) {
@@ -53,7 +53,9 @@ abstract class TrapMotionEventCollector(
 
     abstract fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent)
 
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
+        this.config = config
+        logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
         TrapWindowCallback.addTouchHandler(handler)
     }
 

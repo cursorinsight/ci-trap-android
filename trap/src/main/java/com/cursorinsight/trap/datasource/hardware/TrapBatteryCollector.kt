@@ -28,17 +28,15 @@ import org.json.JSONObject
  * @param config The library config instance.
  */
 class TrapBatteryCollector(
-    private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    private val storage: SynchronizedQueue<JSONArray>
 ): TrapDatasource {
     /**
-     * The Trap event type for wifi
+     * The Trap event type for battery status
      */
-    private val batteryEventType = 132
-
+    private val batteryEventType = 133
 
     /**
-     * The system service for wifi.
+     * The system service for battery.
      */
     private var batteryManager: BatteryManager? = null
 
@@ -120,9 +118,9 @@ class TrapBatteryCollector(
         }
     }
 
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
         batteryManager = activity.getSystemService(BATTERY_SERVICE) as BatteryManager
-        activity.registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        activity.registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_OKAY))
         registered = true
     }
 

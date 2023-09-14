@@ -26,11 +26,10 @@ import org.json.JSONArray
  * @param config The library config instance.
  */
 class TrapAccelerometerCollector(
-    private val storage: SynchronizedQueue<JSONArray>,
-    private val config: TrapConfig,
+    private val storage: SynchronizedQueue<JSONArray>
 ) : TrapDatasource {
     private val accelerometerEventType = 103
-    private val logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
+    private lateinit var logger : TrapLogger
 
     private val handler = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
@@ -54,8 +53,9 @@ class TrapAccelerometerCollector(
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
     }
 
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
         if (activity.packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER)) {
+            logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
             val sensorManager = activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
             val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
             sensor?.let {

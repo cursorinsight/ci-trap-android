@@ -13,7 +13,6 @@ import android.view.MotionEvent.BUTTON_PRIMARY
 import android.view.MotionEvent.BUTTON_SECONDARY
 import android.view.MotionEvent.BUTTON_TERTIARY
 import android.view.MotionEvent.TOOL_TYPE_MOUSE
-import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
@@ -30,8 +29,8 @@ import org.json.JSONArray
  */
 class TrapPointerCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    private val config: TrapConfig,
-): TrapMotionEventCollector(storage, config) {
+): TrapMotionEventCollector(storage) {
+
     @OptIn(ExperimentalStdlibApi::class)
     override fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent) {
         if (event.getToolType(0) == TOOL_TYPE_MOUSE) {
@@ -54,7 +53,7 @@ class TrapPointerCollector(
                 }
 
                 ACTION_MOVE -> {
-                    if (config.collectCoalescedPointerEvents) {
+                    if (config?.collectCoalescedPointerEvents == true) {
                         for (pos in 0..<event.historySize) {
                             val frame = JSONArray()
                             frame.put(PointerState.MOVE.state)

@@ -35,7 +35,6 @@ import org.json.JSONArray
  */
 class TrapCoarseLocationCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
 ): TrapDatasource {
     /**
      * The Trap event type for location
@@ -76,7 +75,7 @@ class TrapCoarseLocationCollector(
     }
 
     @SuppressLint("MissingPermission")
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_LOW_POWER,

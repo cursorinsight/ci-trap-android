@@ -24,11 +24,10 @@ import org.json.JSONArray
  * @param config The library config instance.
  */
 class TrapMagnetometerCollector(
-    private val storage: SynchronizedQueue<JSONArray>,
-    private val config: TrapConfig,
+    private val storage: SynchronizedQueue<JSONArray>
 ) : TrapDatasource {
     private val magneticEventType = 106
-    private val logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
+    private lateinit var logger : TrapLogger
 
     private val handler = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
@@ -52,7 +51,8 @@ class TrapMagnetometerCollector(
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
     }
 
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
+        logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
         val sensorManager = activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
         sensor?.let {

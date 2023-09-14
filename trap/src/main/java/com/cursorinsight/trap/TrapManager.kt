@@ -2,8 +2,19 @@ package com.cursorinsight.trap
 
 import android.app.Activity
 import android.app.Application
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
+import android.os.BatteryManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.core.content.getSystemService
 import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
 import com.cursorinsight.trap.transport.TrapReporter
@@ -43,13 +54,72 @@ class TrapManager internal constructor(
      * The registered and running collector
      * instances.
      */
-    private var collectors: MutableMap<Int, TrapDatasource>
+    private var collectors: MutableMap<String, TrapDatasource>
 
     /**
      * The cached current activity the run and halt methods
      * can use to mange individual collectors.
      */
     private var currentActivity: WeakReference<Activity>? = null
+
+    private var hasLowBattery: Boolean = false
+
+    private var inLowDataMode: Boolean = false
+
+    private var currentDataCollectionConfig: TrapConfig.DataCollection = config.defaultDataCollection
+
+    private val batteryReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            try {
+                val batteryManager = context.getSystemService<BatteryManager>()
+
+                val batteryIntent = context.registerReceiver(
+                    null,
+                    IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+                )
+
+                hasLowBattery = !(batteryManager?.isCharging ?: false) &&
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        batteryIntent?.getBooleanExtra(BatteryManager.EXTRA_BATTERY_LOW, false)
+                            ?: false
+                    }
+                    else {
+                        (batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) ?: 100) < 10
+                    }
+
+                maybeModifyConfigAndRestartCollection()
+            } catch (ex: Exception) {
+                Log.e(
+                    TrapManager::class.simpleName,
+                    "Processing batteryg change failed",
+                    ex
+                )
+            }
+        }
+    }
+
+    private val networkReceiver = object: ConnectivityManager.NetworkCallback() {
+        override fun onCapabilitiesChanged(
+            network: Network,
+            networkCapabilities: NetworkCapabilities
+        ) {
+            try {
+
+
+                super.onCapabilitiesChanged(network, networkCapabilities)
+                inLowDataMode = !networkCapabilities.hasCapability(
+                    NetworkCapabilities.NET_CAPABILITY_NOT_METERED
+                )
+                maybeModifyConfigAndRestartCollection()
+            } catch (ex: Exception) {
+                Log.e(
+                    TrapManager::class.simpleName,
+                    "Processing network change failed",
+                    ex
+                )
+            }
+        }
+    }
 
     companion object {
         private var instance: TrapManager? = null
@@ -70,26 +140,26 @@ class TrapManager internal constructor(
         // Register the activity collection and lifecycle dispatch.
         application.registerActivityLifecycleCallbacks(this)
 
+        val connectivityManager = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkRequest = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+            .build()
+
+        connectivityManager.registerNetworkCallback(networkRequest, networkReceiver)
+
+        val filter = IntentFilter()
+        filter.addAction(Intent.ACTION_BATTERY_OKAY)
+        filter.addAction(Intent.ACTION_BATTERY_LOW)
+        filter.addAction(Intent.ACTION_POWER_CONNECTED)
+        filter.addAction(Intent.ACTION_POWER_DISCONNECTED)
+        application.registerReceiver(batteryReceiver, filter)
+
         // Init the collector collection
         collectors = mutableMapOf()
-        for (collector in config.collectors) {
-            val instance = try {
-                val constructor = collector.java.getConstructor(
-                    SynchronizedQueue::class.java,
-                    TrapConfig::class.java
-                )
-                constructor.newInstance(buffer, config) as? TrapDatasource
-            } catch (_: Exception) {
-                Log.e(
-                    TrapManager::class.simpleName,
-                    "The provided class '${collector.simpleName}' doesn't have a proper constructor signature"
-                )
-                null
-            }
-
-            if (instance != null) {
-                collectors[instance.hashCode()] = instance
-            }
+        for (collector in currentDataCollectionConfig.collectors) {
+            createCollector(collector)
         }
     }
 
@@ -100,13 +170,13 @@ class TrapManager internal constructor(
     @Suppress("unused")
     fun run(collector: TrapDatasource) {
         try {
-            if (!collectors.containsKey(collector.hashCode())) {
+            if (!collectors.containsKey(collector.getName())) {
                 reporter.start()
                 val activity = currentActivity?.get()
                 if (activity != null) {
-                    collector.start(activity)
+                    collector.start(activity, currentDataCollectionConfig)
                 }
-                collectors[collector.hashCode()] = collector
+                collectors[collector.getName()] = collector
             }
         } catch (ex: Exception) {
             Log.e(
@@ -125,7 +195,7 @@ class TrapManager internal constructor(
         try {
             val activity = currentActivity?.get()
             if (activity != null) {
-                collectors[collector.hashCode()]?.stop(activity)
+                collectors[collector.getName()]?.stop(activity)
             }
             reporter.stop()
         } catch (ex: Exception) {
@@ -143,10 +213,14 @@ class TrapManager internal constructor(
     private fun runAll(activity: Activity) {
         try {
             reporter.start()
-            for (collector in collectors.values) {
-                collector.start(activity)
-            }
             buffer.add(startMessage())
+            currentDataCollectionConfig = getDataCollectionConfig()
+            for (collectorQualifiedName in currentDataCollectionConfig.collectors) {
+                if (!collectors.containsKey(collectorQualifiedName)) {
+                    createCollector(collectorQualifiedName)
+                }
+                collectors[collectorQualifiedName]?.start(activity, currentDataCollectionConfig)
+            }
         } catch (ex: Exception) {
             Log.e(
                 TrapManager::class.simpleName,
@@ -154,6 +228,19 @@ class TrapManager internal constructor(
                 ex
             )
         }
+    }
+
+    /**
+     * Returns the data collection config that should be used
+     */
+    private fun getDataCollectionConfig(): TrapConfig.DataCollection {
+        if (inLowDataMode) {
+            return config.lowDataDataCollection
+        }
+        if (hasLowBattery) {
+            return config.lowBatteryDataCollection
+        }
+        return config.defaultDataCollection
     }
 
     /**
@@ -185,6 +272,8 @@ class TrapManager internal constructor(
         return with(JSONArray()) {
             put(startEventType)
             put(TrapTime.getCurrentTime())
+            put(inLowDataMode)
+            put(hasLowBattery)
             this
         }
     }
@@ -200,6 +289,41 @@ class TrapManager internal constructor(
             put(stopEventType)
             put(TrapTime.getCurrentTime())
             this
+        }
+    }
+
+    /**
+     * Restarts the collection if the config has to be changed
+     */
+    private fun maybeModifyConfigAndRestartCollection() {
+        val activity = currentActivity?.get()
+        if (activity != null) {
+            if (getDataCollectionConfig() != currentDataCollectionConfig) {
+                haltAll(activity)
+                runAll(activity)
+            }
+        }
+    }
+
+    /*
+     * Initializes a collector
+     */
+    private fun createCollector(collectorQualifiedName: String) {
+        val instance = try {
+            val constructor = Class.forName(collectorQualifiedName).getConstructor(
+                SynchronizedQueue::class.java
+            )
+            constructor.newInstance(buffer) as? TrapDatasource
+        } catch (_: Exception) {
+            Log.e(
+                TrapManager::class.simpleName,
+                "The provided class '${collectorQualifiedName}' doesn't have a proper constructor signature"
+            )
+            null
+        }
+
+        if (instance != null) {
+            collectors[collectorQualifiedName] = instance
         }
     }
 

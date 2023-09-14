@@ -108,10 +108,10 @@ class StylusCollectorTest {
     fun `test stylus collection`(captureCoalescedEvents: Boolean) {
         val activity: Activity = mockk()
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val config = TrapConfig()
+        val config = TrapConfig.DataCollection()
         config.collectCoalescedStylusEvents = captureCoalescedEvents
-        val collector = TrapStylusCollector(storage, config)
-        collector.start(activity)
+        val collector = TrapStylusCollector(storage)
+        collector.start(activity, config)
 
         windowCallback.dispatchTouchEvent(
             getEvent(

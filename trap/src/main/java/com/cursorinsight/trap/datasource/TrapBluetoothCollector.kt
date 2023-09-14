@@ -41,8 +41,7 @@ import java.lang.reflect.Method
  * @param config The library config instance.
  */
 class TrapBluetoothCollector(
-    private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    private val storage: SynchronizedQueue<JSONArray>
 ) : TrapDatasource {
     val bluetoothEventType = 108
 
@@ -97,7 +96,7 @@ class TrapBluetoothCollector(
     }
 
     @SuppressLint("MissingPermission")
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
         if (checkPermissions(activity) && activity.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)) {
             val bluetoothManager = activity.getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
 

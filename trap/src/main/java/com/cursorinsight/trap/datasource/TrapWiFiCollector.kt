@@ -35,8 +35,7 @@ import org.json.JSONArray
  * @param config The library config instance.
  */
 class TrapWiFiCollector(
-    private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    private val storage: SynchronizedQueue<JSONArray>
 ): TrapDatasource {
     /**
      * The Trap event type for wifi
@@ -123,7 +122,7 @@ class TrapWiFiCollector(
         }
     }
 
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
         wifiManager = activity.getSystemService(WIFI_SERVICE) as WifiManager
         connectivityManager = activity.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
 

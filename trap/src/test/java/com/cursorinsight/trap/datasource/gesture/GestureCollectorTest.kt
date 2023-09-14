@@ -60,7 +60,7 @@ class GestureCollectorTest {
     fun `test gesture collection`() {
         val activity: Activity = mockk()
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapGestureCollector(storage, TrapConfig())
+        val collector = TrapGestureCollector(storage)
         val event = run {
             val event = mockkClass(MotionEvent::class)
             every { event.source } returns InputDevice.SOURCE_TOUCHSCREEN
@@ -70,7 +70,7 @@ class GestureCollectorTest {
             event
         }
 
-        collector.start(activity)
+        collector.start(activity, TrapConfig.DataCollection())
 
         windowCallback.dispatchTouchEvent(event)
 

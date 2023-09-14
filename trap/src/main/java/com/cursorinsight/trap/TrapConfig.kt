@@ -24,88 +24,46 @@ data class TrapConfig(
     var reporter: Reporter = Reporter(),
 
     /**
+     * Default data collection options.
+     */
+    var defaultDataCollection: DataCollection = DataCollection(),
+
+    /**
+     * Limited data collection in case of low battery
+     */
+    var lowBatteryDataCollection: DataCollection = DataCollection(
+        collectCoalescedPointerEvents = false,
+        collectCoalescedStylusEvents = false,
+        collectCoalescedTouchEvents = false,
+        collectors = mutableListOf(
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName).filterNotNull()
+    ),
+
+    /**
+     * Limited data collection in case of low battery
+     */
+    var lowDataDataCollection: DataCollection = DataCollection(
+        collectCoalescedPointerEvents = false,
+        collectCoalescedStylusEvents = false,
+        collectCoalescedTouchEvents = false,
+        collectors = mutableListOf(
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName).filterNotNull()
+    ),
+
+    /**
      * The size of the circular data queue.
      */
     var queueSize: Int = 2048,
 
-    /**
-     * Maximum number of log messages per collector if the collector uses log throttling
-     */
-    var maxNumberOfLogMessagesPerMinute: Int = 100,
-
-    /**
-     * How frequent the sampling of the given sensor should be.
-     */
-    var accelerationSamplingPeriodMs: Int = 10,
-
-    /**
-     * How long the sensor can cache reported events.
-     */
-    var accelerationMaxReportLatencyMs: Int = 200,
-
-    /**
-     * How frequent the sampling of the given sensor should be.
-     */
-    var gyroscopeSamplingPeriodMs: Int = 10,
-
-    /**
-     * How long the sensor can cache reported events.
-     */
-    var gyroscopeMaxReportLatencyMs: Int = 200,
-
-    /**
-     * How frequent the sampling of the given sensor should be.
-     */
-    var magnetometerSamplingPeriodMs: Int = 10,
-
-    /**
-     * How long the sensor can cache reported events.
-     */
-    var magnetometerMaxReportLatencyMs: Int = 200,
-
-    /**
-     * How frequent the sampling of the given sensor should be.
-     */
-    var gravitySamplingPeriodMs: Int = 10,
-
-    /**
-     * How long the sensor can cache reported events.
-     */
-    var gravityMaxReportLatencyMs: Int = 200,
-
-    /**
-     * Collect coalesced pointer events
-     */
-    var collectCoalescedPointerEvents: Boolean = true,
-
-    /**
-     * Collect coalesced stylus events
-     */
-    var collectCoalescedStylusEvents: Boolean = true,
-
-    /**
-     * Collect coalesced touch events
-     */
-    var collectCoalescedTouchEvents: Boolean = true,
-
-    /**
-     * The list of collectors to start at initialization.
-     */
-    var collectors: List<KClass<*>> = mutableListOf(
-        TrapAccelerometerCollector::class,
-        TrapBluetoothCollector::class,
-        TrapGravityCollector::class,
-        TrapGyroscopeCollector::class,
-        TrapCoarseLocationCollector::class,
-        TrapMagnetometerCollector::class,
-        TrapPointerCollector::class,
-        TrapStylusCollector::class,
-        TrapTouchCollector::class,
-        TrapWiFiCollector::class,
-        TrapBatteryCollector::class,
-    ),
 ) {
-
     /**
      * The configuration for the reporter task serializing
      * and sending the collected data through the transport.
@@ -157,4 +115,84 @@ data class TrapConfig(
          */
         var readTimeout: Int = 500,
     ) {}
+
+    data class DataCollection(
+
+        /**
+         * Maximum number of log messages per collector if the collector uses log throttling
+         */
+        var maxNumberOfLogMessagesPerMinute: Int = 100,
+
+        /**
+         * How frequent the sampling of the given sensor should be.
+         */
+        var accelerationSamplingPeriodMs: Int = 10,
+
+        /**
+         * How long the sensor can cache reported events.
+         */
+        var accelerationMaxReportLatencyMs: Int = 200,
+
+        /**
+         * How frequent the sampling of the given sensor should be.
+         */
+        var gyroscopeSamplingPeriodMs: Int = 10,
+
+        /**
+         * How long the sensor can cache reported events.
+         */
+        var gyroscopeMaxReportLatencyMs: Int = 200,
+
+        /**
+         * How frequent the sampling of the given sensor should be.
+         */
+        var magnetometerSamplingPeriodMs: Int = 10,
+
+        /**
+         * How long the sensor can cache reported events.
+         */
+        var magnetometerMaxReportLatencyMs: Int = 200,
+
+        /**
+         * How frequent the sampling of the given sensor should be.
+         */
+        var gravitySamplingPeriodMs: Int = 10,
+
+        /**
+         * How long the sensor can cache reported events.
+         */
+        var gravityMaxReportLatencyMs: Int = 200,
+
+        /**
+         * Collect coalesced pointer events
+         */
+        var collectCoalescedPointerEvents: Boolean = true,
+
+        /**
+         * Collect coalesced stylus events
+         */
+        var collectCoalescedStylusEvents: Boolean = true,
+
+        /**
+         * Collect coalesced touch events
+         */
+        var collectCoalescedTouchEvents: Boolean = true,
+
+        /**
+         * The list of collectors to start at initialization.
+         */
+        var collectors: List<String> = mutableListOf(
+            TrapAccelerometerCollector::class.qualifiedName,
+            TrapBluetoothCollector::class.qualifiedName,
+            TrapGravityCollector::class.qualifiedName,
+            TrapGyroscopeCollector::class.qualifiedName,
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapMagnetometerCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapWiFiCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName,
+        ).filterNotNull(),
+    )
 }

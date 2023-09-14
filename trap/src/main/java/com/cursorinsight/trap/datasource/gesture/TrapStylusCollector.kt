@@ -12,7 +12,6 @@ import android.view.MotionEvent.ACTION_UP
 import android.view.MotionEvent.AXIS_TILT
 import android.view.MotionEvent.TOOL_TYPE_ERASER
 import android.view.MotionEvent.TOOL_TYPE_STYLUS
-import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
@@ -29,8 +28,7 @@ import org.json.JSONArray
  */
 class TrapStylusCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    private val config: TrapConfig,
-): TrapMotionEventCollector(storage, config) {
+): TrapMotionEventCollector(storage) {
     @OptIn(ExperimentalStdlibApi::class)
     override fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent) {
         if (event.getToolType(0) == TOOL_TYPE_STYLUS || event.getToolType(0) == TOOL_TYPE_ERASER) {
@@ -47,7 +45,7 @@ class TrapStylusCollector(
                     frames.add(frame)
                 }
                 ACTION_MOVE -> {
-                    if (config.collectCoalescedStylusEvents) {
+                    if (config?.collectCoalescedStylusEvents == true) {
                         for (pos in 0..<event.historySize) {
                             val frame = JSONArray()
                             frame.put(StylusState.MOVE.state)
