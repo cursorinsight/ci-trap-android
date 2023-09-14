@@ -11,11 +11,8 @@ plugins {
 
 // Stub secrets to let the project sync and build without the publication values set up
 ext["signing.keyId"] = null
+ext["signing.key"] = null
 ext["signing.password"] = null
-ext["signing.secretKeyRingFile"] = null
-ext["signing.gnupg.keyName"] = null
-ext["signing.gnupg.passphrase"] = null
-ext["signing.use.gnupg"] = false
 ext["ossrhUsername"] = null
 ext["ossrhPassword"] = null
 
@@ -33,10 +30,7 @@ if (secretPropsFile.exists()) {
 } else {
     ext["signing.keyId"] = System.getenv("SIGNING_KEY_ID")
     ext["signing.password"] = System.getenv("SIGNING_PASSWORD")
-    ext["signing.secretKeyRingFile"] = System.getenv("SIGNING_SECRET_KEY_RING_FILE")
-    ext["signing.use.gnupg"] = System.getenv("SIGNING_USE_GNUPG")
-    ext["signing.gnupg.keyName"] = System.getenv("SIGNING_GNUPG_KEYNAME")
-    ext["signing.gnupg.passphrase"] = System.getenv("SIGNING_GNUPG_PASSPHRASE")
+    ext["signing.key"] = System.getenv("SIGNING_KEY")
     ext["ossrhUsername"] = System.getenv("OSSRH_USERNAME")
     ext["ossrhPassword"] = System.getenv("OSSRH_PASSWORD")
 }
@@ -103,8 +97,9 @@ publishing {
 
 // Signing artifacts. Signing.* extra properties values will be used
 signing {
-    if ( getExtraString("signing.use.gnupg") == "true") {
-        useGpgCmd()
-    }
+    val signingKeyId = findProperty("signing.keyId") as String
+    val signingKey = findProperty("signing.key") as String
+    val signingPassword = findProperty("signing.password") as String
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign(publishing.publications)
 }
