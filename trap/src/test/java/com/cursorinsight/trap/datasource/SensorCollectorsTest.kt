@@ -21,9 +21,11 @@ import io.mockk.mockk
 import io.mockk.mockkClass
 import io.mockk.mockkStatic
 import io.mockk.slot
+import io.mockk.unmockkAll
 import org.apache.commons.collections4.queue.CircularFifoQueue
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -70,6 +72,11 @@ class SensorCollectorsTest {
     fun setUp() {
         handler = slot()
         unhandler = slot()
+    }
+
+    @AfterEach
+    fun tearDown() {
+        unmockkAll()
     }
 
     private fun getEvent(timestamp: Long, x: Float, y: Float, z: Float): SensorEvent {

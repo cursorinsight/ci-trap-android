@@ -19,10 +19,12 @@ import io.mockk.mockkConstructor
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.slot
+import io.mockk.unmockkAll
 import io.mockk.verify
 import org.apache.commons.collections4.queue.CircularFifoQueue
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -46,6 +48,11 @@ class GestureCollectorTest {
         mockkConstructor(GestureDetector::class)
         every { anyConstructed<GestureDetector>().onTouchEvent(any()) } returns true
         windowCallback = TrapWindowCallback(initialWindowCallback)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        unmockkAll()
     }
 
     @Test
