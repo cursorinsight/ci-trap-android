@@ -1,6 +1,5 @@
 package com.cursorinsight.trap.util
 
-import android.util.Log
 import java.io.File
 import java.util.UUID
 
@@ -25,8 +24,6 @@ internal class TrapFileCache(
 
     init {
         cacheDir.mkdir()
-
-        Log.d(TrapFileCache::class.simpleName, "Cache dir is $cacheDir")
     }
 
     /**
@@ -67,6 +64,16 @@ internal class TrapFileCache(
                 // We are over max cache size, start deleting
                 file.delete()
             }
+        }
+    }
+
+    /**
+     * Clears the file system cache completely.
+     */
+    fun clear() {
+        val files = cacheDir.listFiles()?.sortedByDescending { it.lastModified() } ?: emptyList()
+        for (file in files) {
+            Record(file).delete()
         }
     }
 

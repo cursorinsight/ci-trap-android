@@ -2,6 +2,7 @@ package com.cursorinsight.trap
 
 import android.app.Activity
 import android.app.Application
+import android.os.Bundle
 import android.util.Log
 import android.view.Window
 import com.cursorinsight.trap.datasource.TrapDatasource
@@ -14,7 +15,9 @@ import io.mockk.mockkClass
 import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
 import io.mockk.spyk
+import io.mockk.unmockkAll
 import io.mockk.verify
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -37,6 +40,11 @@ class TrapManagerTest {
         application = spyk(Application())
         every { application.cacheDir }  answers { File("/test/cache/dir") }
         every { application.registerActivityLifecycleCallbacks(any()) } returns Unit
+    }
+
+    @AfterEach
+    fun tearDown() {
+        unmockkAll()
     }
 
     @Test
@@ -145,6 +153,19 @@ class TrapManagerTest {
         trapManager.onActivityCreated(activity, null)
 
         verify { window.callback }
+    }
+
+    @Test
+    fun `test additional methods`(@MockK activity: Activity) {
+        val config = TrapConfig()
+        config.collectors = mutableListOf()
+
+        val trapManager = TrapManager(application, config)
+
+        trapManager.onActivityStopped(activity)
+        trapManager.onActivityStarted(activity)
+        trapManager.onActivitySaveInstanceState(activity, Bundle())
+        trapManager.onActivityDestroyed(activity)
     }
 
     companion object {

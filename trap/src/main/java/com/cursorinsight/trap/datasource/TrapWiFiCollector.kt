@@ -59,7 +59,6 @@ class TrapWiFiCollector(
             network: Network,
             networkCapabilities: NetworkCapabilities
         ) {
-            super.onCapabilitiesChanged(network, networkCapabilities)
             if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                 processScan()
             }
@@ -197,6 +196,8 @@ class TrapWiFiCollector(
                     TrapPermissionActivity.Permissions.WIFI.code
                 )
                 activity.startActivity(permissionActivityIntent)
+            } else {
+                onSuccess()
             }
         }
     }

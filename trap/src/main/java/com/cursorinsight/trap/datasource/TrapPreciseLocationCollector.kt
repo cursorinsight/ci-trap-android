@@ -136,6 +136,8 @@ class TrapPreciseLocationCollector(
                     TrapPermissionActivity.Permissions.FINE_LOCATION.code
                 )
                 activity.startActivity(permissionActivityIntent)
+            } else {
+                onSuccess()
             }
         }
     }
