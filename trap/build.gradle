@@ -4,6 +4,7 @@ plugins {
     id 'maven-publish'
     id 'org.jetbrains.dokka'
     id 'jacoco'
+    id 'convention-publication'
 }
 
 group 'com.cursorinsight.trap'
