@@ -71,7 +71,7 @@ internal class TrapWebsocketTransport(): TrapTransport {
     /**
      * The WebSocketClient dummy implementation required by JavaWebSocket.
      */
-    private class WebSocket(url: URI): WebSocketClient(url) {
+    class WebSocket(url: URI): WebSocketClient(url) {
         override fun onOpen(handshakedata: ServerHandshake?) { }
 
         override fun onMessage(message: String?) { }
