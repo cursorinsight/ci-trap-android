@@ -15,4 +15,3 @@ dependencyResolutionManagement {
 rootProject.name = "Trap"
 include ':example'
 include ':trap'
-includeBuild 'convention-plugins'

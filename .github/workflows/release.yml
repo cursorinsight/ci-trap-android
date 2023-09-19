@@ -1,0 +1,55 @@
+permissions:
+  contents: write
+  id-token: write
+on:
+  push:
+    tags:
+      - '?.?.?'
+
+name: Create Release
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Upgrade Java to SDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+
+
+  release:
+    name: Release on Sonatype
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Upgrade Java to SDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      - name: Run lint
+        run: ./gradlew lintRelease --no-daemon
+
+      - name: Run tests
+        run: ./gradlew clean trap:testReleaseUnitTest --no-daemon
+
+      - name: Build with Gradle
+        run: ./gradlew buildRelease --no-daemon
+      
+      - name: Sign release
+        run: ./gradlew publishToSonatype --no-daemon
+        env:
+          ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+          OSSRH_USERNAME: ${{ OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ OSSRH_PASSWORD }}
