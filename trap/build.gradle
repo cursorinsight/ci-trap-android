@@ -10,9 +10,9 @@ plugins {
 group 'com.cursorinsight.trap'
 version '1.0'
 
-ext.signingKey = System.getenv("SIGNING_KEY")
-ext.signingKeyId = System.getenv("SIGNING_KEY_ID")
-ext.signingPassword = System.getenv("SIGNING_PASSWORD")
+ext["signing.key"] = System.getenv("SIGNING_KEY")
+ext["signing.keyId"] = System.getenv("SIGNING_KEY_ID")
+ext["signing.password"] = System.getenv("SIGNING_PASSWORD")
 ext.ossrhUsername = System.getenv("OSSRH_USERNAME")
 ext.ossrhPassword = System.getenv("OSSRH_PASSWORD")
 
@@ -20,9 +20,9 @@ def localProperties = new Properties()
 def secretPropsFile = rootProject.file("local.properties")
 if (secretPropsFile.exists()) {
     localProperties.load(new FileInputStream(secretPropsFile))
-    ext.signingKey = localProperties.getProperty("signingKey", ext.signingKey)
-    ext.signingKeyId = localProperties.getProperty("signingKeyId", ext.signingKeyId)
-    ext.signingPassword = localProperties.getProperty("signingPassword", ext.signingPassword)
+    ext["signing.key"] = localProperties.getProperty("signing.key", ext["signing.key"])
+    ext["signing.keyId"] = localProperties.getProperty("signing.keyId", ext["signing.keyId"])
+    ext["signing.password"] = localProperties.getProperty("signing.password", ext["signing.password"])
     ext.ossrhUsername = localProperties.getProperty("ossrhUsername", ext.ossrhUsername)
     ext.ossrhPassword = localProperties.getProperty("ossrhPassword", ext.ossrhPassword)
 }
@@ -176,10 +176,10 @@ publishing {
 }
 
 signing {
-    def signingKeyId = findProperty("signingKeyId")
-    def signingKey = findProperty("signingKey")
-    def signingPassword = findProperty("signingPassword")
-    useInMemoryPgpKeys(signingKey, signingPassword)
+    def signingKeyId = findProperty("signing.keyId")
+    def signingKey = findProperty("signing.key")
+    def signingPassword = findProperty("signing.password")
+    useInMemoryPgpKeys(signingKeyId.substring(signingKeyId.length() - 8), signingKey, signingPassword)
     sign(publishing.publications)
 }
 
