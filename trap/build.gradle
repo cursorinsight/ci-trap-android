@@ -4,11 +4,28 @@ plugins {
     id 'maven-publish'
     id 'org.jetbrains.dokka'
     id 'jacoco'
-    id 'convention-publication'
+    id 'signing'
 }
 
 group 'com.cursorinsight.trap'
 version '1.0'
+
+ext.signingKey = System.getenv("SIGNING_KEY")
+ext.signingKeyId = System.getenv("SIGNING_KEY_ID")
+ext.signingPassword = System.getenv("SIGNING_PASSWORD")
+ext.ossrhUsername = System.getenv("OSSRH_USERNAME")
+ext.ossrhPassword = System.getenv("OSSRH_PASSWORD")
+
+def localProperties = new Properties()
+def secretPropsFile = rootProject.file("local.properties")
+if (secretPropsFile.exists()) {
+    localProperties.load(new FileInputStream(secretPropsFile))
+    ext.signingKey = localProperties.getProperty("signingKey", ext.signingKey)
+    ext.signingKeyId = localProperties.getProperty("signingKeyId", ext.signingKeyId)
+    ext.signingPassword = localProperties.getProperty("signingPassword", ext.signingPassword)
+    ext.ossrhUsername = localProperties.getProperty("ossrhUsername", ext.ossrhUsername)
+    ext.ossrhPassword = localProperties.getProperty("ossrhPassword", ext.ossrhPassword)
+}
 
 kotlin {
     android {
@@ -108,15 +125,63 @@ publishing {
             afterEvaluate {
                 from components.release
             }
+
+            pom {
+                name = "Trap Library for Android"
+                description = "Touch and sensor data collector Android library for the Cursor Insight trap server."
+                url = "https://github.com/cursorinsight/ci-trap-android"
+
+                licenses {
+                    license {
+                        name = "MIT"
+                        url = "https://opensource.org/licenses/MIT"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "mtolmacs"
+                        name = "Mark Tolmacs"
+                        email = "mark@lazycat.hu"
+                    }
+                    developer {
+                        id = "gbence"
+                        name = "Bence Golda"
+                        email = "bence@cursorinsight.com"
+                    }
+                    developer {
+                        id = "denessapi"
+                        name = "Denes Sapi"
+                        email = "denes@cursorinsight.com"
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/cursorinsight/ci-trap-android.git'
+                    developerConnection = 'scm:git:ssh://github.com/cursorinsight/ci-trap-android.git'
+                    url = "https://github.com/cursorinsight/ci-trap-android"
+                }
+            }
         }
     }
 
     repositories {
         maven {
-            name = "TrapRepo"
-            url = layout.buildDirectory.dir("repo")
+            name = "sonatype"
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = findProperty("ossrhUsername")
+                password = findProperty("ossrhPassword")
+            }
         }
     }
+}
+
+signing {
+    def signingKeyId = findProperty("signingKeyId")
+    def signingKey = findProperty("signingKey")
+    def signingPassword = findProperty("signingPassword")
+    project.logger.warn(signingPassword)
+    useInMemoryPgpKeys(signingKeyId, signingKey, "")
+    sign(publishing.publications)
 }
 
 dependencies {
