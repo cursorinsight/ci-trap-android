@@ -179,7 +179,9 @@ signing {
     def signingKeyId = findProperty("signing.keyId")
     def signingKey = findProperty("signing.key")
     def signingPassword = findProperty("signing.password")
+    
     project.logger.lifecycle("KEY LENGTH: ${signingKey.length()}")
+    
     useInMemoryPgpKeys(signingKeyId.substring(signingKeyId.length() - 8), signingKey, signingPassword)
     sign(publishing.publications)
 }
