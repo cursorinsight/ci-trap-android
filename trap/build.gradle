@@ -179,8 +179,7 @@ signing {
     def signingKeyId = findProperty("signingKeyId")
     def signingKey = findProperty("signingKey")
     def signingPassword = findProperty("signingPassword")
-    project.logger.warn(signingPassword)
-    useInMemoryPgpKeys(signingKeyId, signingKey, "")
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign(publishing.publications)
 }
 
