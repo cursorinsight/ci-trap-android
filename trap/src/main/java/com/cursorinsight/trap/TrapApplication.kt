@@ -28,7 +28,7 @@ import java.util.UUID
  *   </application>
  * ```
  */
-class TrapApplication : Application() {
+open class TrapApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         initialize(this)
