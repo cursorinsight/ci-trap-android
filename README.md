@@ -2,15 +2,16 @@
 This library can collect various device and user data, forwarding it to a specified endpoint. The following data collectors are bundled with this version:
 
 * Accelerometer
-* Bluetooth LE devices connected / peered (Needs interactive permission, namely precise location)
-* Approximate and precise location (Needs interactive permission)
 * Gravity
 * Gyroscope
-* Indirect pointer (mouse)
 * Magnetometer
+* Bluetooth LE devices connected / peered (Needs interactive permission, namely precise location)
+* Approximate and precise location (Needs interactive permission)
+* WiFi connection and available networks (Needs interactive permissions, namely precise location)
+* Touch
+* Indirect pointer (mouse)
 * Pencil and stylus
 * Tap gesture
-* WiFi connection and available networks (Needs interactive permissions, namely precise location)
 
 ## How to use it
 You can check out the Example app in this project for a working example. The application needs to either use the provided TrapApplication as the 'android:name' value for the '<application>' tag in the AndroidManifest.xml, or subclass TrapApplication if you also need to use a custom Application class. Configuration is done via a '<meta-data>' tag within the '<application>' tag.
@@ -53,7 +54,7 @@ class MyConfig: TrapConfigProvider {
         val config = TrapConfig()
 
         // Can be a websocket or http server
-        config.reporter.url = URI("https://my.server.com")
+        config.reporter.url = "https://my.server.com"
         
         // Use a special set of data collectors
         config.collectors = mutableListOf(TrapCoarseLocationCollector::class)
