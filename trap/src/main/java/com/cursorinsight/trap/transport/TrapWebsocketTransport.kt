@@ -15,7 +15,7 @@ import kotlin.Exception
  * keeps the connection alive with ping control frames if there is
  * no data packets sent within 3 seconds.
  */
-internal class TrapWebsocketTransport(): TrapTransport {
+internal class TrapWebsocketTransport: TrapTransport {
     private var url: URI? = null
 
     /**

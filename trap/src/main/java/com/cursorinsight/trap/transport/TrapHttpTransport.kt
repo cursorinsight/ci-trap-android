@@ -7,6 +7,7 @@ import java.io.IOException
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URI
+import java.util.zip.GZIPOutputStream
 import javax.net.ssl.HttpsURLConnection
 
 /**
@@ -19,6 +20,7 @@ import javax.net.ssl.HttpsURLConnection
 internal class TrapHttpTransport(
     private val connectTimeout: Int,
     private val readTimeout: Int,
+    private val compress: Boolean,
 ) : TrapTransport {
     /**
      * The url to send the data to.
@@ -49,7 +51,8 @@ internal class TrapHttpTransport(
             raw as HttpsURLConnection
         }
 
-        connection.setRequestProperty("Content-Type", "text/plain; encoding=json")
+        val compressEncoding = if (compress) "+zlib" else ""
+        connection.setRequestProperty("Content-Type", "text/plain; encoding=json$compressEncoding")
         connection.requestMethod = "POST"
         connection.doOutput = true
         connection.doInput = false
@@ -58,8 +61,9 @@ internal class TrapHttpTransport(
 
         with(connection) {
             try {
-                val writer =
-                    BufferedWriter(OutputStreamWriter(BufferedOutputStream(outputStream), "UTF-8"))
+                val outStream = if (compress) GZIPOutputStream(outputStream) else outputStream
+                val writer = BufferedWriter(
+                    OutputStreamWriter(BufferedOutputStream(outStream), "UTF-8"))
                 writer.write(data)
                 writer.flush()
 

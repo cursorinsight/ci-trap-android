@@ -66,7 +66,8 @@ internal class TrapReporter(
             val underlyingTransport = when (url.scheme) {
                 "http", "https" -> TrapHttpTransport(
                     config.reporter.connectTimeout,
-                    config.reporter.readTimeout
+                    config.reporter.readTimeout,
+                    config.reporter.compress
                 )
 
                 "ws", "wss" -> TrapWebsocketTransport()
@@ -107,11 +108,7 @@ internal class TrapReporter(
                 try {
                     if (packet.length() > 1) {
                         transport?.send(
-                            if (BuildConfig.DEBUG) {
-                                packet.toString(4)
-                            } else {
-                                packet.toString()
-                            }
+                            packet.toString()
                         )
                     }
                 } catch (ex: Exception) {

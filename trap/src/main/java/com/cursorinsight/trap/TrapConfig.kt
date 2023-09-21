@@ -117,6 +117,12 @@ data class TrapConfig(
          * in milliseconds.
          */
         var readTimeout: Int = 500,
+
+        /**
+         * Whether to compress the data sent to the server.
+         * If true GZIP compression is used.
+         */
+        var compress: Boolean = false,
     ) {}
 
     data class DataCollection(

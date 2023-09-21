@@ -65,7 +65,7 @@ class TrapHttpTransportTest {
             url
         }
 
-        val transport = TrapHttpTransport(100, 100)
+        val transport = TrapHttpTransport(100, 100, compress = false)
         transport.start(URI.create("http://localhost"))
         transport.send("[[999]]")
         assert(writeArray.isCaptured)
