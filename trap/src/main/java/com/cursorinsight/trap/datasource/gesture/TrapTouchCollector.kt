@@ -32,6 +32,7 @@ class TrapTouchCollector(
     private val storage: SynchronizedQueue<JSONArray>,
     @Suppress("UNUSED_PARAMETER") config: TrapConfig,
 ) : TrapDatasource {
+    @OptIn(ExperimentalStdlibApi::class)
     private val handler = { event: MotionEvent? ->
         if (event != null && (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER || event.getToolType(0) == TOOL_TYPE_UNKNOWN)) {
             when(event.actionMasked) {
