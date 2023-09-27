@@ -14,9 +14,15 @@ This library can collect various device and user data, forwarding it to a specif
 * Tap gesture
 
 ## How to use it
-You can check out the Example app in this project for a working example. The application needs to either use the provided TrapApplication as the 'android:name' value for the '<application>' tag in the AndroidManifest.xml, or subclass TrapApplication if you also need to use a custom Application class. Configuration is done via a '<meta-data>' tag within the '<application>' tag.
 
-### 1. Specify the application class
+### Option A - Using a custom Application implementation
+
+You can check out the Example app in this project for a working example. The application needs to 
+either use the provided TrapApplication as the 'android:name' value for the '<application>' tag in 
+the AndroidManifest.xml, or subclass TrapApplication if you also need to use a custom Application 
+class. Configuration is done via a '<meta-data>' tag within the '<application>' tag.
+
+#### 1. Specify the application class
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -37,7 +43,7 @@ You can check out the Example app in this project for a working example. The app
 </manifest>
 ```
 
-### 2. (Optional) Use a custom config class
+#### 2. (Optional) Use a custom config class
 Create the configuration provider implementation.
 
 ```kotlin
@@ -94,7 +100,39 @@ Specify your configuration provider in the 'AndroidManifest.xml'.
 </manifest>
 ```
 
-### 3. Ask for interactive permissions (if not previously requested)
+### Option B - Intialize from code
+
+Execute the following code once, during the application startup, before the onActivityCreated 
+lifecycle event is called for the MainActivity. It can be called either in the onCreate method of
+the Application, if a custom application is used or in the onCreate method of the main activity, 
+before the super.onCreate() is called.
+
+```kotlin
+val config = TrapConfig()
+config.reporter.url = "https://example.com/api/post/{streamId}/{sessionId}"
+
+// Use a special set of data collectors
+config.collectors = mutableListOf(TrapCoarseLocationCollector::class)
+
+// Set session id
+val file = File(application.filesDir, "my-session.id")
+if (!file.exists()) {
+    file.writeText(UUID.randomUUID().toString())
+}
+config.reporter.sessionId = UUID.fromString(file.readText())
+
+// Set session id
+val file = File(application.filesDir, "trap-session.id")
+if (!file.exists()) {
+    file.writeText(UUID.randomUUID().toString())
+}
+config.reporter.sessionId = UUID.fromString(file.readText())
+
+// Instantiate the TrapManager
+trapManager = TrapManager.getInstance(application, config)
+```
+
+### Ask for interactive permissions (if not previously requested) - both in case of option A and B
 ```kotlin
 if (!TrapBluetoothCollector.checkPermissions(activity)) {
     TrapBluetoothCollector.requirePermissions(activity) {
