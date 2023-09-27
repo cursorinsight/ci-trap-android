@@ -37,6 +37,7 @@ internal class TrapCachedTransport(
     }
 
     @Throws(Exception::class)
+    @OptIn(ExperimentalStdlibApi::class)
     override fun send(data: String) {
         try {
             // Attempt to send the cache contents
