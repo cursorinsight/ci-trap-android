@@ -18,11 +18,12 @@ This library can collect various device and user data, forwarding it to a specif
 ### Option A - Using a custom Application implementation
 
 You can check out the Example app in this project for a working example. The application needs to
-either use the provided TrapApplication as the `android:name` value for the `<application>` tag in
-the AndroidManifest.xml, or subclass TrapApplication if you also need to use a custom Application
-class. Configuration is done via a `<meta-data>` tag within the `<application>` tag.
+either use the provided `TrapApplication` as the `android:name` value for the `<application>` tag in
+the `AndroidManifest.xml`, or subclass `TrapApplication` if you also need to use a custom 
+`Application` class. Configuration is done via a `<meta-data>` tag within the `<application>` tag.
 
 #### 1. Specify the application class
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -44,6 +45,7 @@ class. Configuration is done via a `<meta-data>` tag within the `<application>` 
 ```
 
 #### 2. (Optional) Use a custom config class
+
 Create the configuration provider implementation.
 
 ```kotlin
@@ -78,6 +80,7 @@ class MyConfig: TrapConfigProvider {
 ```
 
 Specify your configuration provider in the `AndroidManifest.xml`.
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -133,6 +136,7 @@ trapManager = TrapManager.getInstance(application, config)
 ```
 
 ### Ask for interactive permissions (if not previously requested) - in both cases
+
 ```kotlin
 if (!TrapBluetoothCollector.checkPermissions(activity)) {
     TrapBluetoothCollector.requirePermissions(activity) {
