@@ -47,6 +47,7 @@ class TouchCollectorTest {
     @AfterEach
     fun tearDown() {
         unmockkAll()
+        TrapWindowCallback.clear()
     }
 
     private fun getEvent(
@@ -101,6 +102,8 @@ class TouchCollectorTest {
 
         assert(command.isCaptured)
         command.captured()
+        command.clear()
+
         assert(storage.size == 1)
         val el = storage.elementAt(0)
         assert(el.getInt(0) == 100)
@@ -126,6 +129,8 @@ class TouchCollectorTest {
 
         assert(command.isCaptured)
         command.captured()
+        command.clear()
+
         assert(storage.size == 2)
         val el2 = storage.elementAt(1)
         assert(el2.getInt(0) == 100)
@@ -151,6 +156,8 @@ class TouchCollectorTest {
 
         assert(command.isCaptured)
         command.captured()
+        command.clear()
+
         assert(storage.size == 3)
         val el3 = storage.elementAt(2)
         assert(el3.getInt(0) == 101)
@@ -160,7 +167,6 @@ class TouchCollectorTest {
         assert(el3.getDouble(4) == 35.0)
         assert(el3.getDouble(5) == 66.0)
         assert(el3.getDouble(6) == 33.0)
-
 
         windowCallback.dispatchTouchEvent(
             getEvent(
@@ -176,6 +182,8 @@ class TouchCollectorTest {
 
         assert(command.isCaptured)
         command.captured()
+        command.clear()
+
         assert(storage.size == 4)
         val el4 = storage.elementAt(3)
         assert(el4.getInt(0) == 102)
@@ -201,6 +209,8 @@ class TouchCollectorTest {
 
         assert(command.isCaptured)
         command.captured()
+        command.clear()
+
         assert(storage.size == 5)
         val el5 = storage.elementAt(4)
         assert(el5.getInt(0) == 102)
@@ -210,7 +220,6 @@ class TouchCollectorTest {
         assert(el5.getDouble(4) == 35.0)
         assert(el5.getDouble(5) == 66.0)
         assert(el5.getDouble(6) == 33.0)
-
 
         windowCallback.dispatchTouchEvent(
             getEvent(
@@ -224,8 +233,7 @@ class TouchCollectorTest {
             )
         )
 
-        assert(command.isCaptured)
-        command.captured()
+        assert(command.isCaptured == false)
         assert(storage.size == 5)
 
         windowCallback.dispatchTouchEvent(
@@ -240,10 +248,8 @@ class TouchCollectorTest {
             )
         )
 
-        assert(command.isCaptured)
-        command.captured()
+        assert(command.isCaptured == false)
         assert(storage.size == 5)
-
 
         collector.stop(activity)
     }

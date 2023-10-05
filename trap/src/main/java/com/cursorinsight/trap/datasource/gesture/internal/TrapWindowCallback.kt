@@ -44,13 +44,17 @@ class TrapWindowCallback internal constructor(
         fun removeTouchHandler(handler: TouchHandler) {
             touchHandlers.remove(handler)
         }
+
+        /**
+         * Removes all touch handlers from the window callback.
+         */
+        fun clear() {
+            touchHandlers.clear();
+        }
     }
 
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
-        TrapBackgroundExecutor.run {
-            touchHandlers.forEach { it(event) }
-        }
-
+        touchHandlers.forEach { it(event) }
         return underlying.dispatchTouchEvent(event)
     }
 
