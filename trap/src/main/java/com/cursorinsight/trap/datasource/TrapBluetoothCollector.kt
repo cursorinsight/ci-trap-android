@@ -50,39 +50,47 @@ class TrapBluetoothCollector(
     private val receiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
         override fun onReceive(context: Context, intent: Intent) {
-            when (intent.action) {
-                BluetoothDevice.ACTION_FOUND -> {
-                    val device: BluetoothDevice? =
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            intent.getParcelableExtra(
-                                BluetoothDevice.EXTRA_DEVICE,
-                                BluetoothDevice::class.java
-                            )
-                        } else {
-                            @Suppress("DEPRECATION") intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                        }
-
-                    with(JSONArray()) {
-                        put(bluetoothEventType)
-                        put(System.currentTimeMillis())
-                        put(with(JSONArray()) {
-                            put(with(JSONArray()) {
-                                put(device?.name)
-                                put(device?.address)
-                                put(
-                                    when (device?.bondState) {
-                                        BOND_NONE -> 1
-                                        BOND_BONDED, BOND_BONDING -> 3
-                                        else -> 0
-                                    }
+            try {
+                when (intent.action) {
+                    BluetoothDevice.ACTION_FOUND -> {
+                        val device: BluetoothDevice? =
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                intent.getParcelableExtra(
+                                    BluetoothDevice.EXTRA_DEVICE,
+                                    BluetoothDevice::class.java
                                 )
+                            } else {
+                                @Suppress("DEPRECATION") intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                            }
+
+                        with(JSONArray()) {
+                            put(bluetoothEventType)
+                            put(System.currentTimeMillis())
+                            put(with(JSONArray()) {
+                                put(with(JSONArray()) {
+                                    put(device?.name)
+                                    put(device?.address)
+                                    put(
+                                        when (device?.bondState) {
+                                            BOND_NONE -> 1
+                                            BOND_BONDED, BOND_BONDING -> 3
+                                            else -> 0
+                                        }
+                                    )
+                                    this
+                                })
                                 this
                             })
                             this
-                        })
-                        this
-                    }.let { storage.add(it) }
+                        }.let { storage.add(it) }
+                    }
                 }
+            } catch (ex: Exception) {
+                Log.e(
+                    TrapBluetoothCollector::class.simpleName,
+                    "Processing Bluetooth scan result failed",
+                    ex
+                )
             }
         }
     }
