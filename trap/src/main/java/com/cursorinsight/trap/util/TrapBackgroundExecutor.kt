@@ -1,5 +1,7 @@
 package com.cursorinsight.trap.util
 
+import android.util.Log
+import com.cursorinsight.trap.TrapApplication
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -33,7 +35,19 @@ internal class TrapBackgroundExecutor {
             if (executor == null) {
                 executor = Executors.newCachedThreadPool()
             }
-            executor!!.execute(command)
+            executor!!.execute(
+            {
+                try {
+                    command.invoke()
+                }
+                catch (ex: Exception) {
+                    Log.e(
+                        TrapBackgroundExecutor::class.simpleName,
+                        "Command failed",
+                        ex
+                    )
+                }
+            })
         }
 
         /**
@@ -55,7 +69,18 @@ internal class TrapBackgroundExecutor {
             if (schedulerExecutor == null) {
                 schedulerExecutor = Executors.newScheduledThreadPool(1)
             }
-            return schedulerExecutor!!.scheduleAtFixedRate(command, initialDelay, period, unit)
+            return schedulerExecutor!!.scheduleAtFixedRate({
+                try {
+                    command.invoke()
+                }
+                catch (ex: Exception) {
+                    Log.e(
+                        TrapBackgroundExecutor::class.simpleName,
+                        "Scheduled command failed",
+                        ex
+                    )
+                }
+            }, initialDelay, period, unit)
         }
     }
 }

@@ -1,8 +1,6 @@
 package com.cursorinsight.trap.datasource.gesture
 
-import android.app.Activity
 import android.util.Log
-import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_CANCEL
 import android.view.MotionEvent.ACTION_DOWN
@@ -15,8 +13,6 @@ import android.view.MotionEvent.AXIS_TILT
 import android.view.MotionEvent.TOOL_TYPE_ERASER
 import android.view.MotionEvent.TOOL_TYPE_STYLUS
 import com.cursorinsight.trap.TrapConfig
-import com.cursorinsight.trap.datasource.TrapDatasource
-import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
 import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
@@ -34,10 +30,10 @@ import org.json.JSONArray
 class TrapStylusCollector(
     private val storage: SynchronizedQueue<JSONArray>,
     @Suppress("UNUSED_PARAMETER") config: TrapConfig,
-): TrapDatasource {
+): TrapMotionEventCollector(storage, config) {
     @OptIn(ExperimentalStdlibApi::class)
-    private val handler = { event: MotionEvent? ->
-        if (event != null && (event.getToolType(0) == TOOL_TYPE_STYLUS || event.getToolType(0) == TOOL_TYPE_ERASER)) {
+    override fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent) {
+        if (event.getToolType(0) == TOOL_TYPE_STYLUS || event.getToolType(0) == TOOL_TYPE_ERASER) {
             when (event.actionMasked) {
                 ACTION_POINTER_DOWN, ACTION_DOWN -> {
                     val frame = JSONArray()
@@ -48,7 +44,7 @@ class TrapStylusCollector(
                     frame.put(event.pressure)
                     frame.put(event.getAxisValue(AXIS_TILT))
                     frame.put(event.orientation)
-                    storage.add(frame)
+                    frames.add(frame)
                 }
                 ACTION_MOVE -> {
                     for (pos in 0..<event.historySize) {
@@ -60,7 +56,7 @@ class TrapStylusCollector(
                         frame.put(event.getHistoricalPressure(pos))
                         frame.put(event.getHistoricalAxisValue(AXIS_TILT, pos))
                         frame.put(event.getHistoricalOrientation(pos))
-                        storage.add(frame)
+                        frames.add(frame)
                     }
                 }
                 ACTION_POINTER_UP, ACTION_UP, ACTION_OUTSIDE, ACTION_CANCEL -> {
@@ -72,21 +68,13 @@ class TrapStylusCollector(
                     frame.put(event.pressure)
                     frame.put(event.getAxisValue(AXIS_TILT))
                     frame.put(event.orientation)
-                    storage.add(frame)
+                    frames.add(frame)
                 }
                 else -> {
                     Log.w(TrapStylusCollector::class.simpleName, "Unknown stylus state ${event.actionMasked}")
                 }
             }
         }
-    }
-
-    override fun start(activity: Activity) {
-        TrapWindowCallback.addTouchHandler(handler)
-    }
-
-    override fun stop(activity: Activity) {
-        TrapWindowCallback.removeTouchHandler(handler)
     }
 
     /**

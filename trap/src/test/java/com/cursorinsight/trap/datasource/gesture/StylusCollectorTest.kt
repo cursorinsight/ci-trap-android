@@ -47,6 +47,7 @@ class StylusCollectorTest {
     @AfterEach
     fun tearDown() {
         unmockkAll()
+        TrapWindowCallback.clear()
     }
 
     private fun getEvent(

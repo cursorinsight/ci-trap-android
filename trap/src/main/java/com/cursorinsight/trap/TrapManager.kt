@@ -7,6 +7,7 @@ import android.util.Log
 import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
 import com.cursorinsight.trap.transport.TrapReporter
+import com.cursorinsight.trap.util.TrapBackgroundExecutor
 import org.apache.commons.collections4.queue.CircularFifoQueue
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
@@ -98,13 +99,21 @@ class TrapManager internal constructor(
      */
     @Suppress("unused")
     fun run(collector: TrapDatasource) {
-        if (!collectors.containsKey(collector.hashCode())) {
-            reporter.start()
-            val activity = currentActivity?.get()
-            if (activity != null) {
-                collector.start(activity)
+        try {
+            if (!collectors.containsKey(collector.hashCode())) {
+                reporter.start()
+                val activity = currentActivity?.get()
+                if (activity != null) {
+                    collector.start(activity)
+                }
+                collectors[collector.hashCode()] = collector
             }
-            collectors[collector.hashCode()] = collector
+        } catch (ex: Exception) {
+            Log.e(
+                TrapManager::class.simpleName,
+                "Starting collector and reporter in run() failed",
+                ex
+            )
         }
     }
 
@@ -113,20 +122,36 @@ class TrapManager internal constructor(
      */
     @Suppress("unused")
     fun halt(collector: TrapDatasource) {
-        val activity = currentActivity?.get()
-        if (activity != null) {
-            collectors[collector.hashCode()]?.stop(activity)
+        try {
+            val activity = currentActivity?.get()
+            if (activity != null) {
+                collectors[collector.hashCode()]?.stop(activity)
+            }
+            reporter.stop()
+        } catch (ex: Exception) {
+            Log.e(
+                TrapManager::class.simpleName,
+                "Stopping collector and reporter in halt() failed",
+                ex
+            )
         }
-        reporter.stop()
     }
 
     /**
      * Run all default collectors set in the configuration.
      */
     private fun runAll(activity: Activity) {
-        reporter.start()
-        for (collector in collectors.values) {
-            collector.start(activity)
+        try {
+            reporter.start()
+            for (collector in collectors.values) {
+                collector.start(activity)
+            }
+        } catch (ex: Exception) {
+            Log.e(
+                TrapManager::class.simpleName,
+                "Starting reporter and collectors in runAll() failed",
+                ex
+            )
         }
     }
 
@@ -134,14 +159,30 @@ class TrapManager internal constructor(
      * Stop all collectors currently running.
      */
     private fun haltAll(activity: Activity) {
-        for (collector in collectors.values) {
-            collector.stop(activity)
+        try {
+            for (collector in collectors.values) {
+                collector.stop(activity)
+            }
+            reporter.stop()
+        } catch (ex: Exception) {
+            Log.e(
+                TrapManager::class.simpleName,
+                "Stopping collectors and reporter in haltAll() failed",
+                ex
+            )
         }
-        reporter.stop()
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        activity.window.callback = TrapWindowCallback(activity.window.callback)
+        try {
+            activity.window.callback = TrapWindowCallback(activity.window.callback)
+        } catch (ex: Exception) {
+            Log.e(
+                TrapManager::class.simpleName,
+                "Setting window callback failed",
+                ex
+            )
+        }
     }
 
     override fun onActivityResumed(activity: Activity) {

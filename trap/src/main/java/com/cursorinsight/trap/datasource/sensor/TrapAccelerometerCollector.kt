@@ -7,8 +7,11 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.util.Log
 import com.cursorinsight.trap.TrapConfig
+import com.cursorinsight.trap.datasource.TrapBluetoothCollector
 import com.cursorinsight.trap.datasource.TrapDatasource
+import com.cursorinsight.trap.util.TrapLogger
 import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
@@ -27,16 +30,25 @@ class TrapAccelerometerCollector(
     @Suppress("UNUSED_PARAMETER") config: TrapConfig,
 ) : TrapDatasource {
     private val accelerometerEventType = 103
+    private val logger = TrapLogger()
 
     private val handler = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
-            val frame = JSONArray()
-            frame.put(accelerometerEventType)
-            frame.put(TrapTime.normalizeNanosecondTime(event?.timestamp ?: 0))
-            frame.put(event?.values?.get(0))
-            frame.put(event?.values?.get(1))
-            frame.put(event?.values?.get(2))
-            storage.add(frame)
+            try {
+                val frame = JSONArray()
+                frame.put(accelerometerEventType)
+                frame.put(TrapTime.normalizeNanosecondTime(event?.timestamp ?: 0))
+                frame.put(event?.values?.get(0))
+                frame.put(event?.values?.get(1))
+                frame.put(event?.values?.get(2))
+                storage.add(frame)
+            } catch (ex: Exception) {
+                logger.logException(
+                    TrapAccelerometerCollector::class.simpleName,
+                    "Processing sensor event failed",
+                    ex
+                )
+            }
         }
 
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}

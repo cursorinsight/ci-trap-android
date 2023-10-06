@@ -53,6 +53,7 @@ class GestureCollectorTest {
     @AfterEach
     fun tearDown() {
         unmockkAll()
+        TrapWindowCallback.clear()
     }
 
     @Test
@@ -73,12 +74,13 @@ class GestureCollectorTest {
 
         windowCallback.dispatchTouchEvent(event)
 
-        assert(command.isCaptured)
-        command.captured()
-
         verify(exactly = 1) { anyConstructed<GestureDetector>().onTouchEvent(event) }
 
         assertEquals(collector.onSingleTapUp(event), false)
+
+        assert(command.isCaptured)
+        command.captured()
+
         assertEquals(storage.size, 1)
         val el = storage.elementAt(0)
         assertEquals(el.getInt(0), 122)

@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
+import com.cursorinsight.trap.util.TrapBackgroundExecutor
 import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
@@ -61,7 +62,9 @@ class TrapGestureCollector(
             put(p0.rawY)
         }.let {
             if (it.length() > 0) {
-                storage.add(it)
+                TrapBackgroundExecutor.run {
+                    storage.add(it)
+                }
             }
         }
 

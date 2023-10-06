@@ -1,8 +1,6 @@
 package com.cursorinsight.trap.datasource.gesture
 
-import android.app.Activity
 import android.util.Log
-import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_CANCEL
 import android.view.MotionEvent.ACTION_DOWN
@@ -12,8 +10,6 @@ import android.view.MotionEvent.ACTION_POINTER_UP
 import android.view.MotionEvent.ACTION_UP
 import android.view.MotionEvent.TOOL_TYPE_UNKNOWN
 import com.cursorinsight.trap.TrapConfig
-import com.cursorinsight.trap.datasource.TrapDatasource
-import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
 import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
@@ -31,10 +27,10 @@ import org.json.JSONArray
 class TrapTouchCollector(
     private val storage: SynchronizedQueue<JSONArray>,
     @Suppress("UNUSED_PARAMETER") config: TrapConfig,
-) : TrapDatasource {
+) : TrapMotionEventCollector(storage, config) {
     @OptIn(ExperimentalStdlibApi::class)
-    private val handler = { event: MotionEvent? ->
-        if (event != null && (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER || event.getToolType(0) == TOOL_TYPE_UNKNOWN)) {
+    override fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent) {
+        if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER || event.getToolType(0) == TOOL_TYPE_UNKNOWN) {
             when(event.actionMasked) {
                 ACTION_DOWN -> {
                     val fingerId = event.getPointerId(event.actionIndex)
@@ -46,7 +42,7 @@ class TrapTouchCollector(
                     frame.put(event.rawY)
                     frame.put(event.pressure)
                     frame.put(event.touchMajor)
-                    storage.add(frame)
+                    frames.add(frame)
                 }
 
                 ACTION_POINTER_DOWN -> {
@@ -59,7 +55,7 @@ class TrapTouchCollector(
                     frame.put(event.getY(event.findPointerIndex(fingerId)))
                     frame.put(event.pressure)
                     frame.put(event.touchMajor)
-                    storage.add(frame)
+                    frames.add(frame)
                 }
 
                 ACTION_MOVE -> {
@@ -74,7 +70,7 @@ class TrapTouchCollector(
                             frame.put(event.getHistoricalY(idx, pos))
                             frame.put(event.getHistoricalPressure(idx, pos))
                             frame.put(event.getHistoricalTouchMajor(idx, pos))
-                            storage.add(frame)
+                            frames.add(frame)
                         }
                     }
                 }
@@ -89,7 +85,7 @@ class TrapTouchCollector(
                     frame.put(event.rawY)
                     frame.put(event.pressure)
                     frame.put(event.touchMajor)
-                    storage.add(frame)
+                    frames.add(frame)
                 }
 
                 ACTION_POINTER_UP -> {
@@ -102,7 +98,7 @@ class TrapTouchCollector(
                     frame.put(event.getY(event.findPointerIndex(fingerId)))
                     frame.put(event.pressure)
                     frame.put(event.touchMajor)
-                    storage.add(frame)
+                    frames.add(frame)
                 }
 
                 ACTION_CANCEL -> {
@@ -120,14 +116,6 @@ class TrapTouchCollector(
                 }
             }
         }
-    }
-
-    override fun start(activity: Activity) {
-        TrapWindowCallback.addTouchHandler(handler)
-    }
-
-    override fun stop(activity: Activity) {
-        TrapWindowCallback.removeTouchHandler(handler)
     }
 
     /**

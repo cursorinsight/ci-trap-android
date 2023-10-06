@@ -48,6 +48,7 @@ class PointerCollectorTest {
     @AfterEach
     fun tearDown() {
         unmockkAll()
+        TrapWindowCallback.clear()
     }
 
     private fun getEvent(
