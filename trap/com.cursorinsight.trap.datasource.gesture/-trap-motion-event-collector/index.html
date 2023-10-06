@@ -2,7 +2,7 @@
 <html class="no-js">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
-    <title>TrapWiFiCollector</title>
+    <title>TrapMotionEventCollector</title>
     <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
     <script>var pathToRoot = "../../../";</script>
     <script>document.documentElement.classList.replace("no-js","js");</script>
@@ -61,23 +61,23 @@
                 <div class="sidebar--inner" id="sideMenu"></div>
             </div>
             <div id="main">
-<div class="main-content" data-page-type="classlike" id="content" pageIds="trap::com.cursorinsight.trap.datasource/TrapWiFiCollector///PointingToDeclaration//-233863329">
-  <div class="breadcrumbs"><a href="../../../index.html">trap</a><span class="delimiter">/</span><a href="../index.html">com.cursorinsight.trap.datasource</a><span class="delimiter">/</span><span class="current">TrapWiFiCollector</span></div>
+<div class="main-content" data-page-type="classlike" id="content" pageIds="trap::com.cursorinsight.trap.datasource.gesture/TrapMotionEventCollector///PointingToDeclaration//-233863329">
+  <div class="breadcrumbs"><a href="../../../index.html">trap</a><span class="delimiter">/</span><a href="../index.html">com.cursorinsight.trap.datasource.gesture</a><span class="delimiter">/</span><span class="current">TrapMotionEventCollector</span></div>
   <div class="cover ">
-    <h1 class="cover"><span>Trap</span><wbr></wbr><span>Wi</span><wbr></wbr><span>Fi</span><wbr></wbr><span><span>Collector</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">TrapWiFiCollector</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">storage<span class="token operator">: </span><span data-unresolved-link="org.apache.commons.collections4.queue/SynchronizedQueue///PointingToDeclaration/">SynchronizedQueue</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/org/json/JSONArray.html">JSONArray</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">config<span class="token operator">: </span><a href="../../com.cursorinsight.trap/-trap-config/index.html">TrapConfig</a></span></span><span class="token punctuation">)</span> : <a href="../-trap-datasource/index.html">TrapDatasource</a></div><p class="paragraph">Monitors for Wifi networks and connections then reports them as data frames.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>config</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The library config instance.</p></div></div></div></div></div></div></div>
+    <h1 class="cover"><span>Trap</span><wbr></wbr><span>Motion</span><wbr></wbr><span>Event</span><wbr></wbr><span><span>Collector</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="index.html">TrapMotionEventCollector</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">storage<span class="token operator">: </span><span data-unresolved-link="org.apache.commons.collections4.queue/SynchronizedQueue///PointingToDeclaration/">SynchronizedQueue</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/org/json/JSONArray.html">JSONArray</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">config<span class="token operator">: </span><a href="../../com.cursorinsight.trap/-trap-config/index.html">TrapConfig</a></span></span><span class="token punctuation">)</span> : <a href="../../com.cursorinsight.trap.datasource/-trap-datasource/index.html">TrapDatasource</a></div><p class="paragraph">Base class for processing MotionEvents.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>config</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The library config instance.</p></div></div></div></div></div><h4 class="">Inheritors</h4><div class="table"><div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-trap-pointer-collector/index.html">TrapPointerCollector</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-trap-stylus-collector/index.html">TrapStylusCollector</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-trap-touch-collector/index.html">TrapTouchCollector</a></div></span></div><div></div></div></div></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="CONSTRUCTOR">
         <h2 class="">Constructors</h2>
-        <div class="table"><a data-name="-795409924%2FConstructors%2F-233863329" anchor-label="TrapWiFiCollector" id="-795409924%2FConstructors%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+        <div class="table"><a data-name="906647231%2FConstructors%2F-233863329" anchor-label="TrapMotionEventCollector" id="906647231%2FConstructors%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
           <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-trap-wi-fi-collector.html"><span>Trap</span><wbr></wbr><span>Wi</span><wbr></wbr><span>Fi</span><wbr></wbr><span><span>Collector</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-795409924%2FConstructors%2F-233863329"></span>
+                  <div><a href="-trap-motion-event-collector.html"><span>Trap</span><wbr></wbr><span>Motion</span><wbr></wbr><span>Event</span><wbr></wbr><span><span>Collector</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="906647231%2FConstructors%2F-233863329"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -89,19 +89,19 @@
           </div>
         </div>
       </div>
-      <div data-togglable="TYPE">
-        <h2 class="">Types</h2>
-        <div class="table"><a data-name="-338781110%2FClasslikes%2F-233863329" anchor-label="Companion" id="-338781110%2FClasslikes%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1463765989%2FProperties%2F-233863329" anchor-label="handler" id="1463765989%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-338781110%2FClasslikes%2F-233863329"></span>
+                  <div><a href="handler.html"><span><span>handler</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1463765989%2FProperties%2F-233863329"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="handler.html">handler</a><span class="token operator">: </span><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/view/MotionEvent.html">MotionEvent</a><span class="token operator">?</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -110,12 +110,27 @@
       </div>
       <div data-togglable="FUNCTION">
         <h2 class="">Functions</h2>
-        <div class="table"><a data-name="-290774010%2FFunctions%2F-233863329" anchor-label="start" id="-290774010%2FFunctions%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+        <div class="table"><a data-name="1303303600%2FFunctions%2F-233863329" anchor-label="processEvent" id="1303303600%2FFunctions%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="process-event.html"><span>process</span><wbr></wbr><span><span>Event</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1303303600%2FFunctions%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="process-event.html"><span class="token function">processEvent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">frames<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html">MutableList</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/org/json/JSONArray.html">JSONArray</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">event<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/view/MotionEvent.html">MotionEvent</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1751021682%2FFunctions%2F-233863329" anchor-label="start" id="1751021682%2FFunctions%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="start.html"><span><span>start</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-290774010%2FFunctions%2F-233863329"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1751021682%2FFunctions%2F-233863329"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -125,12 +140,12 @@
               </div>
             </div>
           </div>
-<a data-name="685772058%2FFunctions%2F-233863329" anchor-label="stop" id="685772058%2FFunctions%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+<a data-name="-495289554%2FFunctions%2F-233863329" anchor-label="stop" id="-495289554%2FFunctions%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="stop.html"><span><span>stop</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="685772058%2FFunctions%2F-233863329"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-495289554%2FFunctions%2F-233863329"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
