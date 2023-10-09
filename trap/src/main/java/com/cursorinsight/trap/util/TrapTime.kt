@@ -1,5 +1,7 @@
 package com.cursorinsight.trap.util
 
+import android.os.SystemClock
+
 /**
  * Utility class to calculate the unified timestamps.
  */
@@ -28,5 +30,14 @@ internal class TrapTime {
         fun normalizeMillisecondTime(time: Long): Long {
             return bootTime + time
         }
+
+        /**
+         * Returns the current time in a millisecond epoch
+         * @return ms epoch
+         */
+        fun getCurrentTime(): Long {
+            return bootTime + SystemClock.elapsedRealtime()
+        }
+
     }
 }
