@@ -28,6 +28,11 @@ data class TrapConfig(
     var queueSize: Int = 2048,
 
     /**
+     * Maximum number of log messages per collector if the collector uses log throttling
+     */
+    var maxNumberOfLogMessagesPerMinute: Int = 100,
+
+    /**
      * The list of collectors to start at initialization.
      */
     var collectors: List<KClass<*>> = mutableListOf(

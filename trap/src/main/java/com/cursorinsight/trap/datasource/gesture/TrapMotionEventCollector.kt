@@ -6,6 +6,7 @@ import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
 import com.cursorinsight.trap.util.TrapBackgroundExecutor
+import com.cursorinsight.trap.util.TrapLogger
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
 
@@ -20,22 +21,33 @@ import org.json.JSONArray
  */
 abstract class TrapMotionEventCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    config: TrapConfig,
 ): TrapDatasource {
     @OptIn(ExperimentalStdlibApi::class)
+    private val logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
+
     val handler = { event: MotionEvent? ->
-        if (event != null) {
-            val frames = mutableListOf<JSONArray>()
+        try {
+            if (event != null) {
+                val frames = mutableListOf<JSONArray>()
 
-            processEvent(frames, event)
+                processEvent(frames, event)
 
-            if (frames.isNotEmpty()) {
-                TrapBackgroundExecutor.run {
-                    for (frame in frames) {
-                        storage.add(frame)
+                if (frames.isNotEmpty()) {
+                    TrapBackgroundExecutor.run {
+                        for (frame in frames) {
+                            storage.add(frame)
+                        }
                     }
                 }
             }
+        }
+        catch (ex: Exception) {
+            logger.logException(
+                TrapWindowCallback::class.simpleName,
+                "Processing touch event failed",
+                ex
+            )
         }
     }
 

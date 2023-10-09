@@ -29,7 +29,7 @@ class TrapGravityCollector(
     @Suppress("UNUSED_PARAMETER") config: TrapConfig,
 ): TrapDatasource {
     private val gravityEventType = 105
-    private val logger = TrapLogger()
+    private val logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
 
     private val handler = object: SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {

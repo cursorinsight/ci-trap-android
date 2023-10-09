@@ -5,12 +5,12 @@ import android.util.Log
 /**
  * Logger used to throttle log messages
  */
-internal class TrapLogger {
-
-    val maxNumberOfMessagesPerInterval: Long = 5
-    val timeIntervalMs: Long = 60000
-    val averageTimeBetweenMessages = timeIntervalMs / maxNumberOfMessagesPerInterval
-    var score: Long = 0
+internal class TrapLogger(
+    maxNumberOfMessagesPerMinute: Int
+) {
+    private val timeIntervalMs: Long = 60_000 //1 minute
+    private val averageTimeBetweenMessages = timeIntervalMs / maxNumberOfMessagesPerMinute
+    private var score: Long = 0
 
     fun throttle(): Boolean {
         var newScore = score

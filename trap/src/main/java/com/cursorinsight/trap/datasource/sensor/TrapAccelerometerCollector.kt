@@ -27,10 +27,10 @@ import org.json.JSONArray
  */
 class TrapAccelerometerCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    config: TrapConfig,
 ) : TrapDatasource {
     private val accelerometerEventType = 103
-    private val logger = TrapLogger()
+    private val logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
 
     private val handler = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {

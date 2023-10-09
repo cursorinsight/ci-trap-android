@@ -32,7 +32,7 @@ class TrapLoggerTest {
         mockkStatic(Log::class)
         every { Log.e(any(), any(), any()) } returns 0
 
-        logger = TrapLogger()
+        logger = TrapLogger(5)
     }
 
     @AfterEach

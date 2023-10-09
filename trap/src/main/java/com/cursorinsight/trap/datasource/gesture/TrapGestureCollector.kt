@@ -8,6 +8,7 @@ import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
 import com.cursorinsight.trap.util.TrapBackgroundExecutor
+import com.cursorinsight.trap.util.TrapLogger
 import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
@@ -25,18 +26,29 @@ import org.json.JSONArray
 @Suppress("unused")
 class TrapGestureCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    config: TrapConfig,
 ) : TrapDatasource, GestureDetector.OnGestureListener {
     private val tapEventType = 122
-
+    private val logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
     private lateinit var gestureHandler: GestureDetector
 
     private val handler = { event: MotionEvent? ->
-        if (event != null
-            && (event.source == InputDevice.SOURCE_TOUCHSCREEN || event.source == InputDevice.SOURCE_TOUCHPAD)
-        ) {
-            gestureHandler.onTouchEvent(event)
+        try {
+            if (event != null &&
+                (event.source == InputDevice.SOURCE_TOUCHSCREEN ||
+                 event.source == InputDevice.SOURCE_TOUCHPAD)
+            ) {
+                gestureHandler.onTouchEvent(event)
+            }
         }
+        catch (ex: Exception) {
+            logger.logException(
+                TrapWindowCallback::class.simpleName,
+                "Processing touch event failed",
+                ex
+            )
+        }
+
     }
 
     override fun start(activity: Activity) {

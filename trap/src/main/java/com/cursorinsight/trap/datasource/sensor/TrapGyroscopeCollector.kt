@@ -29,7 +29,7 @@ class TrapGyroscopeCollector(
     @Suppress("UNUSED_PARAMETER") config: TrapConfig,
 ): TrapDatasource {
     private val gyroscopeEventType = 104
-    private val logger = TrapLogger()
+    private val logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
 
     private val handler = object: SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
