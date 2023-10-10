@@ -18,7 +18,6 @@ import android.os.Build
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.cursorinsight.trap.TrapConfig
-import com.cursorinsight.trap.TrapManager
 import com.cursorinsight.trap.util.TrapPermissionActivity
 import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
@@ -31,8 +30,6 @@ import org.json.JSONArray
  * @property storage The data frame queue.
  * @constructor
  * Sets up the data collector.
- *
- * @param config The library config instance.
  */
 class TrapWiFiCollector(
     private val storage: SynchronizedQueue<JSONArray>

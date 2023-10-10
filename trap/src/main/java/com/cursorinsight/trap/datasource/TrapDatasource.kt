@@ -9,7 +9,7 @@ import com.cursorinsight.trap.TrapConfig
  */
 interface TrapDatasource {
     /**
-     * Start the data collection process for this particular collector.
+     * Start the data collection process for this particular collector with the specified config.
      */
     fun start(activity: Activity, config: TrapConfig.DataCollection)
 

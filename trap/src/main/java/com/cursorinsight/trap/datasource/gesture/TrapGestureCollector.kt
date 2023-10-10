@@ -20,8 +20,6 @@ import org.json.JSONArray
  * @property storage The data frame queue.
  * @constructor
  * Sets up the data collector.
- *
- * @param config The library config instance.
  */
 @Suppress("unused")
 class TrapGestureCollector(

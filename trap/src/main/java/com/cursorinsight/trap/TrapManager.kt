@@ -92,7 +92,7 @@ class TrapManager internal constructor(
             } catch (ex: Exception) {
                 Log.e(
                     TrapManager::class.simpleName,
-                    "Processing batteryg change failed",
+                    "Processing battery change failed",
                     ex
                 )
             }

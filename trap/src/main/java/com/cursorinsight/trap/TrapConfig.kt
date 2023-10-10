@@ -15,7 +15,6 @@ import com.cursorinsight.trap.datasource.sensor.TrapGyroscopeCollector
 import com.cursorinsight.trap.datasource.sensor.TrapMagnetometerCollector
 import java.io.File
 import java.util.UUID
-import kotlin.reflect.KClass
 
 /**
  * The global configuration for the library.
@@ -86,7 +85,7 @@ data class TrapConfig(
 
         /**
          * Whether to cache data packets on the device
-         * when conntection to the remote server cannot be
+         * when connection to the remote server cannot be
          * established.
          */
         var cachedTransport: Boolean = true,
@@ -125,7 +124,7 @@ data class TrapConfig(
          * If true GZIP compression is used.
          */
         var compress: Boolean = false,
-    ) {}
+    )
 
     data class DataCollection(
 

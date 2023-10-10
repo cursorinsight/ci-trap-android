@@ -11,7 +11,6 @@ import android.os.Build
 import android.util.Log
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.datasource.TrapDatasource
-import com.cursorinsight.trap.datasource.sensor.TrapAccelerometerCollector
 import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
@@ -24,8 +23,6 @@ import org.json.JSONObject
  * @property storage The data frame queue.
  * @constructor
  * Sets up the data collector.
- *
- * @param config The library config instance.
  */
 class TrapBatteryCollector(
     private val storage: SynchronizedQueue<JSONArray>
@@ -67,7 +64,7 @@ class TrapBatteryCollector(
      * Process the scan results
      */
     private fun processBatteryResult(intent : Intent) {
-        var batteryLevel = batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) ?: -1
+        val batteryLevel = batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) ?: -1
         var batteryStatus: Int = -1
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

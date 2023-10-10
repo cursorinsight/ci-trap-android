@@ -16,13 +16,11 @@ import org.json.JSONArray
  * @property storage The data frame queue.
  * @constructor
  * Sets up the data collector.
- *
- * @param config The library config instance.
  */
 abstract class TrapMotionEventCollector(
     private val storage: SynchronizedQueue<JSONArray>
 ): TrapDatasource {
-    protected var config: TrapConfig.DataCollection? = null;
+    protected var config: TrapConfig.DataCollection? = null
     internal lateinit var logger: TrapLogger
 
     @OptIn(ExperimentalStdlibApi::class)

@@ -7,9 +7,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
 import com.cursorinsight.trap.TrapConfig
-import com.cursorinsight.trap.datasource.TrapBluetoothCollector
 import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.util.TrapLogger
 import com.cursorinsight.trap.util.TrapTime
@@ -22,8 +20,6 @@ import org.json.JSONArray
  * @property storage The data frame queue.
  * @constructor
  * Sets up the data collector.
- *
- * @param config The library config instance.
  */
 class TrapAccelerometerCollector(
     private val storage: SynchronizedQueue<JSONArray>
