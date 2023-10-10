@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name="com.cursorinsight.trap.TrapApplication"
+        android:name="com.cursorinsight.trap.example.ExampleApplication"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,8 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Example"
         tools:targetApi="31" >
-
-        <meta-data android:name="trap:config" android:value="com.cursorinsight.trap.example.MyConfig" />
 
         <activity
             android:name=".MainActivity"
