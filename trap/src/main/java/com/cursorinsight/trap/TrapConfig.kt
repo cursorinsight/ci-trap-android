@@ -1,5 +1,6 @@
 package com.cursorinsight.trap
 
+import android.app.Application
 import com.cursorinsight.trap.datasource.TrapBluetoothCollector
 import com.cursorinsight.trap.datasource.TrapCoarseLocationCollector
 import com.cursorinsight.trap.datasource.TrapMetaDataCollector
@@ -12,6 +13,7 @@ import com.cursorinsight.trap.datasource.sensor.TrapAccelerometerCollector
 import com.cursorinsight.trap.datasource.sensor.TrapGravityCollector
 import com.cursorinsight.trap.datasource.sensor.TrapGyroscopeCollector
 import com.cursorinsight.trap.datasource.sensor.TrapMagnetometerCollector
+import java.io.File
 import java.util.UUID
 import kotlin.reflect.KClass
 
@@ -210,4 +212,12 @@ data class TrapConfig(
             TrapMetaDataCollector::class.qualifiedName,
         ).filterNotNull(),
     )
+
+    fun initSessionId(application: Application) {
+        val file = File(application.filesDir, "my-session.id")
+        if (!file.exists()) {
+            file.writeText(UUID.randomUUID().toString())
+        }
+        reporter.sessionId = UUID.fromString(file.readText())
+    }
 }
