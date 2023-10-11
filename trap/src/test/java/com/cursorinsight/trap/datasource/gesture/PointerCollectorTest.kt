@@ -144,7 +144,7 @@ class PointerCollectorTest {
 
         assert(command.isCaptured)
         command.captured()
-        assertEquals(storage.size, if (captureCoalescedEvents) 3 else  2)
+        assertEquals(storage.size, if (captureCoalescedEvents) 3 else 2)
         val el2 = storage.elementAt(1)
         assertEquals(el2.getInt(0), 5)
         assertEquals(el2.getLong(1), TrapTime.normalizeUptimeMillisecond(11L))
@@ -164,8 +164,8 @@ class PointerCollectorTest {
 
         assert(command.isCaptured)
         command.captured()
-        assertEquals(storage.size, if (captureCoalescedEvents) 4 else  3)
-        val el3 = storage.elementAt(if (captureCoalescedEvents) 3 else  2)
+        assertEquals(storage.size, if (captureCoalescedEvents) 4 else 3)
+        val el3 = storage.elementAt(if (captureCoalescedEvents) 3 else 2)
         assertEquals(el3.getInt(0), 6)
         assertEquals(el3.getLong(1), TrapTime.normalizeUptimeMillisecond(111L))
         assertEquals(el3.getDouble(2), 1115.0)

@@ -15,8 +15,9 @@ open class NetworkTrapConfigProvider(
             return Gson().fromJson(configString, TrapConfig::class.java)
         } catch (e: Exception) {
             Log.e(
-                TrapApplication::class.simpleName,
-                "Could not initialize the application"
+                NetworkTrapConfigProvider::class.simpleName,
+                "Could not download or parse configuration",
+                e
             )
         }
         return TrapConfig()

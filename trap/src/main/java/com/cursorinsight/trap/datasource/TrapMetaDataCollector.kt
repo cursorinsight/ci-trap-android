@@ -25,8 +25,7 @@ import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
 /**
- * Collect device specific metadata and send it
- * as data frames periodically.
+ * Collect device specific metadata and send it as data frames periodically.
  *
  * @property storage The data frame queue.
  * @constructor
@@ -262,7 +261,6 @@ class TrapMetaDataCollector (
             val path = Environment.getDataDirectory()
             return getAvailableSize(path)
         }
-
 
     private val availableExternalMemorySize: Long
         get() {

@@ -1,7 +1,6 @@
 package com.cursorinsight.trap.util
 import android.util.Log
 
-
 /**
  * Logger used to throttle log messages
  */

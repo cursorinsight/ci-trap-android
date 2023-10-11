@@ -44,7 +44,7 @@ class TrapBatteryCollector(
     private var registered = false
 
     /**
-     * The callback for the wifi service.
+     * The callback for the battery service.
      */
     private val batteryReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {

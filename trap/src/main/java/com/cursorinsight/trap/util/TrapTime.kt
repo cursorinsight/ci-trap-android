@@ -6,7 +6,24 @@ import android.os.SystemClock
  */
 internal class TrapTime {
     companion object {
+        /**
+         * Both elapsedRealtime and uptimeMillis are reported relative to the system boot
+         * and we have to report all timestamps in UNIX epoch we have to determine the system
+         * boot time.
+         */
         var bootTime : Long
+
+        /**
+         * Difference between the elapsedRealtime and uptimeMillis
+         *
+         * Both are measured in milliseconds since the system boot.
+         * But uptimeMillis does not include the time that the device
+         * spent in sleep, so elapsedRealtime can differ from uptimeMillis
+         *
+         * As we would like to report all events with comparable timestamps
+         * the events reported in upltimeMillis has to be converted to real time
+         * by increasing it with the timeDiff.
+         */
         var timeDiff: Long
 
         init {
@@ -28,7 +45,7 @@ internal class TrapTime {
         }
 
         /**
-         * Brings the millisecond resolution up time diff into
+         * Brings the millisecond resolution uptime diff into
          * a millisecond epoch.
          *
          * @param time The time diff in ms
@@ -40,7 +57,7 @@ internal class TrapTime {
 
         /**
          * Updates the time difference between the elapsedRealtime
-         * and the uptime
+         * and the uptime.
          */
         fun updateTimeDiff() {
             timeDiff = SystemClock.elapsedRealtime() -

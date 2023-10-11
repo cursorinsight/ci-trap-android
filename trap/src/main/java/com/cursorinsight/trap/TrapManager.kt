@@ -105,8 +105,6 @@ class TrapManager internal constructor(
             networkCapabilities: NetworkCapabilities
         ) {
             try {
-
-
                 super.onCapabilitiesChanged(network, networkCapabilities)
                 inLowDataMode = !networkCapabilities.hasCapability(
                     NetworkCapabilities.NET_CAPABILITY_NOT_METERED
