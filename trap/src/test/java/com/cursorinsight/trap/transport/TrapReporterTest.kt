@@ -66,7 +66,7 @@ class TrapReporterTest {
 
         var msg: CapturingSlot<String> = slot()
         mockkConstructor(TrapHttpTransport::class)
-        every { anyConstructed<TrapHttpTransport>().start(any()) } returns Unit
+        every { anyConstructed<TrapHttpTransport>().start(any(), any()) } returns Unit
         every { anyConstructed<TrapHttpTransport>().stop() } returns Unit
         every { anyConstructed<TrapHttpTransport>().send(capture(msg)) } returns Unit
 

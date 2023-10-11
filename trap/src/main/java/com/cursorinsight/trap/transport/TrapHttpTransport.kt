@@ -1,6 +1,7 @@
 package com.cursorinsight.trap.transport
 
 import android.util.Log
+import com.cursorinsight.trap.TrapConfig
 import java.io.BufferedOutputStream
 import java.io.BufferedWriter
 import java.io.IOException
@@ -13,28 +14,28 @@ import javax.net.ssl.HttpsURLConnection
 /**
  * The HTTP transport layer implementation, which POSTs
  * the data packets for every send.
- *
- * @property connectTimeout The maximum time to wait for the connection to establish.
- * @property readTimeout The maximum time to wait for a response from the server.
  */
-internal class TrapHttpTransport(
-    private val connectTimeout: Int,
-    private val readTimeout: Int,
-    private val compress: Boolean,
-) : TrapTransport {
+internal class TrapHttpTransport : TrapTransport {
     /**
      * The url to send the data to.
      */
     private var url: URI? = null
 
-    override fun start(url: URI) {
+    /**
+     * Additional configuration properties
+     */
+    private var config: TrapConfig.Reporter? = null
+
+    override fun start(url: URI, config: TrapConfig.Reporter) {
         assert(url.scheme.startsWith("http"))
         this.url = url
+        this.config = config
     }
 
 
     override fun stop() {
         url = null
+        config = null
     }
 
     @Throws(
@@ -43,7 +44,7 @@ internal class TrapHttpTransport(
     )
     override fun send(data: String) {
         val url = url ?: throw TrapTransportException("URL is not valid")
-
+        val config = config ?: throw TrapTransportException("Config is not valid")
         val raw = url.toURL().openConnection()
         val connection = if (url.scheme.equals("http")) {
             raw as HttpURLConnection
@@ -51,17 +52,18 @@ internal class TrapHttpTransport(
             raw as HttpsURLConnection
         }
 
-        val compressEncoding = if (compress) "+zlib" else ""
+        val compressEncoding = if (config.compress) "+zlib" else ""
         connection.setRequestProperty("Content-Type", "text/plain; encoding=json$compressEncoding")
+        connection.setRequestProperty(config.apiKeyName, config.apiKeyValue)
         connection.requestMethod = "POST"
         connection.doOutput = true
         connection.doInput = false
-        connection.connectTimeout = connectTimeout
-        connection.readTimeout = readTimeout
+        connection.connectTimeout = config.connectTimeout
+        connection.readTimeout = config.readTimeout
 
         with(connection) {
             try {
-                val outStream = if (compress) GZIPOutputStream(outputStream) else outputStream
+                val outStream = if (config.compress) GZIPOutputStream(outputStream) else outputStream
                 val writer = BufferedWriter(
                     OutputStreamWriter(BufferedOutputStream(outStream), "UTF-8"))
                 writer.write(data)

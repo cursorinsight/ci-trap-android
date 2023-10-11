@@ -124,6 +124,16 @@ data class TrapConfig(
          * If true GZIP compression is used.
          */
         var compress: Boolean = false,
+
+        /**
+         * Name of the api key sent in the HTTP header
+         */
+        var apiKeyName: String = "graboxy-api-key",
+
+        /**
+         * Value of the api key sent in the HTTP header
+         */
+        var apiKeyValue: String = "api-key-value"
     )
 
     data class DataCollection(

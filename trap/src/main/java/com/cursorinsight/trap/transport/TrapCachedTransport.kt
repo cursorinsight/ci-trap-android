@@ -1,5 +1,6 @@
 package com.cursorinsight.trap.transport
 
+import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapFileCache
 import org.json.JSONArray
 import java.io.File
@@ -28,8 +29,8 @@ internal class TrapCachedTransport(
      */
     private val cache = TrapFileCache(cacheDir, cacheSize)
 
-    override fun start(url: URI) {
-        underlying.start(url)
+    override fun start(url: URI, config: TrapConfig.Reporter) {
+        underlying.start(url, config)
     }
 
     override fun stop() {

@@ -1,5 +1,6 @@
 package com.cursorinsight.trap.transport
 
+import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapFileCache
 import io.mockk.CapturingSlot
 import io.mockk.every
@@ -33,13 +34,13 @@ class TrapCachedTransportTest {
     @Test
     fun `test cached transport`() {
         val underlying = mockkClass(TrapTransport::class)
-        every { underlying.start(any()) } returns Unit
+        every { underlying.start(any(), any()) } returns Unit
         every { underlying.stop() } returns Unit
         every { underlying.send(any(String::class))} returns Unit
 
         val transport = TrapCachedTransport(File(tempDir), 128, underlying)
-        transport.start(URI.create("http://localhost"))
-        verify(exactly = 1) { underlying.start(any()) }
+        transport.start(URI.create("http://localhost"), TrapConfig.Reporter())
+        verify(exactly = 1) { underlying.start(any(), any()) }
         transport.stop()
         verify(exactly = 1) { underlying.stop() }
         transport.send("[[999,12345678]]")
@@ -50,13 +51,13 @@ class TrapCachedTransportTest {
     fun `test cached transport with cached results`() {
         var msg: CapturingSlot<String> = slot()
         val underlying = mockkClass(TrapTransport::class)
-        every { underlying.start(any()) } returns Unit
+        every { underlying.start(any(), any()) } returns Unit
         every { underlying.stop() } returns Unit
         every { underlying.send(capture(msg))} throws TrapTransportException() andThen Unit
 
         val transport = TrapCachedTransport(File(tempDir), 128, underlying)
-        transport.start(URI.create("http://localhost"))
-        verify(exactly = 1) { underlying.start(any()) }
+        transport.start(URI.create("http://localhost"), TrapConfig.Reporter())
+        verify(exactly = 1) { underlying.start(any(), any()) }
         transport.stop()
         verify(exactly = 1) { underlying.stop() }
         transport.send("[[999,12345678]]")

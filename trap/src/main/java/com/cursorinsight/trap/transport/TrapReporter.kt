@@ -64,11 +64,7 @@ internal class TrapReporter(
                     .replace("{sessionId}", sessionId.toString(), true)
             )
             val underlyingTransport = when (url.scheme) {
-                "http", "https" -> TrapHttpTransport(
-                    config.reporter.connectTimeout,
-                    config.reporter.readTimeout,
-                    config.reporter.compress
-                )
+                "http", "https" -> TrapHttpTransport()
 
                 "ws", "wss" -> TrapWebsocketTransport()
                 else -> throw IllegalArgumentException("Unknown transport scheme $url")
@@ -82,7 +78,7 @@ internal class TrapReporter(
             } else {
                 underlyingTransport
             }
-            transport?.start(url)
+            transport?.start(url, config.reporter)
 
             task = TrapBackgroundExecutor.runScheduled({
                 // Safety first: In case the background reporter

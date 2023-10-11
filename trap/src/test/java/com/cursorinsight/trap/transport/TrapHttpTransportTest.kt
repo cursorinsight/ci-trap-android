@@ -1,6 +1,7 @@
 package com.cursorinsight.trap.transport
 
 import android.icu.util.Output
+import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapFileCache
 import io.mockk.CapturingSlot
 import io.mockk.every
@@ -65,8 +66,14 @@ class TrapHttpTransportTest {
             url
         }
 
-        val transport = TrapHttpTransport(100, 100, compress = false)
-        transport.start(URI.create("http://localhost"))
+        val transport = TrapHttpTransport()
+        transport.start(
+            URI.create("http://localhost"),
+            TrapConfig.Reporter(
+                connectTimeout = 100,
+                readTimeout = 100,
+                compress = false,
+            ))
         transport.send("[[999]]")
         assert(writeArray.isCaptured)
         transport.stop()
