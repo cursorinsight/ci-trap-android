@@ -1,6 +1,5 @@
 package com.cursorinsight.trap.datasource.gesture.internal
 
-import android.util.Log
 import android.view.ActionMode
 import android.view.KeyEvent
 import android.view.Menu
@@ -11,10 +10,6 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
-import com.cursorinsight.trap.TrapConfig
-import com.cursorinsight.trap.datasource.TrapBluetoothCollector
-import com.cursorinsight.trap.util.TrapBackgroundExecutor
-import com.cursorinsight.trap.util.TrapLogger
 
 typealias TouchHandler = (event: MotionEvent?) -> Unit
 
@@ -52,7 +47,7 @@ class TrapWindowCallback internal constructor(
          * Removes all touch handlers from the window callback.
          */
         fun clear() {
-            touchHandlers.clear();
+            touchHandlers.clear()
         }
     }
 

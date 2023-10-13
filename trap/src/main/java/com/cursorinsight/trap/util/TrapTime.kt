@@ -8,8 +8,8 @@ internal class TrapTime {
     companion object {
         /**
          * Both elapsedRealtime and uptimeMillis are reported relative to the system boot
-         * and we have to report all timestamps in UNIX epoch we have to determine the system
-         * boot time.
+         * and we have to report all timestamps in UNIX epoch. To do that we need the system
+         * boot time in UNIX epoch.
          */
         var bootTime : Long
 
