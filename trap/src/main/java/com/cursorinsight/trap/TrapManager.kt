@@ -16,7 +16,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.core.content.getSystemService
 import com.cursorinsight.trap.datasource.TrapDatasource
-import com.cursorinsight.trap.datasource.TrapMetaDataCollector
+import com.cursorinsight.trap.datasource.TrapMetadataCollector
 import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
 import com.cursorinsight.trap.transport.TrapReporter
 import com.cursorinsight.trap.util.TrapTime
@@ -211,7 +211,7 @@ class TrapManager internal constructor(
      */
     @Suppress("unused")
     fun addCustomMetadata(key: String, value: String) {
-        val metaDataCollector = collectors[TrapMetaDataCollector::class.qualifiedName] as TrapMetaDataCollector?
+        val metaDataCollector = collectors[TrapMetadataCollector::class.qualifiedName] as TrapMetadataCollector?
         metaDataCollector?.addCustom(key, value)
     }
 
@@ -220,7 +220,7 @@ class TrapManager internal constructor(
      */
     @Suppress("unused")
     fun removeCustomMetadata(key: String) {
-        val metaDataCollector = collectors[TrapMetaDataCollector::class.qualifiedName] as TrapMetaDataCollector?
+        val metaDataCollector = collectors[TrapMetadataCollector::class.qualifiedName] as TrapMetadataCollector?
         metaDataCollector?.removeCustom(key)
     }
 

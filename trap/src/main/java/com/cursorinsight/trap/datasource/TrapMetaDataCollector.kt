@@ -13,6 +13,7 @@ import android.os.Environment
 import android.os.StatFs
 import android.provider.Settings
 import android.telephony.TelephonyManager
+import android.util.Log
 import android.webkit.WebSettings
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapBackgroundExecutor
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeUnit
  * @constructor
  * Sets up the data collector.
  */
-class TrapMetaDataCollector (
+class TrapMetadataCollector (
     private val storage: SynchronizedQueue<JSONArray>
 ) : TrapDatasource {
     private val metadataEventType = 11
@@ -73,75 +74,119 @@ class TrapMetaDataCollector (
     }
 
     private fun sendMetadataEvent() {
-        storage.add(with(JSONArray())
-        {
-            put(metadataEventType)
-            put(TrapTime.getCurrentTime())
-            put(with(JSONObject()) {
-                put("build", buildData())
-                put("storage", storageData())
-                put("custom", customMap)
-                put("screen", screenData())
-                put("hardware", hardwareData())
+        try {
+            storage.add(with(JSONArray())
+            {
+                put(metadataEventType)
+                put(TrapTime.getCurrentTime())
+                put(with(JSONObject()) {
+                    put("build", buildData())
+                    put("storage", storageData())
+                    put("custom", customMap)
+                    put("screen", screenData())
+                    put("hardware", hardwareData())
+                    this
+                })
                 this
             })
-            this
-        })
+        } catch (ex: Exception) {
+            Log.e(
+                TrapMetadataCollector::class.simpleName,
+                "Sending metadata event failed",
+                ex
+            )
+        }
     }
 
     private fun buildData() : JSONObject {
-        val jsonObject = JSONObject()
-        jsonObject.put("deviceName", deviceName)
-        jsonObject.put("osVersion", osVersion)
-        jsonObject.put("buildVersionCodeName", buildVersionCodeName)
-        jsonObject.put("product", product)
-        jsonObject.put("fingerprint", fingerprint)
-        jsonObject.put("hardware", hardware)
-        jsonObject.put("radioVersion", radioVersion)
-        jsonObject.put("device", device)
-        jsonObject.put("board", board)
-        jsonObject.put("displayVersion", displayVersion)
-        jsonObject.put("buildBrand", buildBrand)
-        jsonObject.put("buildHost", buildHost)
-        jsonObject.put("buildTime", buildTime)
-        jsonObject.put("buildUser", buildUser)
-        jsonObject.put("osVersion", osVersion)
-        jsonObject.put("sdkVersion", sdkVersion)
-        return jsonObject
+        try {
+            val jsonObject = JSONObject()
+            jsonObject.put("deviceName", deviceName)
+            jsonObject.put("osVersion", osVersion)
+            jsonObject.put("buildVersionCodeName", buildVersionCodeName)
+            jsonObject.put("product", product)
+            jsonObject.put("fingerprint", fingerprint)
+            jsonObject.put("hardware", hardware)
+            jsonObject.put("radioVersion", radioVersion)
+            jsonObject.put("device", device)
+            jsonObject.put("board", board)
+            jsonObject.put("displayVersion", displayVersion)
+            jsonObject.put("buildBrand", buildBrand)
+            jsonObject.put("buildHost", buildHost)
+            jsonObject.put("buildTime", buildTime)
+            jsonObject.put("buildUser", buildUser)
+            jsonObject.put("osVersion", osVersion)
+            jsonObject.put("sdkVersion", sdkVersion)
+            return jsonObject
+        } catch (ex: Exception) {
+            Log.e(
+                TrapMetadataCollector::class.simpleName,
+                "Collecting build data failed",
+                ex
+            )
+        }
+        return JSONObject()
     }
 
     private fun storageData() : JSONObject {
-        val jsonObject = JSONObject()
-        jsonObject.put("totalRAM", totalRAM)
-        jsonObject.put("totalExternalMemorySize", totalExternalMemorySize)
-        jsonObject.put("availableExternalMemorySize", availableExternalMemorySize)
-        jsonObject.put("totalInternalMemorySize", totalInternalMemorySize)
-        jsonObject.put("availableInternalMemorySize", availableInternalMemorySize)
-        return jsonObject
+        try {
+            val jsonObject = JSONObject()
+            jsonObject.put("totalRAM", totalRAM)
+            jsonObject.put("totalExternalMemorySize", totalExternalMemorySize)
+            jsonObject.put("availableExternalMemorySize", availableExternalMemorySize)
+            jsonObject.put("totalInternalMemorySize", totalInternalMemorySize)
+            jsonObject.put("availableInternalMemorySize", availableInternalMemorySize)
+            return jsonObject
+        } catch (ex: Exception) {
+            Log.e(
+                TrapMetadataCollector::class.simpleName,
+                "Collecting storage data failed",
+                ex
+            )
+        }
+        return JSONObject()
     }
 
     private fun screenData() : JSONObject {
-        val jsonObject = JSONObject()
-        jsonObject.put("screenDensity", screenDensity)
-        jsonObject.put("screenHeight", screenHeight)
-        jsonObject.put("screenWidth", screenWidth)
-        jsonObject.put("orientation", orientation)
-        return jsonObject
+        try {
+            val jsonObject = JSONObject()
+            jsonObject.put("screenDensity", screenDensity)
+            jsonObject.put("screenHeight", screenHeight)
+            jsonObject.put("screenWidth", screenWidth)
+            jsonObject.put("orientation", orientation)
+            return jsonObject
+        } catch (ex: Exception) {
+            Log.e(
+                TrapMetadataCollector::class.simpleName,
+                "Collecting screen data failed",
+                ex
+            )
+        }
+        return JSONObject()
     }
 
     private fun hardwareData() : JSONObject {
-        val jsonObject = JSONObject()
-        jsonObject.put("androidId", androidId)
-        jsonObject.put("locale", deviceLocale)
-        jsonObject.put("userAgent", userAgent)
-        jsonObject.put("deviceRingerMode", deviceRingerMode)
-        jsonObject.put("phoneType", phoneType)
-        jsonObject.put("operator", operator)
-        jsonObject.put("isSimNetworkLocked", isSimNetworkLocked)
-        jsonObject.put("isNfcEnabled", isNfcEnabled)
-        jsonObject.put("isNfcPresent", isNfcPresent)
-        jsonObject.put("isWifiEnabled", isWifiEnabled)
-        return jsonObject
+        try {
+            val jsonObject = JSONObject()
+            jsonObject.put("androidId", androidId)
+            jsonObject.put("locale", deviceLocale)
+            jsonObject.put("userAgent", userAgent)
+            jsonObject.put("deviceRingerMode", deviceRingerMode)
+            jsonObject.put("phoneType", phoneType)
+            jsonObject.put("operator", operator)
+            jsonObject.put("isSimNetworkLocked", isSimNetworkLocked)
+            jsonObject.put("isNfcEnabled", isNfcEnabled)
+            jsonObject.put("isNfcPresent", isNfcPresent)
+            jsonObject.put("isWifiEnabled", isWifiEnabled)
+            return jsonObject
+        } catch (ex: Exception) {
+            Log.e(
+                TrapMetadataCollector::class.simpleName,
+                "Collecting hardware data failed",
+                ex
+            )
+        }
+        return JSONObject()
     }
 
     private val deviceName: String

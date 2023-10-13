@@ -3,7 +3,7 @@ package com.cursorinsight.trap
 import android.app.Application
 import com.cursorinsight.trap.datasource.TrapBluetoothCollector
 import com.cursorinsight.trap.datasource.TrapCoarseLocationCollector
-import com.cursorinsight.trap.datasource.TrapMetaDataCollector
+import com.cursorinsight.trap.datasource.TrapMetadataCollector
 import com.cursorinsight.trap.datasource.TrapWiFiCollector
 import com.cursorinsight.trap.datasource.gesture.TrapPointerCollector
 import com.cursorinsight.trap.datasource.gesture.TrapStylusCollector
@@ -38,7 +38,7 @@ data class TrapConfig(
         collectCoalescedStylusEvents = false,
         collectCoalescedTouchEvents = false,
         collectors = mutableListOf(
-            TrapMetaDataCollector::class.qualifiedName,
+            TrapMetadataCollector::class.qualifiedName,
             TrapCoarseLocationCollector::class.qualifiedName,
             TrapPointerCollector::class.qualifiedName,
             TrapStylusCollector::class.qualifiedName,
@@ -54,7 +54,7 @@ data class TrapConfig(
         collectCoalescedStylusEvents = false,
         collectCoalescedTouchEvents = false,
         collectors = mutableListOf(
-            TrapMetaDataCollector::class.qualifiedName,
+            TrapMetadataCollector::class.qualifiedName,
             TrapCoarseLocationCollector::class.qualifiedName,
             TrapPointerCollector::class.qualifiedName,
             TrapStylusCollector::class.qualifiedName,
@@ -218,7 +218,7 @@ data class TrapConfig(
             TrapTouchCollector::class.qualifiedName,
             TrapWiFiCollector::class.qualifiedName,
             TrapBatteryCollector::class.qualifiedName,
-            TrapMetaDataCollector::class.qualifiedName,
+            TrapMetadataCollector::class.qualifiedName,
         ).filterNotNull(),
     )
 
