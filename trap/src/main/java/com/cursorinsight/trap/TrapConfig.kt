@@ -1,17 +1,20 @@
 package com.cursorinsight.trap
 
+import android.app.Application
 import com.cursorinsight.trap.datasource.TrapBluetoothCollector
 import com.cursorinsight.trap.datasource.TrapCoarseLocationCollector
+import com.cursorinsight.trap.datasource.TrapMetadataCollector
 import com.cursorinsight.trap.datasource.TrapWiFiCollector
 import com.cursorinsight.trap.datasource.gesture.TrapPointerCollector
 import com.cursorinsight.trap.datasource.gesture.TrapStylusCollector
 import com.cursorinsight.trap.datasource.gesture.TrapTouchCollector
+import com.cursorinsight.trap.datasource.hardware.TrapBatteryCollector
 import com.cursorinsight.trap.datasource.sensor.TrapAccelerometerCollector
 import com.cursorinsight.trap.datasource.sensor.TrapGravityCollector
 import com.cursorinsight.trap.datasource.sensor.TrapGyroscopeCollector
 import com.cursorinsight.trap.datasource.sensor.TrapMagnetometerCollector
+import java.io.File
 import java.util.UUID
-import kotlin.reflect.KClass
 
 /**
  * The global configuration for the library.
@@ -23,27 +26,48 @@ data class TrapConfig(
     var reporter: Reporter = Reporter(),
 
     /**
+     * Default data collection options.
+     */
+    var defaultDataCollection: DataCollection = DataCollection(),
+
+    /**
+     * Limited data collection in case of low battery
+     */
+    var lowBatteryDataCollection: DataCollection = DataCollection(
+        collectCoalescedPointerEvents = false,
+        collectCoalescedStylusEvents = false,
+        collectCoalescedTouchEvents = false,
+        collectors = mutableListOf(
+            TrapMetadataCollector::class.qualifiedName,
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName).filterNotNull()
+    ),
+
+    /**
+     * Limited data collection in case of low battery
+     */
+    var lowDataDataCollection: DataCollection = DataCollection(
+        collectCoalescedPointerEvents = false,
+        collectCoalescedStylusEvents = false,
+        collectCoalescedTouchEvents = false,
+        collectors = mutableListOf(
+            TrapMetadataCollector::class.qualifiedName,
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName).filterNotNull()
+    ),
+
+    /**
      * The size of the circular data queue.
      */
     var queueSize: Int = 2048,
 
-    /**
-     * The list of collectors to start at initialization.
-     */
-    var collectors: List<KClass<*>> = mutableListOf(
-        TrapAccelerometerCollector::class,
-        TrapBluetoothCollector::class,
-        TrapGravityCollector::class,
-        TrapGyroscopeCollector::class,
-        TrapCoarseLocationCollector::class,
-        TrapMagnetometerCollector::class,
-        TrapPointerCollector::class,
-        TrapStylusCollector::class,
-        TrapTouchCollector::class,
-        TrapWiFiCollector::class,
-    ),
 ) {
-
     /**
      * The configuration for the reporter task serializing
      * and sending the collected data through the transport.
@@ -61,7 +85,7 @@ data class TrapConfig(
 
         /**
          * Whether to cache data packets on the device
-         * when conntection to the remote server cannot be
+         * when connection to the remote server cannot be
          * established.
          */
         var cachedTransport: Boolean = true,
@@ -94,5 +118,115 @@ data class TrapConfig(
          * in milliseconds.
          */
         var readTimeout: Int = 500,
-    ) {}
+
+        /**
+         * Whether to compress the data sent to the server.
+         * If true GZIP compression is used.
+         */
+        var compress: Boolean = false,
+
+        /**
+         * Name of the api key sent in the HTTP header
+         */
+        var apiKeyName: String = "graboxy-api-key",
+
+        /**
+         * Value of the api key sent in the HTTP header
+         */
+        var apiKeyValue: String = "api-key-value"
+    )
+
+    data class DataCollection(
+
+        /**
+         * Maximum number of log messages per collector if the collector uses log throttling
+         */
+        var maxNumberOfLogMessagesPerMinute: Int = 100,
+
+        /**
+         * How frequent the sampling of the given sensor should be.
+         */
+        var accelerationSamplingPeriodMs: Int = 10,
+
+        /**
+         * How long the sensor can cache reported events.
+         */
+        var accelerationMaxReportLatencyMs: Int = 200,
+
+        /**
+         * How frequent the sampling of the given sensor should be.
+         */
+        var gyroscopeSamplingPeriodMs: Int = 10,
+
+        /**
+         * How long the sensor can cache reported events.
+         */
+        var gyroscopeMaxReportLatencyMs: Int = 200,
+
+        /**
+         * How frequent the sampling of the given sensor should be.
+         */
+        var magnetometerSamplingPeriodMs: Int = 10,
+
+        /**
+         * How long the sensor can cache reported events.
+         */
+        var magnetometerMaxReportLatencyMs: Int = 200,
+
+        /**
+         * How frequent the sampling of the given sensor should be.
+         */
+        var gravitySamplingPeriodMs: Int = 10,
+
+        /**
+         * How long the sensor can cache reported events.
+         */
+        var gravityMaxReportLatencyMs: Int = 200,
+
+        /**
+         * Collect coalesced pointer events
+         */
+        var collectCoalescedPointerEvents: Boolean = true,
+
+        /**
+         * Collect coalesced stylus events
+         */
+        var collectCoalescedStylusEvents: Boolean = true,
+
+        /**
+         * Collect coalesced touch events
+         */
+        var collectCoalescedTouchEvents: Boolean = true,
+
+        /**
+         * The time interval metadata events are reported.
+         */
+        var metadataSubmissionInterval: Long = 60_000,
+
+        /**
+         * The list of collectors to start at initialization.
+         */
+        var collectors: List<String> = mutableListOf(
+            TrapAccelerometerCollector::class.qualifiedName,
+            TrapBluetoothCollector::class.qualifiedName,
+            TrapGravityCollector::class.qualifiedName,
+            TrapGyroscopeCollector::class.qualifiedName,
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapMagnetometerCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapWiFiCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName,
+            TrapMetadataCollector::class.qualifiedName,
+        ).filterNotNull(),
+    )
+
+    fun initSessionId(application: Application) {
+        val file = File(application.filesDir, "my-session.id")
+        if (!file.exists()) {
+            file.writeText(UUID.randomUUID().toString())
+        }
+        reporter.sessionId = UUID.fromString(file.readText())
+    }
 }

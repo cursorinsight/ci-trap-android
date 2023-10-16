@@ -9,6 +9,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
+import android.os.SystemClock
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.cursorinsight.trap.TrapConfig
@@ -29,11 +30,20 @@ import org.json.JSONArray
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class TrapWifiCollectorTest {
+
+    @BeforeEach
+    fun setUp() {
+        mockkStatic(SystemClock::class)
+        every { SystemClock.elapsedRealtime() } returns 0
+        every { SystemClock.uptimeMillis() } returns 0
+    }
+
     @AfterEach
     fun tearDown() {
         unmockkAll()
@@ -71,9 +81,9 @@ class TrapWifiCollectorTest {
         }
 
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapWiFiCollector(storage, TrapConfig())
+        val collector = TrapWiFiCollector(storage)
 
-        collector.start(activity)
+        collector.start(activity, TrapConfig.DataCollection())
         Assertions.assertSame(storage.size, 1)
         val record1 = storage.first()
         assert(record1.getInt(0) == 107)

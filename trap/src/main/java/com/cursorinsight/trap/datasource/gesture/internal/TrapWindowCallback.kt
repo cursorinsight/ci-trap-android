@@ -1,6 +1,5 @@
 package com.cursorinsight.trap.datasource.gesture.internal
 
-import android.util.Log
 import android.view.ActionMode
 import android.view.KeyEvent
 import android.view.Menu
@@ -11,9 +10,6 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
-import com.cursorinsight.trap.datasource.TrapBluetoothCollector
-import com.cursorinsight.trap.util.TrapBackgroundExecutor
-import com.cursorinsight.trap.util.TrapLogger
 
 typealias TouchHandler = (event: MotionEvent?) -> Unit
 
@@ -27,8 +23,6 @@ typealias TouchHandler = (event: MotionEvent?) -> Unit
 class TrapWindowCallback internal constructor(
     private val underlying: Window.Callback
 ): Window.Callback {
-    private val logger = TrapLogger()
-
     companion object {
         // The set of touch handlers to notify
         private var touchHandlers = mutableListOf<TouchHandler>()
@@ -53,20 +47,12 @@ class TrapWindowCallback internal constructor(
          * Removes all touch handlers from the window callback.
          */
         fun clear() {
-            touchHandlers.clear();
+            touchHandlers.clear()
         }
     }
 
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
-        try {
-            touchHandlers.forEach { it(event) }
-        } catch (ex: Exception) {
-            logger.logException(
-                TrapWindowCallback::class.simpleName,
-                "Processing touch event failed",
-                ex
-            )
-        }
+        touchHandlers.forEach { it(event) }
         return underlying.dispatchTouchEvent(event)
     }
 

@@ -1,6 +1,7 @@
 package com.cursorinsight.trap.datasource.gesture
 
 import android.app.Activity
+import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import android.view.Window
@@ -26,6 +27,8 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 @Suppress("SameParameterValue")
 @ExtendWith(MockKExtension::class)
@@ -42,6 +45,20 @@ class TouchCollectorTest {
     @BeforeEach
     fun setUp() {
         windowCallback = TrapWindowCallback(initialWindowCallback)
+
+        mockkStatic(SystemClock::class)
+        every { SystemClock.elapsedRealtime() } returns 0
+        every { SystemClock.uptimeMillis() } returns 0
+
+        mockkStatic(Log::class)
+        every { Log.v(any(), any()) } returns 0
+        every { Log.d(any(), any()) } returns 0
+        every { Log.i(any(), any()) } returns 0
+        every { Log.e(any(), any()) } returns 0
+        every { Log.w(ofType(String::class), ofType(String::class)) } returns 0
+
+        mockkObject(TrapBackgroundExecutor)
+        every { TrapBackgroundExecutor.run(capture(command)) } returns Unit
     }
 
     @AfterEach
@@ -65,6 +82,7 @@ class TouchCollectorTest {
         every { event.getPointerId(any()) } returns fingerId
         every { event.actionIndex } returns 0
         every { event.eventTime } returns time
+        every { event.getHistoricalEventTime(any()) } returns time
         every { event.rawX } returns x
         every { event.rawY } returns y
         every { event.pressure } returns pressure
@@ -72,8 +90,10 @@ class TouchCollectorTest {
         every { event.findPointerIndex(any()) } returns 0
         every { event.getX(any()) } returns x
         every { event.getY(any()) } returns y
+        every { event.getPressure(any()) } returns pressure
+        every { event.getTouchMajor(any()) } returns touchMajor
         every { event.pointerCount } returns 1
-        every { event.historySize } returns 1
+        every { event.historySize } returns 2
         every { event.getHistoricalX(any(), any()) } returns x
         every { event.getHistoricalY(any(), any()) } returns y
         every { event.getHistoricalPressure(any(), any()) } returns pressure
@@ -82,11 +102,17 @@ class TouchCollectorTest {
         return event
     }
 
-    @Test
-    fun `test touch data is collected`(@MockK activity: Activity) {
+    @ParameterizedTest
+    @CsvSource(
+        "true",
+        "false"
+    )
+    fun `test touch data is collected`(captureCoalescedEvents: Boolean, @MockK activity: Activity) {
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapTouchCollector(storage, TrapConfig())
-        collector.start(activity)
+        val config = TrapConfig.DataCollection()
+        config.collectCoalescedTouchEvents = captureCoalescedEvents
+        val collector = TrapTouchCollector(storage)
+        collector.start(activity, config)
 
         windowCallback.dispatchTouchEvent(
             getEvent(
@@ -107,7 +133,7 @@ class TouchCollectorTest {
         assert(storage.size == 1)
         val el = storage.elementAt(0)
         assert(el.getInt(0) == 100)
-        assert(el.getLong(1) == TrapTime.normalizeMillisecondTime(1L))
+        assert(el.getLong(1) == TrapTime.normalizeUptimeMillisecond(1L))
         assert(el.getInt(2) == 0)
         assert(el.getDouble(3) == 15.0)
         assert(el.getDouble(4) == 35.0)
@@ -134,13 +160,12 @@ class TouchCollectorTest {
         assert(storage.size == 2)
         val el2 = storage.elementAt(1)
         assert(el2.getInt(0) == 100)
-        assert(el2.getLong(1) == TrapTime.normalizeMillisecondTime(1L))
+        assert(el2.getLong(1) == TrapTime.normalizeUptimeMillisecond(1L))
         assert(el2.getInt(2) == 0)
         assert(el2.getDouble(3) == 15.0)
         assert(el2.getDouble(4) == 35.0)
         assert(el2.getDouble(5) == 66.0)
         assert(el2.getDouble(6) == 33.0)
-
 
         windowCallback.dispatchTouchEvent(
             getEvent(
@@ -158,10 +183,10 @@ class TouchCollectorTest {
         command.captured()
         command.clear()
 
-        assert(storage.size == 3)
+        assert(storage.size == if (captureCoalescedEvents) 4 else 3)
         val el3 = storage.elementAt(2)
         assert(el3.getInt(0) == 101)
-        assert(el3.getLong(1) == TrapTime.normalizeMillisecondTime(1L))
+        assert(el3.getLong(1) == TrapTime.normalizeUptimeMillisecond(1L))
         assert(el3.getInt(2) == 0)
         assert(el3.getDouble(3) == 15.0)
         assert(el3.getDouble(4) == 35.0)
@@ -184,10 +209,10 @@ class TouchCollectorTest {
         command.captured()
         command.clear()
 
-        assert(storage.size == 4)
-        val el4 = storage.elementAt(3)
+        assert(storage.size == if (captureCoalescedEvents) 5 else 4)
+        val el4 = storage.elementAt(if (captureCoalescedEvents) 4 else 3)
         assert(el4.getInt(0) == 102)
-        assert(el4.getLong(1) == TrapTime.normalizeMillisecondTime(1L))
+        assert(el4.getLong(1) == TrapTime.normalizeUptimeMillisecond(1L))
         assert(el4.getInt(2) == 0)
         assert(el4.getDouble(3) == 15.0)
         assert(el4.getDouble(4) == 35.0)
@@ -211,10 +236,10 @@ class TouchCollectorTest {
         command.captured()
         command.clear()
 
-        assert(storage.size == 5)
-        val el5 = storage.elementAt(4)
+        assert(storage.size == if (captureCoalescedEvents) 6 else 5)
+        val el5 = storage.elementAt(if (captureCoalescedEvents) 5 else 4)
         assert(el5.getInt(0) == 102)
-        assert(el5.getLong(1) == TrapTime.normalizeMillisecondTime(1L))
+        assert(el5.getLong(1) == TrapTime.normalizeUptimeMillisecond(1L))
         assert(el5.getInt(2) == 0)
         assert(el5.getDouble(3) == 15.0)
         assert(el5.getDouble(4) == 35.0)
@@ -234,7 +259,7 @@ class TouchCollectorTest {
         )
 
         assert(command.isCaptured == false)
-        assert(storage.size == 5)
+        assert(storage.size == if (captureCoalescedEvents) 6 else 5)
 
         windowCallback.dispatchTouchEvent(
             getEvent(
@@ -249,26 +274,12 @@ class TouchCollectorTest {
         )
 
         assert(command.isCaptured == false)
-        assert(storage.size == 5)
+        assert(storage.size == if (captureCoalescedEvents) 6 else 5)
 
         collector.stop(activity)
     }
 
     companion object {
         var command: CapturingSlot<() -> Unit> = slot()
-
-        @BeforeAll
-        @JvmStatic
-        fun beforeAll() {
-            mockkStatic(Log::class)
-            every { Log.v(any(), any()) } returns 0
-            every { Log.d(any(), any()) } returns 0
-            every { Log.i(any(), any()) } returns 0
-            every { Log.e(any(), any()) } returns 0
-            every { Log.w(ofType(String::class), ofType(String::class)) } returns 0
-
-            mockkObject(TrapBackgroundExecutor)
-            every { TrapBackgroundExecutor.run(capture(command)) } returns Unit
-        }
     }
 }

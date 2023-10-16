@@ -5,9 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import java.io.File
 import java.lang.ref.WeakReference
-import java.util.UUID
 
 /**
  * The Application class you can use in the AndroidManifest.xml
@@ -54,13 +52,20 @@ open class TrapApplication : Application() {
          * @param application The global android Application instance.
          * @return The singletonTrapManager instance.
          */
-        fun initialize(application: Application): TrapManager {
-            if (TrapApplication.application.get() == null) {
-                TrapApplication.application = WeakReference(application)
-                trapManager = TrapManager.getInstance(application, getConfig(application))
-            }
-
-            return trapManager
+        fun initialize(application: Application) {
+            Thread {
+                try {
+                    if (TrapApplication.application.get() == null) {
+                        TrapApplication.application = WeakReference(application)
+                        trapManager = TrapManager.getInstance(application, getConfig(application))
+                    }
+                } catch (e: Exception) {
+                    Log.e(
+                        TrapApplication::class.simpleName,
+                        "Could not initialize the application"
+                    )
+                }
+            }.start()
         }
 
         /**
@@ -71,11 +76,7 @@ open class TrapApplication : Application() {
          */
         private fun getConfig(application: Application): TrapConfig {
             val info = getMetadata()?.getString("trap:config") ?: return with(TrapConfig()) {
-                val file = File(application.filesDir, "trap-session.id")
-                if (!file.exists()) {
-                    file.writeText(UUID.randomUUID().toString())
-                }
-                reporter.sessionId = UUID.fromString(file.readText())
+                this.initSessionId(application)
                 this
             }
             val provider = try {

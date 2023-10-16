@@ -18,8 +18,8 @@ import android.os.Build
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.cursorinsight.trap.TrapConfig
-import com.cursorinsight.trap.TrapManager
 import com.cursorinsight.trap.util.TrapPermissionActivity
+import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
 
@@ -30,12 +30,9 @@ import org.json.JSONArray
  * @property storage The data frame queue.
  * @constructor
  * Sets up the data collector.
- *
- * @param config The library config instance.
  */
 class TrapWiFiCollector(
-    private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    private val storage: SynchronizedQueue<JSONArray>
 ): TrapDatasource {
     /**
      * The Trap event type for wifi
@@ -98,7 +95,7 @@ class TrapWiFiCollector(
         val results = wifiManager?.scanResults
         with(JSONArray()) {
             put(wifiEventType)
-            put(System.currentTimeMillis())
+            put(TrapTime.getCurrentTime())
             put(with(JSONArray()) {
                 results?.forEach {result ->
                     put(with(JSONArray()) {
@@ -122,7 +119,7 @@ class TrapWiFiCollector(
         }
     }
 
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
         wifiManager = activity.getSystemService(WIFI_SERVICE) as WifiManager
         connectivityManager = activity.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
 

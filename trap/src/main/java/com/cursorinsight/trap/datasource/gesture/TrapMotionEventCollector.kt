@@ -6,6 +6,7 @@ import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
 import com.cursorinsight.trap.util.TrapBackgroundExecutor
+import com.cursorinsight.trap.util.TrapLogger
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
 
@@ -15,33 +16,44 @@ import org.json.JSONArray
  * @property storage The data frame queue.
  * @constructor
  * Sets up the data collector.
- *
- * @param config The library config instance.
  */
 abstract class TrapMotionEventCollector(
-    private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    private val storage: SynchronizedQueue<JSONArray>
 ): TrapDatasource {
+    protected var config: TrapConfig.DataCollection? = null
+    internal lateinit var logger: TrapLogger
+
     @OptIn(ExperimentalStdlibApi::class)
     val handler = { event: MotionEvent? ->
-        if (event != null) {
-            val frames = mutableListOf<JSONArray>()
+        try {
+            if (event != null) {
+                val frames = mutableListOf<JSONArray>()
 
-            processEvent(frames, event)
+                processEvent(frames, event)
 
-            if (frames.isNotEmpty()) {
-                TrapBackgroundExecutor.run {
-                    for (frame in frames) {
-                        storage.add(frame)
+                if (frames.isNotEmpty()) {
+                    TrapBackgroundExecutor.run {
+                        for (frame in frames) {
+                            storage.add(frame)
+                        }
                     }
                 }
             }
+        }
+        catch (ex: Exception) {
+            logger.logException(
+                TrapWindowCallback::class.simpleName,
+                "Processing touch event failed",
+                ex
+            )
         }
     }
 
     abstract fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent)
 
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
+        this.config = config
+        logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
         TrapWindowCallback.addTouchHandler(handler)
     }
 

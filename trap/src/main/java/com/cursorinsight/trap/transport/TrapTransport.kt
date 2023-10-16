@@ -1,5 +1,6 @@
 package com.cursorinsight.trap.transport
 
+import com.cursorinsight.trap.TrapConfig
 import java.net.URI
 import kotlin.jvm.Throws
 
@@ -15,7 +16,7 @@ internal interface TrapTransport {
      *
      * @param url The url to initialize this transport method with.
      */
-    fun start(url: URI)
+    fun start(url: URI, config: TrapConfig.Reporter)
 
     /**
      * Terminate this transport mechanism.

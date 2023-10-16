@@ -1,11 +1,10 @@
 package com.cursorinsight.trap.transport
 
 import android.content.Context
-import android.os.Build
 import android.util.Log
-import com.cursorinsight.trap.BuildConfig
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapBackgroundExecutor
+import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
 import org.json.JSONObject
@@ -53,7 +52,6 @@ internal class TrapReporter(
      */
     private var sequenceId: Long = 0
 
-
     /**
      * Start the reporter task and all
      * necessary underlying systems.
@@ -66,10 +64,7 @@ internal class TrapReporter(
                     .replace("{sessionId}", sessionId.toString(), true)
             )
             val underlyingTransport = when (url.scheme) {
-                "http", "https" -> TrapHttpTransport(
-                    config.reporter.connectTimeout,
-                    config.reporter.readTimeout
-                )
+                "http", "https" -> TrapHttpTransport()
 
                 "ws", "wss" -> TrapWebsocketTransport()
                 else -> throw IllegalArgumentException("Unknown transport scheme $url")
@@ -83,7 +78,7 @@ internal class TrapReporter(
             } else {
                 underlyingTransport
             }
-            transport?.start(url)
+            transport?.start(url, config.reporter)
 
             task = TrapBackgroundExecutor.runScheduled({
                 // Safety first: In case the background reporter
@@ -102,19 +97,14 @@ internal class TrapReporter(
 
                     packet.sortBy { it.get(1) as? Long }
 
-                    packet.add(0, metadata())
                     packet.add(0, header())
                     JSONArray(packet)
                 }
 
                 try {
-                    if (packet.length() > 2) {
+                    if (packet.length() > 1) {
                         transport?.send(
-                            if (BuildConfig.DEBUG) {
-                                packet.toString(4)
-                            } else {
-                                packet.toString()
-                            }
+                            packet.toString()
                         )
                     }
                 } catch (ex: Exception) {
@@ -133,7 +123,6 @@ internal class TrapReporter(
     fun stop() {
         task?.cancel(true)
         task = null
-
         transport?.stop()
     }
 
@@ -147,33 +136,12 @@ internal class TrapReporter(
         val headerEventType = -1
         return with(JSONArray()) {
             put(headerEventType)
-            put(System.currentTimeMillis())
+            put(TrapTime.getCurrentTime())
             put(sessionId.toString())
             put(streamId.toString())
             put(sequenceId++)
             put(with(JSONObject()) {
                 put("version", "20230706T094422Z")
-                this
-            })
-            this
-        }
-    }
-
-    /**
-     * Generates the metadata frame for the next
-     * data packet.
-     *
-     * @return The metadata data frame.
-     */
-    private fun metadata(): JSONArray {
-        val metadataEventType = 11
-        return with(JSONArray()) {
-            put(metadataEventType)
-            put(System.currentTimeMillis())
-            put(with(JSONObject()) {
-                put("architecture", System.getProperty("os.arch"))
-                put("family", Build.DEVICE)
-                put("version", Build.VERSION.RELEASE)
                 this
             })
             this

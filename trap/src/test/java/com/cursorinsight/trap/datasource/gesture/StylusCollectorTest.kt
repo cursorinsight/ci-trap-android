@@ -1,6 +1,7 @@
 package com.cursorinsight.trap.datasource.gesture
 
 import android.app.Activity
+import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import android.view.Window
@@ -26,6 +27,8 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 @Suppress("SameParameterValue")
 @ExtendWith(MockKExtension::class)
@@ -42,6 +45,20 @@ class StylusCollectorTest {
     @BeforeEach
     fun setUp() {
         windowCallback = TrapWindowCallback(initialWindowCallback)
+
+        mockkStatic(SystemClock::class)
+        every { SystemClock.elapsedRealtime() } returns 0
+        every { SystemClock.uptimeMillis() } returns 0
+
+        mockkStatic(Log::class)
+        every { Log.v(any(), any()) } returns 0
+        every { Log.d(any(), any()) } returns 0
+        every { Log.i(any(), any()) } returns 0
+        every { Log.e(any(), any()) } returns 0
+        every { Log.w(ofType(String::class), ofType(String::class)) } returns 0
+
+        mockkObject(TrapBackgroundExecutor)
+        every { TrapBackgroundExecutor.run(capture(command)) } returns Unit
     }
 
     @AfterEach
@@ -74,7 +91,7 @@ class StylusCollectorTest {
         every { event.getAxisValue(MotionEvent.AXIS_TILT) } returns axis
         every { event.getX(any()) } returns x
         every { event.getY(any()) } returns y
-        every { event.historySize } returns 1
+        every { event.historySize } returns 2
         every { event.getHistoricalAxisValue(MotionEvent.AXIS_TILT, any()) } returns axis
         every { event.getHistoricalOrientation(any()) } returns orientation
         every { event.getHistoricalPressure(any()) } returns pressure
@@ -83,12 +100,18 @@ class StylusCollectorTest {
         return event
     }
 
-    @Test
-    fun `test stylus collection`() {
+    @ParameterizedTest
+    @CsvSource(
+        "true",
+        "false"
+    )
+    fun `test stylus collection`(captureCoalescedEvents: Boolean) {
         val activity: Activity = mockk()
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapStylusCollector(storage, TrapConfig())
-        collector.start(activity)
+        val config = TrapConfig.DataCollection()
+        config.collectCoalescedStylusEvents = captureCoalescedEvents
+        val collector = TrapStylusCollector(storage)
+        collector.start(activity, config)
 
         windowCallback.dispatchTouchEvent(
             getEvent(
@@ -107,7 +130,7 @@ class StylusCollectorTest {
         Assertions.assertEquals(storage.size, 1)
         val el = storage.elementAt(0)
         Assertions.assertEquals(el.getInt(0), 110)
-        Assertions.assertEquals(el.getLong(1), TrapTime.normalizeMillisecondTime(1L))
+        Assertions.assertEquals(el.getLong(1), TrapTime.normalizeUptimeMillisecond(1L))
         assert(el.getDouble(2) == 15.0)
         assert(el.getDouble(3) == 35.0)
         Assertions.assertEquals(el.getDouble(4), 1.0)
@@ -128,10 +151,10 @@ class StylusCollectorTest {
 
         assert(command.isCaptured)
         command.captured()
-        Assertions.assertEquals(storage.size, 2)
+        Assertions.assertEquals(storage.size, if (captureCoalescedEvents) 3 else 2)
         val el2 = storage.elementAt(1)
         Assertions.assertEquals(el2.getInt(0), 111)
-        Assertions.assertEquals(el2.getLong(1), TrapTime.normalizeMillisecondTime(11L))
+        Assertions.assertEquals(el2.getLong(1), TrapTime.normalizeUptimeMillisecond(11L))
         Assertions.assertEquals(el2.getDouble(2), 115.0)
         Assertions.assertEquals(el2.getDouble(3), 135.0)
         Assertions.assertEquals(el2.getDouble(4), 1.0)
@@ -152,10 +175,10 @@ class StylusCollectorTest {
 
         assert(command.isCaptured)
         command.captured()
-        Assertions.assertEquals(storage.size, 3)
-        val el3 = storage.elementAt(2)
+        Assertions.assertEquals(storage.size, if (captureCoalescedEvents) 4 else 3)
+        val el3 = storage.elementAt(if (captureCoalescedEvents) 3 else 2)
         Assertions.assertEquals(el3.getInt(0), 112)
-        Assertions.assertEquals(el3.getLong(1), TrapTime.normalizeMillisecondTime(111L))
+        Assertions.assertEquals(el3.getLong(1), TrapTime.normalizeUptimeMillisecond(111L))
         Assertions.assertEquals(el3.getDouble(2), 1115.0)
         Assertions.assertEquals(el3.getDouble(3), 1135.0)
         Assertions.assertEquals(el3.getDouble(4), 1.0)
@@ -168,18 +191,5 @@ class StylusCollectorTest {
     companion object {
         var command: CapturingSlot<() -> Unit> = slot()
 
-        @BeforeAll
-        @JvmStatic
-        fun beforeAll() {
-            mockkStatic(Log::class)
-            every { Log.v(any(), any()) } returns 0
-            every { Log.d(any(), any()) } returns 0
-            every { Log.i(any(), any()) } returns 0
-            every { Log.e(any(), any()) } returns 0
-            every { Log.w(ofType(String::class), ofType(String::class)) } returns 0
-
-            mockkObject(TrapBackgroundExecutor)
-            every { TrapBackgroundExecutor.run(capture(command)) } returns Unit
-        }
     }
 }

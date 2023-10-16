@@ -1,10 +1,15 @@
 package com.cursorinsight.trap
 
 import android.app.Application
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkRequest
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -32,6 +37,7 @@ class TrapApplicationTest {
         application = mockkClass(Application::class)
         every { application.packageName } returns "com.cursorinsight.trap"
         every { application.registerActivityLifecycleCallbacks(any()) } returns Unit
+        every { application.registerReceiver(any(), any()) } returns Intent()
         every { application.packageManager } answers {
             val packageManager = mockkClass(PackageManager::class)
 
@@ -48,6 +54,23 @@ class TrapApplicationTest {
             packageManager
         }
         every { application.filesDir } returns File(tempDir)
+        every { application.getSystemService("connectivity") } answers {
+            val manager = mockkClass(ConnectivityManager::class)
+            every { manager.registerNetworkCallback(any(), any<ConnectivityManager.NetworkCallback>()) } returns Unit
+            every { manager.unregisterNetworkCallback(any(ConnectivityManager.NetworkCallback::class)) } returns Unit
+            manager
+        }
+        val networkRequestBuilder = mockkClass(NetworkRequest.Builder::class)
+        val networkRequest = mockkClass(NetworkRequest::class)
+        mockkConstructor(NetworkRequest.Builder::class)
+
+        every { anyConstructed<NetworkRequest.Builder>().addCapability(any()) } returns networkRequestBuilder
+        every { networkRequestBuilder.addTransportType(any()) } returns networkRequestBuilder
+        every { networkRequestBuilder.build() } returns networkRequest
+        mockkStatic(NetworkRequest.Builder::class)
+
+        mockkConstructor(IntentFilter::class)
+        every { anyConstructed<IntentFilter>().addAction(any()) } returns Unit
     }
 
     @AfterEach

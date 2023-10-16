@@ -25,6 +25,7 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapPermissionActivity
+import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
 import java.lang.reflect.Method
@@ -36,12 +37,9 @@ import java.lang.reflect.Method
  * @property storage The data frame queue.
  * @constructor
  * Sets up the data collector.
- *
- * @param config The library config instance.
  */
 class TrapBluetoothCollector(
-    private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    private val storage: SynchronizedQueue<JSONArray>
 ) : TrapDatasource {
     val bluetoothEventType = 108
 
@@ -65,7 +63,7 @@ class TrapBluetoothCollector(
 
                         with(JSONArray()) {
                             put(bluetoothEventType)
-                            put(System.currentTimeMillis())
+                            put(TrapTime.getCurrentTime())
                             put(with(JSONArray()) {
                                 put(with(JSONArray()) {
                                     put(device?.name)
@@ -96,31 +94,38 @@ class TrapBluetoothCollector(
     }
 
     @SuppressLint("MissingPermission")
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
         if (checkPermissions(activity) && activity.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)) {
             val bluetoothManager = activity.getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
 
             val bondedDevices = bluetoothManager.adapter.bondedDevices.toList()
-            with(JSONArray()) {
-                put(bluetoothEventType)
-                put(System.currentTimeMillis())
-                put(with(JSONArray()) {
-                    bondedDevices.forEach { device ->
-                        put(with(JSONArray()) {
-                            put(device?.name ?: "<unknown>")
-                            put(device?.address)
-                            put(if (isConnected(device)) { 3 } else { 2 })
-                            this
-                        })
+            if (bondedDevices.size > 0) {
+                with(JSONArray()) {
+                    put(bluetoothEventType)
+                    put(TrapTime.getCurrentTime())
+                    put(with(JSONArray()) {
+                        bondedDevices.forEach { device ->
+                            put(with(JSONArray()) {
+                                put(device?.name ?: "<unknown>")
+                                put(device?.address)
+                                put(
+                                    if (isConnected(device)) {
+                                        3
+                                    } else {
+                                        2
+                                    }
+                                )
+                                this
+                            })
+                        }
+                        this
+                    })
+                }.let {
+                    if (it.length() > 0) {
+                        storage.add(it)
                     }
-                    this
-                })
-            }.let {
-                if (it.length() > 0) {
-                    storage.add(it)
                 }
             }
-
             activity.registerReceiver(receiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
             registered = true
 

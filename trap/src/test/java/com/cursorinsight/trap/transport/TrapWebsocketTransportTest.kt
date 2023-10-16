@@ -1,6 +1,7 @@
 package com.cursorinsight.trap.transport
 
 import android.util.Log
+import com.cursorinsight.trap.TrapConfig
 import io.mockk.CapturingSlot
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
@@ -43,7 +44,7 @@ class TrapWebsocketTransportTest {
         every { anyConstructed<TrapWebsocketTransport.WebSocket>().send(capture(msg)) } returns Unit
 
         val transport = TrapWebsocketTransport()
-        transport.start(URI.create("ws://localhost"))
+        transport.start(URI.create("ws://localhost"), TrapConfig.Reporter())
 
         transport.send("[[999]]")
         assert(msg.isCaptured)

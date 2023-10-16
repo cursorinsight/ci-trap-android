@@ -1,6 +1,7 @@
 package com.cursorinsight.trap.transport
 
 import android.util.Log
+import com.cursorinsight.trap.TrapConfig
 import java.net.URI
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
@@ -15,8 +16,10 @@ import kotlin.Exception
  * keeps the connection alive with ping control frames if there is
  * no data packets sent within 3 seconds.
  */
-internal class TrapWebsocketTransport(): TrapTransport {
+internal class TrapWebsocketTransport: TrapTransport {
     private var url: URI? = null
+
+    private var config: TrapConfig.Reporter? = null
 
     /**
      * The websocket instance we use to send data packets.
@@ -28,11 +31,13 @@ internal class TrapWebsocketTransport(): TrapTransport {
      */
     private var pingTask: Future<*>? = null
 
-    override fun start(url: URI) {
+    override fun start(url: URI, config: TrapConfig.Reporter) {
         assert(url.scheme.startsWith("ws"))
         this.url = url
+        this.config = config
         websocket = WebSocket(url)
-        websocket?.connectBlocking(500, TimeUnit.MILLISECONDS)
+        websocket?.addHeader(config.apiKeyName, config.apiKeyValue)
+        websocket?.connectBlocking(config.connectTimeout.toLong(), TimeUnit.MILLISECONDS)
         schedulePing()
     }
 
@@ -44,7 +49,12 @@ internal class TrapWebsocketTransport(): TrapTransport {
     override fun send(data: String) {
         if (websocket == null) {
             Log.d(TrapWebsocketTransport::class.simpleName, "send(): Attempting to reconnect")
-            url?.run { start(this) }
+            url?.run {
+                val currentUrl = this
+                config?.run {
+                    start(currentUrl, this)
+                }
+            }
         }
 
         try {

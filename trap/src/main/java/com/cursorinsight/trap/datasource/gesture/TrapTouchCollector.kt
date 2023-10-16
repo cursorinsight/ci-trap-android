@@ -9,7 +9,6 @@ import android.view.MotionEvent.ACTION_POINTER_DOWN
 import android.view.MotionEvent.ACTION_POINTER_UP
 import android.view.MotionEvent.ACTION_UP
 import android.view.MotionEvent.TOOL_TYPE_UNKNOWN
-import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
@@ -21,13 +20,10 @@ import org.json.JSONArray
  * @property storage The data frame queue.
  * @constructor
  * Sets up the data collector.
- *
- * @param config The library config instance.
  */
 class TrapTouchCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
-) : TrapMotionEventCollector(storage, config) {
+) : TrapMotionEventCollector(storage) {
     @OptIn(ExperimentalStdlibApi::class)
     override fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent) {
         if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER || event.getToolType(0) == TOOL_TYPE_UNKNOWN) {
@@ -36,7 +32,7 @@ class TrapTouchCollector(
                     val fingerId = event.getPointerId(event.actionIndex)
                     val frame = JSONArray()
                     frame.put(TouchState.START.state)
-                    frame.put(TrapTime.normalizeMillisecondTime(event.eventTime))
+                    frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
                     frame.put(fingerId)
                     frame.put(event.rawX)
                     frame.put(event.rawY)
@@ -49,7 +45,7 @@ class TrapTouchCollector(
                     val fingerId = event.getPointerId(event.actionIndex)
                     val frame = JSONArray()
                     frame.put(TouchState.START.state)
-                    frame.put(TrapTime.normalizeMillisecondTime(event.eventTime))
+                    frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
                     frame.put(fingerId)
                     frame.put(event.getX(event.findPointerIndex(fingerId)))
                     frame.put(event.getY(event.findPointerIndex(fingerId)))
@@ -61,15 +57,29 @@ class TrapTouchCollector(
                 ACTION_MOVE -> {
                     for (idx in 0..<event.pointerCount) {
                         val fingerId = event.getPointerId(idx)
-                        for (pos in 0..<event.historySize) {
+                        if (config?.collectCoalescedTouchEvents == true && event.historySize > 0) {
+                            for (pos in 0..<event.historySize) {
+                                val frame = JSONArray()
+                                frame.put(TouchState.MOVE.state)
+                                frame.put(TrapTime.normalizeUptimeMillisecond(
+                                    event.getHistoricalEventTime(pos))
+                                )
+                                frame.put(fingerId)
+                                frame.put(event.getHistoricalX(idx, pos))
+                                frame.put(event.getHistoricalY(idx, pos))
+                                frame.put(event.getHistoricalPressure(idx, pos))
+                                frame.put(event.getHistoricalTouchMajor(idx, pos))
+                                frames.add(frame)
+                            }
+                        } else {
                             val frame = JSONArray()
                             frame.put(TouchState.MOVE.state)
-                            frame.put(TrapTime.normalizeMillisecondTime(event.eventTime))
+                            frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
                             frame.put(fingerId)
-                            frame.put(event.getHistoricalX(idx, pos))
-                            frame.put(event.getHistoricalY(idx, pos))
-                            frame.put(event.getHistoricalPressure(idx, pos))
-                            frame.put(event.getHistoricalTouchMajor(idx, pos))
+                            frame.put(event.getX(idx))
+                            frame.put(event.getY(idx))
+                            frame.put(event.getPressure(idx))
+                            frame.put(event.getTouchMajor(idx))
                             frames.add(frame)
                         }
                     }
@@ -79,7 +89,7 @@ class TrapTouchCollector(
                     val fingerId = event.getPointerId(event.actionIndex)
                     val frame = JSONArray()
                     frame.put(TouchState.END.state)
-                    frame.put(TrapTime.normalizeMillisecondTime(event.eventTime))
+                    frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
                     frame.put(fingerId)
                     frame.put(event.rawX)
                     frame.put(event.rawY)
@@ -92,7 +102,7 @@ class TrapTouchCollector(
                     val fingerId = event.getPointerId(event.actionIndex)
                     val frame = JSONArray()
                     frame.put(TouchState.END.state)
-                    frame.put(TrapTime.normalizeMillisecondTime(event.eventTime))
+                    frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
                     frame.put(fingerId)
                     frame.put(event.getX(event.findPointerIndex(fingerId)))
                     frame.put(event.getY(event.findPointerIndex(fingerId)))

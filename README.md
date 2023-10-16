@@ -12,6 +12,8 @@ This library can collect various device and user data, forwarding it to a specif
 * Indirect pointer (mouse)
 * Pencil and stylus
 * Tap gesture
+* Battery status
+* Device specific metadata
 
 ## How to use it
 
@@ -68,11 +70,7 @@ class MyConfig: TrapConfigProvider {
         config.collectors = mutableListOf(TrapCoarseLocationCollector::class)
 
         // Set session id
-        val file = File(application.filesDir, "my-session.id")
-        if (!file.exists()) {
-            file.writeText(UUID.randomUUID().toString())
-        }
-        config.reporter.sessionId = UUID.fromString(file.readText())
+        config.initSessionId(application)
 
         return config
     }
@@ -118,21 +116,41 @@ config.reporter.url = "https://example.com/api/post/{streamId}/{sessionId}"
 config.collectors = mutableListOf(TrapCoarseLocationCollector::class)
 
 // Set session id
-val file = File(application.filesDir, "my-session.id")
-if (!file.exists()) {
-    file.writeText(UUID.randomUUID().toString())
-}
-config.reporter.sessionId = UUID.fromString(file.readText())
-
-// Set session id
-val file = File(application.filesDir, "trap-session.id")
-if (!file.exists()) {
-    file.writeText(UUID.randomUUID().toString())
-}
-config.reporter.sessionId = UUID.fromString(file.readText())
+config.initSessionId(application)
 
 // Instantiate the TrapManager
 trapManager = TrapManager.getInstance(application, config)
+```
+
+### Providing custom metadata
+
+You can add and remove custom metadata (a string key-value pair), that will be sent to the server
+periodically as part of the metadata event.
+
+Adding metadata: 
+
+```kotlin
+trapManager.addCustomMetadata("some-key", "some-value")
+```
+
+Removing metadata: 
+
+```kotlin
+trapManager.removeCustomMetadata("some-key")
+```
+
+### Sending event with custom data
+
+You can add a custom event to the event stream as well. This can contain any JSON serizable data. 
+It will be sent to the server only once, after it is added to the stream.
+
+```kotlin
+trapManager.addCustomEvent(with(JSONObject()) {
+    put("some-key", "some-data")
+    put("numeric-data-key", 2)
+    put("boolean-data-key", false)
+    this
+})
 ```
 
 ### Ask for interactive permissions (if not previously requested) - in both cases

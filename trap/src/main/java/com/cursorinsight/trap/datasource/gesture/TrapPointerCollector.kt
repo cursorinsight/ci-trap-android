@@ -13,7 +13,6 @@ import android.view.MotionEvent.BUTTON_PRIMARY
 import android.view.MotionEvent.BUTTON_SECONDARY
 import android.view.MotionEvent.BUTTON_TERTIARY
 import android.view.MotionEvent.TOOL_TYPE_MOUSE
-import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
@@ -25,13 +24,11 @@ import org.json.JSONArray
  * @property storage The data frame queue.
  * @constructor
  * Sets up the data collector.
- *
- * @param config The library config instance.
  */
 class TrapPointerCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
-): TrapMotionEventCollector(storage, config) {
+): TrapMotionEventCollector(storage) {
+
     @OptIn(ExperimentalStdlibApi::class)
     override fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent) {
         if (event.getToolType(0) == TOOL_TYPE_MOUSE) {
@@ -39,7 +36,7 @@ class TrapPointerCollector(
                 ACTION_POINTER_DOWN, ACTION_DOWN -> {
                     val frame = JSONArray()
                     frame.put(PointerState.START.state)
-                    frame.put(TrapTime.normalizeMillisecondTime(event.eventTime))
+                    frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
                     frame.put(event.rawX)
                     frame.put(event.rawY)
                     frame.put(
@@ -54,12 +51,35 @@ class TrapPointerCollector(
                 }
 
                 ACTION_MOVE -> {
-                    for (pos in 0..<event.historySize) {
+                    if (config?.collectCoalescedPointerEvents == true) {
+                        for (pos in 0..<event.historySize) {
+                            val frame = JSONArray()
+                            frame.put(PointerState.MOVE.state)
+                            frame.put(
+                                TrapTime.normalizeUptimeMillisecond(
+                                    event.getHistoricalEventTime(
+                                        pos
+                                    )
+                                )
+                            )
+                            frame.put(event.getHistoricalX(pos))
+                            frame.put(event.getHistoricalY(pos))
+                            frame.put(
+                                when {
+                                    event.isButtonPressed(BUTTON_PRIMARY) -> 0
+                                    event.isButtonPressed(BUTTON_SECONDARY) -> 1
+                                    event.isButtonPressed(BUTTON_TERTIARY) -> 2
+                                    else -> 999
+                                }
+                            )
+                            frames.add(frame)
+                        }
+                    } else {
                         val frame = JSONArray()
                         frame.put(PointerState.MOVE.state)
-                        frame.put(TrapTime.normalizeMillisecondTime(event.getHistoricalEventTime(pos)))
-                        frame.put(event.getHistoricalX(pos))
-                        frame.put(event.getHistoricalY(pos))
+                        frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
+                        frame.put(event.rawX)
+                        frame.put(event.rawY)
                         frame.put(
                             when {
                                 event.isButtonPressed(BUTTON_PRIMARY) -> 0
@@ -75,7 +95,7 @@ class TrapPointerCollector(
                 ACTION_POINTER_UP, ACTION_UP, ACTION_OUTSIDE, ACTION_CANCEL -> {
                     val frame = JSONArray()
                     frame.put(PointerState.END.state)
-                    frame.put(TrapTime.normalizeMillisecondTime(event.eventTime))
+                    frame.put(TrapTime.normalizeUptimeMillisecond(event.eventTime))
                     frame.put(event.rawX)
                     frame.put(event.rawY)
                     frame.put(

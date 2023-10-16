@@ -9,9 +9,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Paint.Cap
+import android.os.SystemClock
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.cursorinsight.trap.TrapConfig
+import com.cursorinsight.trap.util.TrapTime
 import io.mockk.CapturingSlot
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -29,11 +31,20 @@ import org.json.JSONArray
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class TrapBluetoothCollectorTest {
+
+    @BeforeEach
+    fun setUp() {
+        mockkStatic(SystemClock::class)
+        every { SystemClock.elapsedRealtime() } returns 0
+        every { SystemClock.uptimeMillis() } returns 0
+    }
+
     @AfterEach
     fun tearDown() {
         unmockkAll()
@@ -82,9 +93,9 @@ class TrapBluetoothCollectorTest {
         }
 
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapBluetoothCollector(storage, TrapConfig())
+        val collector = TrapBluetoothCollector(storage)
 
-        collector.start(activity)
+        collector.start(activity, TrapConfig.DataCollection())
         assertSame(storage.size, 1)
         val record1 = storage.first()
         assert(record1.getInt(0) == 108)
@@ -115,6 +126,53 @@ class TrapBluetoothCollectorTest {
         assert(record2device.getString(0) == "Found Device")
         assert(record2device.getString(1) == "FE:DC:BA:98:76:54:32:10")
         assertSame(record2device.getInt(2), 3)
+        collector.stop(activity)
+    }
+
+    @Test
+    fun `test No event when no device`() {
+        mockkStatic(ContextCompat::class)
+        every {
+            ContextCompat.checkSelfPermission(
+                any(),
+                any()
+            )
+        } returns PackageManager.PERMISSION_GRANTED
+
+        var receiver: CapturingSlot<BroadcastReceiver> = slot()
+        var activity = mockkClass(Activity::class)
+        every {
+            activity.registerReceiver(
+                capture(receiver),
+                any(IntentFilter::class)
+            )
+        } returns mockk()
+        every { activity.unregisterReceiver(any(BroadcastReceiver::class)) } returns Unit
+        every { activity.packageManager } answers {
+            val packageManager = mockkClass(PackageManager::class)
+            every { packageManager.hasSystemFeature(any()) } returns true
+            packageManager
+        }
+        every { activity.getSystemService(any(String::class)) } answers {
+            val manager = mockkClass(BluetoothManager::class)
+            every { manager.adapter } answers {
+                val adapter = mockkClass(BluetoothAdapter::class)
+                every { adapter.startDiscovery() } returns true
+                every { adapter.isDiscovering } returns true
+                every { adapter.cancelDiscovery() } returns true
+                every { adapter.bondedDevices } answers {
+                    mutableSetOf<BluetoothDevice>()
+                }
+                adapter
+            }
+            manager
+        }
+
+        val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
+        val collector = TrapBluetoothCollector(storage)
+
+        collector.start(activity, TrapConfig.DataCollection())
+        assertSame(storage.size, 0)
         collector.stop(activity)
     }
 

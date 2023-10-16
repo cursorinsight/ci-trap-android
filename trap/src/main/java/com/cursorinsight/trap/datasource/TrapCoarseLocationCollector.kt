@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapBackgroundExecutor
 import com.cursorinsight.trap.util.TrapPermissionActivity
+import com.cursorinsight.trap.util.TrapTime
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -29,12 +30,9 @@ import org.json.JSONArray
  * @property storage The data frame queue.
  * @constructor
  * Sets up the data collector.
- *
- * @param config The library config instance.
  */
 class TrapCoarseLocationCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
 ): TrapDatasource {
     /**
      * The Trap event type for location
@@ -60,7 +58,7 @@ class TrapCoarseLocationCollector(
             locationResult.locations.forEach {
                 with(JSONArray()) {
                     put(locationEventType)
-                    put(System.currentTimeMillis())
+                    put(TrapTime.getCurrentTime())
                     put(it.latitude)
                     put(it.longitude)
                     put(it.accuracy)
@@ -75,7 +73,7 @@ class TrapCoarseLocationCollector(
     }
 
     @SuppressLint("MissingPermission")
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_LOW_POWER,

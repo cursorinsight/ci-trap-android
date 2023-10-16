@@ -7,7 +7,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.util.TrapLogger
@@ -21,22 +20,19 @@ import org.json.JSONArray
  * @property storage The data frame queue.
  * @constructor
  * Sets up the data collector.
- *
- * @param config The library config instance.
  */
 class TrapGravityCollector(
-    private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
+    private val storage: SynchronizedQueue<JSONArray>
 ): TrapDatasource {
     private val gravityEventType = 105
-    private val logger = TrapLogger()
+    private lateinit var logger : TrapLogger
 
     private val handler = object: SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
             try {
                 val frame = JSONArray()
                 frame.put(gravityEventType)
-                frame.put(TrapTime.normalizeNanosecondTime(event?.timestamp ?: 0))
+                frame.put(TrapTime.normalizeRealTimeNanosecond(event?.timestamp ?: 0))
                 frame.put(event?.values?.get(0))
                 frame.put(event?.values?.get(1))
                 frame.put(event?.values?.get(2))
@@ -53,12 +49,17 @@ class TrapGravityCollector(
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { }
     }
 
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
         if (activity.packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE)) {
+            logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
             val sensorManager = activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
             val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY)
             sensor?.let {
-                sensorManager.registerListener(handler, it, SensorManager.SENSOR_DELAY_GAME)
+                sensorManager.registerListener(
+                    handler,
+                    it,
+                    config.gravitySamplingPeriodMs * 1000,
+                    config.gravityMaxReportLatencyMs * 1000)
             }
         }
     }

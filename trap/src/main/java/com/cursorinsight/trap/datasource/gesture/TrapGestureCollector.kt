@@ -8,6 +8,7 @@ import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.datasource.gesture.internal.TrapWindowCallback
 import com.cursorinsight.trap.util.TrapBackgroundExecutor
+import com.cursorinsight.trap.util.TrapLogger
 import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
@@ -19,27 +20,36 @@ import org.json.JSONArray
  * @property storage The data frame queue.
  * @constructor
  * Sets up the data collector.
- *
- * @param config The library config instance.
  */
 @Suppress("unused")
 class TrapGestureCollector(
     private val storage: SynchronizedQueue<JSONArray>,
-    @Suppress("UNUSED_PARAMETER") config: TrapConfig,
 ) : TrapDatasource, GestureDetector.OnGestureListener {
     private val tapEventType = 122
-
+    private lateinit var logger: TrapLogger
     private lateinit var gestureHandler: GestureDetector
 
     private val handler = { event: MotionEvent? ->
-        if (event != null
-            && (event.source == InputDevice.SOURCE_TOUCHSCREEN || event.source == InputDevice.SOURCE_TOUCHPAD)
-        ) {
-            gestureHandler.onTouchEvent(event)
+        try {
+            if (event != null &&
+                (event.source == InputDevice.SOURCE_TOUCHSCREEN ||
+                 event.source == InputDevice.SOURCE_TOUCHPAD)
+            ) {
+                gestureHandler.onTouchEvent(event)
+            }
         }
+        catch (ex: Exception) {
+            logger.logException(
+                TrapWindowCallback::class.simpleName,
+                "Processing touch event failed",
+                ex
+            )
+        }
+
     }
 
-    override fun start(activity: Activity) {
+    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
+        logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
         gestureHandler = GestureDetector(activity, this)
         TrapWindowCallback.addTouchHandler(handler)
     }
@@ -57,7 +67,7 @@ class TrapGestureCollector(
     override fun onSingleTapUp(p0: MotionEvent): Boolean {
         with(JSONArray()) {
             put(tapEventType)
-            put(TrapTime.normalizeMillisecondTime(p0.eventTime))
+            put(TrapTime.normalizeUptimeMillisecond(p0.eventTime))
             put(p0.rawX)
             put(p0.rawY)
         }.let {
