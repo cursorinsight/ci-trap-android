@@ -67,6 +67,12 @@ data class TrapConfig(
      */
     var queueSize: Int = 2048,
 
+    /**
+     * SessionId filter, if specified the data collection is only enabled
+     * if sessionId <= sessionIdFilter
+     */
+    var sessionIdFilter: String? = null,
+
 ) {
     /**
      * The configuration for the reporter task serializing
@@ -228,5 +234,10 @@ data class TrapConfig(
             file.writeText(UUID.randomUUID().toString())
         }
         reporter.sessionId = UUID.fromString(file.readText())
+    }
+
+    fun isDataCollectionDisabled() : Boolean {
+        val filter = sessionIdFilter
+        return filter != null && reporter.sessionId.toString() > filter
     }
 }
