@@ -169,6 +169,11 @@ class TrapManager internal constructor(
     @Suppress("unused")
     fun run(collector: TrapDatasource) {
         try {
+            if (config.isDataCollectionDisabled()) {
+                Log.i(TrapManager::class.simpleName, "Data collection disabled")
+                return;
+            }
+
             if (!collectors.containsKey(collector.getName())) {
                 reporter.start()
                 val activity = currentActivity?.get()
@@ -243,6 +248,11 @@ class TrapManager internal constructor(
      */
     private fun runAll(activity: Activity) {
         try {
+            if (config.isDataCollectionDisabled()) {
+                Log.i(TrapManager::class.simpleName, "Data collection disabled")
+                return;
+            }
+
             reporter.start()
             buffer.add(startMessage())
             currentDataCollectionConfig = getDataCollectionConfig()
