@@ -65,13 +65,18 @@ data class TrapConfig(
     /**
      * The size of the circular data queue.
      */
-    var queueSize: Int = 2048,
+     var queueSize: Int = 8192,
 
     /**
      * SessionId filter, if specified the data collection is only enabled
      * if sessionId <= sessionIdFilter
      */
     var sessionIdFilter: String? = null,
+
+    /**
+     * Battery charge threshold for low battery status
+     */
+    var lowBatteryThreshold: Float = 10.0f
 
 ) {
     /**
