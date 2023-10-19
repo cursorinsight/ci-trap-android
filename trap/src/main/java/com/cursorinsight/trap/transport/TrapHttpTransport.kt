@@ -8,7 +8,7 @@ import java.io.IOException
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URI
-import java.util.zip.GZIPOutputStream
+import java.util.zip.DeflaterOutputStream
 import javax.net.ssl.HttpsURLConnection
 
 /**
@@ -63,12 +63,23 @@ internal class TrapHttpTransport : TrapTransport {
 
         with(connection) {
             try {
-                val outStream = if (config.compress) GZIPOutputStream(outputStream) else outputStream
-                val writer = BufferedWriter(
-                    OutputStreamWriter(BufferedOutputStream(outStream), "UTF-8"))
-                writer.write(data)
-                writer.flush()
-
+                if (config.compress) {
+                    DeflaterOutputStream(outputStream).use {
+                        val writer = BufferedWriter(OutputStreamWriter(it, "UTF-8"))
+                        writer.write(data)
+                        writer.flush()
+                    }
+                }
+                else {
+                    val writer = BufferedWriter(
+                        OutputStreamWriter(
+                            BufferedOutputStream(outputStream),
+                            "UTF-8"
+                        )
+                    )
+                    writer.write(data)
+                    writer.flush()
+                }
                 if (responseCode !in 200..299) {
                     Log.w(
                         TrapHttpTransport::class.simpleName,
