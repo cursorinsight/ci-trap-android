@@ -36,15 +36,15 @@ class TrapCachedTransportTest {
         val underlying = mockkClass(TrapTransport::class)
         every { underlying.start(any(), any()) } returns Unit
         every { underlying.stop() } returns Unit
-        every { underlying.send(any(String::class))} returns Unit
+        every { underlying.send(any(String::class), any())} returns Unit
 
         val transport = TrapCachedTransport(File(tempDir), 128, underlying)
         transport.start(URI.create("http://localhost"), TrapConfig.Reporter())
         verify(exactly = 1) { underlying.start(any(), any()) }
         transport.stop()
         verify(exactly = 1) { underlying.stop() }
-        transport.send("[[999,12345678]]")
-        verify(exactly = 1) { transport.send("[[999,12345678]]") }
+        transport.send("[[999,12345678]]", false)
+        verify(exactly = 1) { transport.send("[[999,12345678]]", false) }
     }
 
     @Test
@@ -53,17 +53,17 @@ class TrapCachedTransportTest {
         val underlying = mockkClass(TrapTransport::class)
         every { underlying.start(any(), any()) } returns Unit
         every { underlying.stop() } returns Unit
-        every { underlying.send(capture(msg))} throws TrapTransportException() andThen Unit
+        every { underlying.send(capture(msg), any())} throws TrapTransportException() andThen Unit
 
         val transport = TrapCachedTransport(File(tempDir), 128, underlying)
         transport.start(URI.create("http://localhost"), TrapConfig.Reporter())
         verify(exactly = 1) { underlying.start(any(), any()) }
         transport.stop()
         verify(exactly = 1) { underlying.stop() }
-        transport.send("[[999,12345678]]")
+        transport.send("[[999,12345678]]", false)
         assert(msg.isCaptured)
         msg.clear()
-        transport.send("[[888,12345678]]")
+        transport.send("[[888,12345678]]", false)
         assert(msg.isCaptured)
         assert(msg.captured == "[[888,12345678]]")
     }

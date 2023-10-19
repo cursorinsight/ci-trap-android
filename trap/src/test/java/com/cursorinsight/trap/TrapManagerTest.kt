@@ -124,7 +124,7 @@ class TrapManagerTest {
         trapManager.run(collector)
 
         verify(exactly = 1) { collector invoke "start" withArguments listOf(activity, config.defaultDataCollection) }
-        verify(exactly = 2) { anyConstructed<TrapReporter>().start() }
+        verify(exactly = 2) { anyConstructed<TrapReporter>().start(false) }
         verify(exactly = 1) { anyConstructed<CircularFifoQueue<JSONArray>>().add(withArg {
             assert(it.getInt(0) == 130)
             assert(it.getLong(1) > 0)
@@ -164,7 +164,7 @@ class TrapManagerTest {
         trapManager.onActivityResumed(activity)
 
         verify(exactly = 1) { anyConstructed<TrapGravityCollector>().start(activity, config.defaultDataCollection) }
-        verify(exactly = 1) { anyConstructed<TrapReporter>().start() }
+        verify(exactly = 1) { anyConstructed<TrapReporter>().start(false) }
     }
 
     @Test

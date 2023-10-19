@@ -175,7 +175,7 @@ class TrapManager internal constructor(
             }
 
             if (!collectors.containsKey(collector.getName())) {
-                reporter.start()
+                reporter.start(inLowDataMode)
                 val activity = currentActivity?.get()
                 if (activity != null) {
                     collector.start(activity, currentDataCollectionConfig)
@@ -252,8 +252,7 @@ class TrapManager internal constructor(
                 Log.i(TrapManager::class.simpleName, "Data collection disabled")
                 return;
             }
-
-            reporter.start()
+            reporter.start(inLowDataMode)
             buffer.add(startMessage())
             currentDataCollectionConfig = getDataCollectionConfig()
             for (collectorQualifiedName in currentDataCollectionConfig.collectors) {

@@ -74,7 +74,7 @@ class TrapHttpTransportTest {
                 readTimeout = 100,
                 compress = false,
             ))
-        transport.send("[[999]]")
+        transport.send("[[999]]", false)
         assert(writeArray.isCaptured)
         transport.stop()
     }

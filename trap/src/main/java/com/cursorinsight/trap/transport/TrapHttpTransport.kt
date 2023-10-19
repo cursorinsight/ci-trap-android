@@ -42,7 +42,7 @@ internal class TrapHttpTransport : TrapTransport {
         IOException::class,
         TrapTransportException::class
     )
-    override fun send(data: String) {
+    override fun send(data: String, avoidSendingTooMuchData: Boolean) {
         val url = url ?: throw TrapTransportException("URL is not valid")
         val config = config ?: throw TrapTransportException("Config is not valid")
         val raw = url.toURL().openConnection()
@@ -80,13 +80,12 @@ internal class TrapHttpTransport : TrapTransport {
             } catch (ex: IOException) {
                 // Ignore connection errors, we'll handle them in the finally block.
                 // Note: Can't catch SocketTimeoutException, so resorting to this.
-                if (ex.message?.startsWith("failed to connect to") == true
-                    || ex.message?.startsWith("timeout") == true
+                if (!(ex.message?.startsWith("failed to connect to")  == true) &&
+                    !(ex.message?.startsWith("timeout") == true)
                 ) {
-                    throw TrapTransportException()
-                } else {
                     Log.e(TrapHttpTransport::class.simpleName, "Unknown IOException happened", ex)
                 }
+                throw TrapTransportException()
             } finally {
                 disconnect()
             }

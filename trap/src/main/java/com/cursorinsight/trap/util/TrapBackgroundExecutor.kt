@@ -69,7 +69,7 @@ internal class TrapBackgroundExecutor {
             if (schedulerExecutor == null) {
                 schedulerExecutor = Executors.newScheduledThreadPool(1)
             }
-            return schedulerExecutor!!.scheduleAtFixedRate({
+            return schedulerExecutor!!.scheduleWithFixedDelay({
                 try {
                     command.invoke()
                 }

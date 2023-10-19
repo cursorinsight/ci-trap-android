@@ -39,27 +39,20 @@ internal class TrapCachedTransport(
 
     @Throws(Exception::class)
     @OptIn(ExperimentalStdlibApi::class)
-    override fun send(data: String) {
+    override fun send(data: String, avoidSendingTooMuchData : Boolean) {
         try {
             // Attempt to send the cache contents
-            val cached = cache.getAll()
-            if (cached.isNotEmpty()) {
-                val json = cached
-                    .map { JSONArray(it.content()) }
-                    .reduce { acc, jsonArray ->
-                        if (jsonArray.length() > 0) {
-                            for (i in 0..<jsonArray.length()) {
-                                acc.put(jsonArray.get(i))
-                            }
-                        }
-                        acc
+            if (!avoidSendingTooMuchData) {
+                val cached = cache.getAll()
+                if (cached.isNotEmpty()) {
+                    cached.forEach {
+                        underlying.send(it.content(), avoidSendingTooMuchData)
+                        it.delete()
                     }
-                underlying.send(json.toString())
-                cached.forEach { it.delete() }
+                }
             }
-
             // Attempt to send the current data packet
-            underlying.send(data)
+            underlying.send(data, avoidSendingTooMuchData)
         } catch (_: TrapTransportException) {
             // If sending fails at any point, store the data packet
             // in the cache and get back to the called

@@ -46,7 +46,7 @@ class TrapWebsocketTransportTest {
         val transport = TrapWebsocketTransport()
         transport.start(URI.create("ws://localhost"), TrapConfig.Reporter())
 
-        transport.send("[[999]]")
+        transport.send("[[999]]", false)
         assert(msg.isCaptured)
 
         transport.stop()

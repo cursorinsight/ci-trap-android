@@ -29,5 +29,5 @@ internal interface TrapTransport {
      * @param data The contents to send to the server.
      */
     @Throws(TrapTransportException::class)
-    fun send(data: String)
+    fun send(data: String, avoidSendingTooMuchData: Boolean  )
 }

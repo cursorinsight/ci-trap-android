@@ -60,7 +60,7 @@ class TrapReporterTest {
         mockkStatic(Executors::class)
         every { Executors.newScheduledThreadPool(any()) } answers {
             val service = mockkClass(ScheduledExecutorService::class)
-            every { service.scheduleAtFixedRate(capture(command), any(), any(), any())} returns fut
+            every { service.scheduleWithFixedDelay(capture(command), any(), any(), any())} returns fut
             service
         }
 
@@ -68,9 +68,9 @@ class TrapReporterTest {
         mockkConstructor(TrapHttpTransport::class)
         every { anyConstructed<TrapHttpTransport>().start(any(), any()) } returns Unit
         every { anyConstructed<TrapHttpTransport>().stop() } returns Unit
-        every { anyConstructed<TrapHttpTransport>().send(capture(msg)) } returns Unit
+        every { anyConstructed<TrapHttpTransport>().send(capture(msg), any()) } returns Unit
 
-        reporter.start()
+        reporter.start(false)
 
         assert(command.isCaptured)
         storage.add(with(JSONArray()) {
