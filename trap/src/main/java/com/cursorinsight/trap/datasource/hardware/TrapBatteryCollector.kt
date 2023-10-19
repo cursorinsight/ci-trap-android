@@ -117,7 +117,7 @@ class TrapBatteryCollector(
 
     override fun start(activity: Activity, config: TrapConfig.DataCollection) {
         batteryManager = activity.getSystemService(BATTERY_SERVICE) as BatteryManager
-        activity.registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_OKAY))
+        activity.registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
         registered = true
     }
 
