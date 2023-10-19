@@ -69,6 +69,8 @@ class TrapManager internal constructor(
 
     private var isRunning: Boolean = false
 
+    private var isEnabled: Boolean = true
+
     private lateinit var currentDataCollectionConfig: TrapConfig.DataCollection
 
     private val batteryReceiver = object : BroadcastReceiver() {
@@ -311,6 +313,30 @@ class TrapManager internal constructor(
     }
 
     /**
+     * Stop and disable the data collection
+     */
+    @Suppress("unused")
+    fun disableCollection() {
+        isEnabled = false
+        val activity = currentActivity?.get()
+        if (activity != null) {
+            haltAll(activity)
+        }
+    }
+
+    /**
+     * Restart the data collection
+     */
+    @Suppress("unused")
+    fun enableDataCollection() {
+        isEnabled = true
+        val activity = currentActivity?.get()
+        if (activity != null) {
+            runAll(activity)
+        }
+    }
+
+    /**
      * Subscribe on battery and network notifications
      */
     private fun subscribeOnNotifications() {
@@ -421,7 +447,9 @@ class TrapManager internal constructor(
     override fun onActivityResumed(activity: Activity) {
         TrapTime.updateTimeDiff()
         currentActivity = WeakReference(activity)
-        runAll(activity)
+        if (isEnabled) {
+            runAll(activity)
+        }
     }
 
     override fun onActivityPaused(activity: Activity) {
