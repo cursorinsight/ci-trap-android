@@ -124,6 +124,7 @@ class TrapBatteryCollector(
     override fun stop(activity: Activity) {
         if (registered) {
             activity.unregisterReceiver(batteryReceiver)
+            registered = false
         }
     }
 }
