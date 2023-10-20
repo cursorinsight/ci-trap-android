@@ -36,7 +36,7 @@ import java.lang.ref.WeakReference
  * @param config The library config.
  */
 class TrapManager internal constructor(
-    application: Application,
+    private val application: Application,
     private var config: TrapConfig,
 ) : Application.ActivityLifecycleCallbacks {
     /**
@@ -65,30 +65,22 @@ class TrapManager internal constructor(
 
     private var hasLowBattery: Boolean = false
 
-    private var inLowDataMode: Boolean = false
+    private var inLowDataMode: Boolean? = null
 
-    private var currentDataCollectionConfig: TrapConfig.DataCollection = config.defaultDataCollection
+    private var isRunning: Boolean = false
+
+    private var isEnabled: Boolean = true
+
+    private lateinit var currentDataCollectionConfig: TrapConfig.DataCollection
 
     private val batteryReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             try {
-                val batteryManager = context.getSystemService<BatteryManager>()
-
-                val batteryIntent = context.registerReceiver(
-                    null,
-                    IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-                )
-
-                hasLowBattery = !(batteryManager?.isCharging ?: false) &&
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        batteryIntent?.getBooleanExtra(BatteryManager.EXTRA_BATTERY_LOW, false)
-                            ?: false
-                    }
-                    else {
-                        (batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) ?: 100) < 10
-                    }
-
-                maybeModifyConfigAndRestartCollection()
+                val newBatteryStatus = getLowBatteryStatus()
+                if (newBatteryStatus != hasLowBattery) {
+                    hasLowBattery = newBatteryStatus
+                    maybeModifyConfigAndRestartCollection()
+                }
             } catch (ex: Exception) {
                 Log.e(
                     TrapManager::class.simpleName,
@@ -105,11 +97,13 @@ class TrapManager internal constructor(
             networkCapabilities: NetworkCapabilities
         ) {
             try {
-                super.onCapabilitiesChanged(network, networkCapabilities)
-                inLowDataMode = !networkCapabilities.hasCapability(
+                val newLowDataMode = !networkCapabilities.hasCapability(
                     NetworkCapabilities.NET_CAPABILITY_NOT_METERED
                 )
-                maybeModifyConfigAndRestartCollection()
+                if (newLowDataMode != inLowDataMode) {
+                    inLowDataMode = newLowDataMode
+                    maybeModifyConfigAndRestartCollection()
+                }
             } catch (ex: Exception) {
                 Log.e(
                     TrapManager::class.simpleName,
@@ -139,21 +133,7 @@ class TrapManager internal constructor(
         // Register the activity collection and lifecycle dispatch.
         application.registerActivityLifecycleCallbacks(this)
 
-        val connectivityManager = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkRequest = NetworkRequest.Builder()
-            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-            .build()
-
-        connectivityManager.registerNetworkCallback(networkRequest, networkReceiver)
-
-        val filter = IntentFilter()
-        filter.addAction(Intent.ACTION_BATTERY_OKAY)
-        filter.addAction(Intent.ACTION_BATTERY_LOW)
-        filter.addAction(Intent.ACTION_POWER_CONNECTED)
-        filter.addAction(Intent.ACTION_POWER_DISCONNECTED)
-        application.registerReceiver(batteryReceiver, filter)
+        currentDataCollectionConfig = config.defaultDataCollection
 
         // Init the collector collection
         collectors = mutableMapOf()
@@ -175,7 +155,7 @@ class TrapManager internal constructor(
             }
 
             if (!collectors.containsKey(collector.getName())) {
-                reporter.start()
+                reporter.start(inLowDataMode ?: false)
                 val activity = currentActivity?.get()
                 if (activity != null) {
                     collector.start(activity, currentDataCollectionConfig)
@@ -252,15 +232,21 @@ class TrapManager internal constructor(
                 Log.i(TrapManager::class.simpleName, "Data collection disabled")
                 return;
             }
-
-            reporter.start()
-            buffer.add(startMessage())
+            hasLowBattery = getLowBatteryStatus()
             currentDataCollectionConfig = getDataCollectionConfig()
-            for (collectorQualifiedName in currentDataCollectionConfig.collectors) {
-                if (!collectors.containsKey(collectorQualifiedName)) {
-                    createCollector(collectorQualifiedName)
+            subscribeOnNotifications()
+
+            val actualDataMode = inLowDataMode
+            if (actualDataMode != null) {
+                isRunning = true
+                reporter.start(actualDataMode)
+                buffer.add(startMessage())
+                for (collectorQualifiedName in currentDataCollectionConfig.collectors) {
+                    if (!collectors.containsKey(collectorQualifiedName)) {
+                        createCollector(collectorQualifiedName)
+                    }
+                    collectors[collectorQualifiedName]?.start(activity, currentDataCollectionConfig)
                 }
-                collectors[collectorQualifiedName]?.start(activity, currentDataCollectionConfig)
             }
         } catch (ex: Exception) {
             Log.e(
@@ -271,14 +257,38 @@ class TrapManager internal constructor(
         }
     }
 
+    private fun getLowBatteryStatus() : Boolean {
+        val batteryIntent = application.registerReceiver(
+            null,
+            IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+        )
+
+        val status: Int = batteryIntent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+        val isCharging: Boolean = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                status == BatteryManager.BATTERY_STATUS_FULL
+
+        val level: Int = batteryIntent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+        val scale: Int = batteryIntent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
+        val batteryPercentage : Float = level * 100 / scale.toFloat()
+
+        return isCharging &&
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    batteryIntent?.getBooleanExtra(BatteryManager.EXTRA_BATTERY_LOW, false)
+                        ?: false
+                }
+                else {
+                    batteryPercentage <= config.lowBatteryThreshold
+                }
+    }
+
     /**
      * Returns the data collection config that should be used
      */
     private fun getDataCollectionConfig(): TrapConfig.DataCollection {
-        if (inLowDataMode) {
+        if (inLowDataMode == true) {
             return config.lowDataDataCollection
         }
-        if (hasLowBattery) {
+        if (hasLowBattery == true) {
             return config.lowBatteryDataCollection
         }
         return config.defaultDataCollection
@@ -289,11 +299,16 @@ class TrapManager internal constructor(
      */
     private fun haltAll(activity: Activity) {
         try {
-            for (collector in collectors.values) {
-                collector.stop(activity)
+            if (isRunning) {
+                isRunning = false
+                for (collector in collectors.values) {
+                    collector.stop(activity)
+                }
+                buffer.add(stopMessage())
+                reporter.stop()
+                inLowDataMode = null
             }
-            buffer.add(stopMessage())
-            reporter.stop()
+            unsubscribeFromNotifications()
         } catch (ex: Exception) {
             Log.e(
                 TrapManager::class.simpleName,
@@ -301,6 +316,60 @@ class TrapManager internal constructor(
                 ex
             )
         }
+    }
+
+    /**
+     * Stop and disable the data collection
+     */
+    @Suppress("unused")
+    fun disableCollection() {
+        isEnabled = false
+        val activity = currentActivity?.get()
+        if (activity != null) {
+            haltAll(activity)
+        }
+    }
+
+    /**
+     * Restart the data collection
+     */
+    @Suppress("unused")
+    fun enableDataCollection() {
+        isEnabled = true
+        val activity = currentActivity?.get()
+        if (activity != null) {
+            runAll(activity)
+        }
+    }
+
+    /**
+     * Subscribe on battery and network notifications
+     */
+    private fun subscribeOnNotifications() {
+        val connectivityManager = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkRequest = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+            .build()
+
+        connectivityManager.registerNetworkCallback(networkRequest, networkReceiver)
+
+        val filter = IntentFilter()
+        filter.addAction(Intent.ACTION_BATTERY_OKAY)
+        filter.addAction(Intent.ACTION_BATTERY_LOW)
+        filter.addAction(Intent.ACTION_POWER_CONNECTED)
+        filter.addAction(Intent.ACTION_POWER_DISCONNECTED)
+        application.registerReceiver(batteryReceiver, filter)
+    }
+
+    /*
+     * Unsubscribe from battery and network notifications
+     **/
+    private fun unsubscribeFromNotifications() {
+        val connectivityManager = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager.unregisterNetworkCallback(networkReceiver)
+        application.unregisterReceiver(batteryReceiver)
     }
 
     /**
@@ -339,7 +408,8 @@ class TrapManager internal constructor(
     private fun maybeModifyConfigAndRestartCollection() {
         val activity = currentActivity?.get()
         if (activity != null) {
-            if (getDataCollectionConfig() != currentDataCollectionConfig) {
+            if (!isRunning ||
+                getDataCollectionConfig() != currentDataCollectionConfig) {
                 haltAll(activity)
                 runAll(activity)
             }
@@ -383,7 +453,9 @@ class TrapManager internal constructor(
     override fun onActivityResumed(activity: Activity) {
         TrapTime.updateTimeDiff()
         currentActivity = WeakReference(activity)
-        runAll(activity)
+        if (isEnabled) {
+            runAll(activity)
+        }
     }
 
     override fun onActivityPaused(activity: Activity) {

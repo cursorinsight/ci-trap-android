@@ -36,7 +36,7 @@ class TrapCachedTransportTest {
         val underlying = mockkClass(TrapTransport::class)
         every { underlying.start(any(), any()) } returns Unit
         every { underlying.stop() } returns Unit
-        every { underlying.send(any(String::class))} returns Unit
+        every { underlying.send(any(String::class), any())} returns Unit
 
         val transport = TrapCachedTransport(File(tempDir), 128, underlying)
         transport.start(URI.create("http://localhost"), TrapConfig.Reporter())
@@ -53,7 +53,7 @@ class TrapCachedTransportTest {
         val underlying = mockkClass(TrapTransport::class)
         every { underlying.start(any(), any()) } returns Unit
         every { underlying.stop() } returns Unit
-        every { underlying.send(capture(msg))} throws TrapTransportException() andThen Unit
+        every { underlying.send(capture(msg), any())} throws TrapTransportException() andThen Unit
 
         val transport = TrapCachedTransport(File(tempDir), 128, underlying)
         transport.start(URI.create("http://localhost"), TrapConfig.Reporter())

@@ -5,8 +5,14 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.os.BatteryManager
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -15,6 +21,7 @@ import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.datasource.sensor.TrapGravityCollector
 import com.cursorinsight.trap.transport.TrapReporter
 import com.cursorinsight.trap.util.TrapTime
+import io.mockk.CapturingSlot
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -22,6 +29,7 @@ import io.mockk.mockk
 import io.mockk.mockkClass
 import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
+import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.unmockkAll
 import io.mockk.verify
@@ -39,6 +47,7 @@ import java.io.File
 class TrapManagerTest {
 
     private lateinit var application: Application
+    private var networkCallback: CapturingSlot<ConnectivityManager.NetworkCallback> = slot()
 
     @BeforeEach
     fun setUp() {
@@ -48,20 +57,31 @@ class TrapManagerTest {
 
         // We only test the TrapManager, no need to mock out everything
         mockkConstructor(TrapReporter::class)
-        every { anyConstructed<TrapReporter>().start() } returns Unit
+        every { anyConstructed<TrapReporter>().start(any()) } returns Unit
         every { anyConstructed<TrapReporter>().stop() } returns Unit
 
         mockkConstructor(CircularFifoQueue::class)
         every { anyConstructed<CircularFifoQueue<JSONArray>>().add(any()) } returns true
 
+        mockkConstructor(ConnectivityManager.NetworkCallback::class)
+        every { anyConstructed<ConnectivityManager.NetworkCallback>().onCapabilitiesChanged(any(), any()) } returns Unit
+
         application = spyk(Application())
         every { application.cacheDir }  answers { File("/test/cache/dir") }
         every { application.registerActivityLifecycleCallbacks(any()) } returns Unit
-        every { application.registerReceiver(any(), any()) } returns Intent()
+
+        var intent = mockkClass(Intent::class)
+        every { intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1) } returns 2
+        every { intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) } returns 50
+        every { intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1) } returns 100
+        every { intent.getBooleanExtra(BatteryManager.EXTRA_BATTERY_LOW, false) } returns false
+
+        every { application.registerReceiver(any(), any()) } returns intent
+        every { application.unregisterReceiver(any()) } returns Unit
 
         every { application.getSystemService("connectivity") } answers {
             val manager = mockkClass(ConnectivityManager::class)
-            every { manager.registerNetworkCallback(any(), any<ConnectivityManager.NetworkCallback>()) } returns Unit
+            every { manager.registerNetworkCallback(any(), capture(networkCallback)) } returns Unit
             every { manager.unregisterNetworkCallback(any(ConnectivityManager.NetworkCallback::class)) } returns Unit
             manager
         }
@@ -121,10 +141,16 @@ class TrapManagerTest {
         val trapManager = TrapManager(application, config)
 
         trapManager.onActivityResumed(activity)
+        var capabilities = mockkClass(NetworkCapabilities::class)
+        every { capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) } returns true
+        networkCallback.captured.onCapabilitiesChanged(
+            mockkClass(Network::class),
+            capabilities)
+
         trapManager.run(collector)
 
         verify(exactly = 1) { collector invoke "start" withArguments listOf(activity, config.defaultDataCollection) }
-        verify(exactly = 2) { anyConstructed<TrapReporter>().start() }
+        verify(exactly = 2) { anyConstructed<TrapReporter>().start(false) }
         verify(exactly = 1) { anyConstructed<CircularFifoQueue<JSONArray>>().add(withArg {
             assert(it.getInt(0) == 130)
             assert(it.getLong(1) > 0)
@@ -163,8 +189,14 @@ class TrapManagerTest {
         val trapManager = TrapManager(application, config)
         trapManager.onActivityResumed(activity)
 
+        var capabilities = mockkClass(NetworkCapabilities::class)
+        every { capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) } returns true
+        networkCallback.captured.onCapabilitiesChanged(
+            mockkClass(Network::class),
+            capabilities)
+
         verify(exactly = 1) { anyConstructed<TrapGravityCollector>().start(activity, config.defaultDataCollection) }
-        verify(exactly = 1) { anyConstructed<TrapReporter>().start() }
+        verify(exactly = 1) { anyConstructed<TrapReporter>().start(false) }
     }
 
     @Test
@@ -173,11 +205,30 @@ class TrapManagerTest {
         every { anyConstructed<TrapGravityCollector>().start(activity, any()) } returns Unit
         every { anyConstructed<TrapGravityCollector>().stop(activity) } returns Unit
 
+        every { activity.packageManager } answers {
+            val packageManager = mockkClass(PackageManager::class)
+            every { packageManager.hasSystemFeature(any()) } returns true
+            packageManager
+        }
+        every { activity.getSystemService(Context.SENSOR_SERVICE) } answers {
+            val sensorManager = mockkClass(SensorManager::class)
+            every { sensorManager.unregisterListener(any<SensorEventListener>()) } returns Unit
+            sensorManager
+        }
+
         val config = TrapConfig()
         config.defaultDataCollection.collectors = mutableListOf(TrapGravityCollector::class.qualifiedName)
             .filterNotNull()
 
         val trapManager = TrapManager(application, config)
+        trapManager.onActivityResumed(activity)
+
+        var capabilities = mockkClass(NetworkCapabilities::class)
+        every { capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) } returns true
+        networkCallback.captured.onCapabilitiesChanged(
+            mockkClass(Network::class),
+            capabilities)
+
         trapManager.onActivityPaused(activity)
 
         verify(exactly = 1) { anyConstructed<TrapGravityCollector>().stop(activity) }

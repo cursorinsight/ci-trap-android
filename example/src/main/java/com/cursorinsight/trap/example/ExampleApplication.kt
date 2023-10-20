@@ -13,7 +13,7 @@ class ExampleApplication : Application() {
         val config = TrapConfig()
 
 // Can be a websocket or http server
-        config.reporter.url = "https://example.com/api/post/{streamId}/{sessionId}"
+        config.reporter.url = "https://example.com/api/post/{sessionId}/{streamId}"
 
 // Set reporting interval to 3 seconds
         config.reporter.interval = 3000

@@ -140,6 +140,7 @@ class TrapWiFiCollector(
         if (registered) {
             activity.unregisterReceiver(wifiReceiver)
             connectivityManager?.unregisterNetworkCallback(connectivityReceiver)
+            registered = false
         }
     }
 

@@ -8,7 +8,7 @@ import java.io.IOException
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URI
-import java.util.zip.GZIPOutputStream
+import java.util.zip.DeflaterOutputStream
 import javax.net.ssl.HttpsURLConnection
 
 /**
@@ -42,7 +42,7 @@ internal class TrapHttpTransport : TrapTransport {
         IOException::class,
         TrapTransportException::class
     )
-    override fun send(data: String) {
+    override fun send(data: String, avoidSendingTooMuchData: Boolean) {
         val url = url ?: throw TrapTransportException("URL is not valid")
         val config = config ?: throw TrapTransportException("Config is not valid")
         val raw = url.toURL().openConnection()
@@ -63,12 +63,23 @@ internal class TrapHttpTransport : TrapTransport {
 
         with(connection) {
             try {
-                val outStream = if (config.compress) GZIPOutputStream(outputStream) else outputStream
-                val writer = BufferedWriter(
-                    OutputStreamWriter(BufferedOutputStream(outStream), "UTF-8"))
-                writer.write(data)
-                writer.flush()
-
+                if (config.compress) {
+                    DeflaterOutputStream(outputStream).use {
+                        val writer = BufferedWriter(OutputStreamWriter(it, "UTF-8"))
+                        writer.write(data)
+                        writer.flush()
+                    }
+                }
+                else {
+                    val writer = BufferedWriter(
+                        OutputStreamWriter(
+                            BufferedOutputStream(outputStream),
+                            "UTF-8"
+                        )
+                    )
+                    writer.write(data)
+                    writer.flush()
+                }
                 if (responseCode !in 200..299) {
                     Log.w(
                         TrapHttpTransport::class.simpleName,
@@ -80,13 +91,12 @@ internal class TrapHttpTransport : TrapTransport {
             } catch (ex: IOException) {
                 // Ignore connection errors, we'll handle them in the finally block.
                 // Note: Can't catch SocketTimeoutException, so resorting to this.
-                if (ex.message?.startsWith("failed to connect to") == true
-                    || ex.message?.startsWith("timeout") == true
+                if (!(ex.message?.startsWith("failed to connect to")  == true) &&
+                    !(ex.message?.startsWith("timeout") == true)
                 ) {
-                    throw TrapTransportException()
-                } else {
                     Log.e(TrapHttpTransport::class.simpleName, "Unknown IOException happened", ex)
                 }
+                throw TrapTransportException()
             } finally {
                 disconnect()
             }
