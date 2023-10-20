@@ -45,7 +45,7 @@
                     </a>
             </div>
             <div class="library-version">
-1.0.5            </div>
+1.1.0            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":trap:dokkaHtml/release">androidJvm</button>
@@ -61,23 +61,34 @@
                 <div class="sidebar--inner" id="sideMenu"></div>
             </div>
             <div id="main">
-<div class="main-content" data-page-type="member" id="content" pageIds="trap::com.cursorinsight.trap/TrapConfig/TrapConfig/#com.cursorinsight.trap.TrapConfig.Reporter#kotlin.Int#kotlin.collections.List[kotlin.reflect.KClass[*]]/PointingToDeclaration//-233863329">
+<div class="main-content" data-page-type="member" id="content" pageIds="trap::com.cursorinsight.trap/TrapConfig/TrapConfig/#com.cursorinsight.trap.TrapConfig.Reporter#com.cursorinsight.trap.TrapConfig.DataCollection#com.cursorinsight.trap.TrapConfig.DataCollection#com.cursorinsight.trap.TrapConfig.DataCollection#kotlin.Int#kotlin.String?#kotlin.Float/PointingToDeclaration//-233863329">
   <div class="breadcrumbs"><a href="../../../index.html">trap</a><span class="delimiter">/</span><a href="../index.html">com.cursorinsight.trap</a><span class="delimiter">/</span><a href="index.html">TrapConfig</a><span class="delimiter">/</span><span class="current">TrapConfig</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Trap</span><wbr></wbr><span><span>Config</span></span></h1>
   </div>
-  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">reporter<span class="token operator">: </span><a href="-reporter/index.html">TrapConfig.Reporter</a><span class="token operator"> = </span>Reporter()<span class="token punctuation">, </span></span><span class="parameter ">queueSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">2048</span><span class="token punctuation">, </span></span><span class="parameter ">collectors<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html">KClass</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token operator"> = </span>mutableListOf(
-        TrapAccelerometerCollector::class,
-        TrapBluetoothCollector::class,
-        TrapGravityCollector::class,
-        TrapGyroscopeCollector::class,
-        TrapCoarseLocationCollector::class,
-        TrapMagnetometerCollector::class,
-        TrapPointerCollector::class,
-        TrapStylusCollector::class,
-        TrapTouchCollector::class,
-        TrapWiFiCollector::class,
-    )</span></span><span class="token punctuation">)</span></div></div></div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">reporter<span class="token operator">: </span><a href="-reporter/index.html">TrapConfig.Reporter</a><span class="token operator"> = </span>Reporter()<span class="token punctuation">, </span></span><span class="parameter ">defaultDataCollection<span class="token operator">: </span><a href="-data-collection/index.html">TrapConfig.DataCollection</a><span class="token operator"> = </span>DataCollection()<span class="token punctuation">, </span></span><span class="parameter ">lowBatteryDataCollection<span class="token operator">: </span><a href="-data-collection/index.html">TrapConfig.DataCollection</a><span class="token operator"> = </span>DataCollection(
+        collectCoalescedPointerEvents = false,
+        collectCoalescedStylusEvents = false,
+        collectCoalescedTouchEvents = false,
+        collectors = mutableListOf(
+            TrapMetadataCollector::class.qualifiedName,
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName).filterNotNull()
+    )<span class="token punctuation">, </span></span><span class="parameter ">lowDataDataCollection<span class="token operator">: </span><a href="-data-collection/index.html">TrapConfig.DataCollection</a><span class="token operator"> = </span>DataCollection(
+        collectCoalescedPointerEvents = false,
+        collectCoalescedStylusEvents = false,
+        collectCoalescedTouchEvents = false,
+        collectors = mutableListOf(
+            TrapMetadataCollector::class.qualifiedName,
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName).filterNotNull()
+    )<span class="token punctuation">, </span></span><span class="parameter ">queueSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">8192</span><span class="token punctuation">, </span></span><span class="parameter ">sessionIdFilter<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">lowBatteryThreshold<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">10.0f</span></span></span><span class="token punctuation">)</span></div></div></div>
 </div>
       <div class="footer">
         <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span

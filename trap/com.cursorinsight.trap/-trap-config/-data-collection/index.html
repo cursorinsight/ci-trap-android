@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>DataCollection</title>
+    <link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../../index.html">
+                            trap
+                    </a>
+            </div>
+            <div class="library-version">
+1.1.0            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":trap:dokkaHtml/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="trap::com.cursorinsight.trap/TrapConfig.DataCollection///PointingToDeclaration//-233863329">
+  <div class="breadcrumbs"><a href="../../../../index.html">trap</a><span class="delimiter">/</span><a href="../../index.html">com.cursorinsight.trap</a><span class="delimiter">/</span><a href="../index.html">TrapConfig</a><span class="delimiter">/</span><span class="current">DataCollection</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Data</span><wbr></wbr><span><span>Collection</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">DataCollection</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">var </span>maxNumberOfLogMessagesPerMinute<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">100</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>accelerationSamplingPeriodMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>accelerationMaxReportLatencyMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">200</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>gyroscopeSamplingPeriodMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>gyroscopeMaxReportLatencyMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">200</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>magnetometerSamplingPeriodMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>magnetometerMaxReportLatencyMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">200</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>gravitySamplingPeriodMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>gravityMaxReportLatencyMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">200</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>collectCoalescedPointerEvents<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>collectCoalescedStylusEvents<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>collectCoalescedTouchEvents<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>metadataSubmissionInterval<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>collectors<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token operator"> = </span>mutableListOf(
+            TrapAccelerometerCollector::class.qualifiedName,
+            TrapBluetoothCollector::class.qualifiedName,
+            TrapGravityCollector::class.qualifiedName,
+            TrapGyroscopeCollector::class.qualifiedName,
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapMagnetometerCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapWiFiCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName,
+            TrapMetadataCollector::class.qualifiedName,
+        ).filterNotNull()</span></span><span class="token punctuation">)</span></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="1849532269%2FConstructors%2F-233863329" anchor-label="DataCollection" id="1849532269%2FConstructors%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-data-collection.html"><span>Data</span><wbr></wbr><span><span>Collection</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1849532269%2FConstructors%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">maxNumberOfLogMessagesPerMinute<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">100</span><span class="token punctuation">, </span></span><span class="parameter ">accelerationSamplingPeriodMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter ">accelerationMaxReportLatencyMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">200</span><span class="token punctuation">, </span></span><span class="parameter ">gyroscopeSamplingPeriodMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter ">gyroscopeMaxReportLatencyMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">200</span><span class="token punctuation">, </span></span><span class="parameter ">magnetometerSamplingPeriodMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter ">magnetometerMaxReportLatencyMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">200</span><span class="token punctuation">, </span></span><span class="parameter ">gravitySamplingPeriodMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter ">gravityMaxReportLatencyMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">200</span><span class="token punctuation">, </span></span><span class="parameter ">collectCoalescedPointerEvents<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">collectCoalescedStylusEvents<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">collectCoalescedTouchEvents<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">metadataSubmissionInterval<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token punctuation">, </span></span><span class="parameter ">collectors<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token operator"> = </span>mutableListOf(
+            TrapAccelerometerCollector::class.qualifiedName,
+            TrapBluetoothCollector::class.qualifiedName,
+            TrapGravityCollector::class.qualifiedName,
+            TrapGyroscopeCollector::class.qualifiedName,
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapMagnetometerCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapWiFiCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName,
+            TrapMetadataCollector::class.qualifiedName,
+        ).filterNotNull()</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-1373085984%2FProperties%2F-233863329" anchor-label="accelerationMaxReportLatencyMs" id="-1373085984%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="acceleration-max-report-latency-ms.html"><span>acceleration</span><wbr></wbr><span>Max</span><wbr></wbr><span>Report</span><wbr></wbr><span>Latency</span><wbr></wbr><span><span>Ms</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1373085984%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="acceleration-max-report-latency-ms.html">accelerationMaxReportLatencyMs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">How long the sensor can cache reported events.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="24263422%2FProperties%2F-233863329" anchor-label="accelerationSamplingPeriodMs" id="24263422%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="acceleration-sampling-period-ms.html"><span>acceleration</span><wbr></wbr><span>Sampling</span><wbr></wbr><span>Period</span><wbr></wbr><span><span>Ms</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="24263422%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="acceleration-sampling-period-ms.html">accelerationSamplingPeriodMs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">How frequent the sampling of the given sensor should be.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1899807147%2FProperties%2F-233863329" anchor-label="collectCoalescedPointerEvents" id="1899807147%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="collect-coalesced-pointer-events.html"><span>collect</span><wbr></wbr><span>Coalesced</span><wbr></wbr><span>Pointer</span><wbr></wbr><span><span>Events</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1899807147%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="collect-coalesced-pointer-events.html">collectCoalescedPointerEvents</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Collect coalesced pointer events</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1929213906%2FProperties%2F-233863329" anchor-label="collectCoalescedStylusEvents" id="-1929213906%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="collect-coalesced-stylus-events.html"><span>collect</span><wbr></wbr><span>Coalesced</span><wbr></wbr><span>Stylus</span><wbr></wbr><span><span>Events</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1929213906%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="collect-coalesced-stylus-events.html">collectCoalescedStylusEvents</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Collect coalesced stylus events</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2106583401%2FProperties%2F-233863329" anchor-label="collectCoalescedTouchEvents" id="2106583401%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="collect-coalesced-touch-events.html"><span>collect</span><wbr></wbr><span>Coalesced</span><wbr></wbr><span>Touch</span><wbr></wbr><span><span>Events</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2106583401%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="collect-coalesced-touch-events.html">collectCoalescedTouchEvents</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Collect coalesced touch events</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1089267494%2FProperties%2F-233863329" anchor-label="collectors" id="1089267494%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="collectors.html"><span><span>collectors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1089267494%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="collectors.html">collectors</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The list of collectors to start at initialization.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-800913004%2FProperties%2F-233863329" anchor-label="gravityMaxReportLatencyMs" id="-800913004%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="gravity-max-report-latency-ms.html"><span>gravity</span><wbr></wbr><span>Max</span><wbr></wbr><span>Report</span><wbr></wbr><span>Latency</span><wbr></wbr><span><span>Ms</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-800913004%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="gravity-max-report-latency-ms.html">gravityMaxReportLatencyMs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">How long the sensor can cache reported events.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="132121266%2FProperties%2F-233863329" anchor-label="gravitySamplingPeriodMs" id="132121266%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="gravity-sampling-period-ms.html"><span>gravity</span><wbr></wbr><span>Sampling</span><wbr></wbr><span>Period</span><wbr></wbr><span><span>Ms</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="132121266%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="gravity-sampling-period-ms.html">gravitySamplingPeriodMs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">How frequent the sampling of the given sensor should be.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1340762685%2FProperties%2F-233863329" anchor-label="gyroscopeMaxReportLatencyMs" id="1340762685%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="gyroscope-max-report-latency-ms.html"><span>gyroscope</span><wbr></wbr><span>Max</span><wbr></wbr><span>Report</span><wbr></wbr><span>Latency</span><wbr></wbr><span><span>Ms</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1340762685%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="gyroscope-max-report-latency-ms.html">gyroscopeMaxReportLatencyMs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">How long the sensor can cache reported events.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-334923365%2FProperties%2F-233863329" anchor-label="gyroscopeSamplingPeriodMs" id="-334923365%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="gyroscope-sampling-period-ms.html"><span>gyroscope</span><wbr></wbr><span>Sampling</span><wbr></wbr><span>Period</span><wbr></wbr><span><span>Ms</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-334923365%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="gyroscope-sampling-period-ms.html">gyroscopeSamplingPeriodMs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">How frequent the sampling of the given sensor should be.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1507339388%2FProperties%2F-233863329" anchor-label="magnetometerMaxReportLatencyMs" id="1507339388%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="magnetometer-max-report-latency-ms.html"><span>magnetometer</span><wbr></wbr><span>Max</span><wbr></wbr><span>Report</span><wbr></wbr><span>Latency</span><wbr></wbr><span><span>Ms</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1507339388%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="magnetometer-max-report-latency-ms.html">magnetometerMaxReportLatencyMs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">How long the sensor can cache reported events.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="45137818%2FProperties%2F-233863329" anchor-label="magnetometerSamplingPeriodMs" id="45137818%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="magnetometer-sampling-period-ms.html"><span>magnetometer</span><wbr></wbr><span>Sampling</span><wbr></wbr><span>Period</span><wbr></wbr><span><span>Ms</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="45137818%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="magnetometer-sampling-period-ms.html">magnetometerSamplingPeriodMs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">How frequent the sampling of the given sensor should be.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-611767511%2FProperties%2F-233863329" anchor-label="maxNumberOfLogMessagesPerMinute" id="-611767511%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="max-number-of-log-messages-per-minute.html"><span>max</span><wbr></wbr><span>Number</span><wbr></wbr><span>Of</span><wbr></wbr><span>Log</span><wbr></wbr><span>Messages</span><wbr></wbr><span>Per</span><wbr></wbr><span><span>Minute</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-611767511%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="max-number-of-log-messages-per-minute.html">maxNumberOfLogMessagesPerMinute</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Maximum number of log messages per collector if the collector uses log throttling</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-296492500%2FProperties%2F-233863329" anchor-label="metadataSubmissionInterval" id="-296492500%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="metadata-submission-interval.html"><span>metadata</span><wbr></wbr><span>Submission</span><wbr></wbr><span><span>Interval</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-296492500%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="metadata-submission-interval.html">metadataSubmissionInterval</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a></div><div class="brief "><p class="paragraph">The time interval metadata events are reported.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

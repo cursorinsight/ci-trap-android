@@ -45,7 +45,7 @@
                     </a>
             </div>
             <div class="library-version">
-1.0.5            </div>
+1.1.0            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":trap:dokkaHtml/release">androidJvm</button>
@@ -65,46 +65,68 @@
   <div class="breadcrumbs"><a href="../../../index.html">trap</a><span class="delimiter">/</span><a href="../index.html">com.cursorinsight.trap</a><span class="delimiter">/</span><span class="current">TrapConfig</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Trap</span><wbr></wbr><span><span>Config</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">TrapConfig</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">var </span>reporter<span class="token operator">: </span><a href="-reporter/index.html">TrapConfig.Reporter</a><span class="token operator"> = </span>Reporter()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>queueSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">2048</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>collectors<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html">KClass</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token operator"> = </span>mutableListOf(
-        TrapAccelerometerCollector::class,
-        TrapBluetoothCollector::class,
-        TrapGravityCollector::class,
-        TrapGyroscopeCollector::class,
-        TrapCoarseLocationCollector::class,
-        TrapMagnetometerCollector::class,
-        TrapPointerCollector::class,
-        TrapStylusCollector::class,
-        TrapTouchCollector::class,
-        TrapWiFiCollector::class,
-    )</span></span><span class="token punctuation">)</span></div><p class="paragraph">The global configuration for the library.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">TrapConfig</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">var </span>reporter<span class="token operator">: </span><a href="-reporter/index.html">TrapConfig.Reporter</a><span class="token operator"> = </span>Reporter()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>defaultDataCollection<span class="token operator">: </span><a href="-data-collection/index.html">TrapConfig.DataCollection</a><span class="token operator"> = </span>DataCollection()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>lowBatteryDataCollection<span class="token operator">: </span><a href="-data-collection/index.html">TrapConfig.DataCollection</a><span class="token operator"> = </span>DataCollection(
+        collectCoalescedPointerEvents = false,
+        collectCoalescedStylusEvents = false,
+        collectCoalescedTouchEvents = false,
+        collectors = mutableListOf(
+            TrapMetadataCollector::class.qualifiedName,
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName).filterNotNull()
+    )<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>lowDataDataCollection<span class="token operator">: </span><a href="-data-collection/index.html">TrapConfig.DataCollection</a><span class="token operator"> = </span>DataCollection(
+        collectCoalescedPointerEvents = false,
+        collectCoalescedStylusEvents = false,
+        collectCoalescedTouchEvents = false,
+        collectors = mutableListOf(
+            TrapMetadataCollector::class.qualifiedName,
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName).filterNotNull()
+    )<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>queueSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">8192</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>sessionIdFilter<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>lowBatteryThreshold<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">10.0f</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">The global configuration for the library.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="CONSTRUCTOR">
         <h2 class="">Constructors</h2>
-        <div class="table"><a data-name="1818566046%2FConstructors%2F-233863329" anchor-label="TrapConfig" id="1818566046%2FConstructors%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+        <div class="table"><a data-name="1048124046%2FConstructors%2F-233863329" anchor-label="TrapConfig" id="1048124046%2FConstructors%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
           <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-trap-config.html"><span>Trap</span><wbr></wbr><span><span>Config</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1818566046%2FConstructors%2F-233863329"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1048124046%2FConstructors%2F-233863329"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">reporter<span class="token operator">: </span><a href="-reporter/index.html">TrapConfig.Reporter</a><span class="token operator"> = </span>Reporter()<span class="token punctuation">, </span></span><span class="parameter ">queueSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">2048</span><span class="token punctuation">, </span></span><span class="parameter ">collectors<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html">KClass</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token operator"> = </span>mutableListOf(
-        TrapAccelerometerCollector::class,
-        TrapBluetoothCollector::class,
-        TrapGravityCollector::class,
-        TrapGyroscopeCollector::class,
-        TrapCoarseLocationCollector::class,
-        TrapMagnetometerCollector::class,
-        TrapPointerCollector::class,
-        TrapStylusCollector::class,
-        TrapTouchCollector::class,
-        TrapWiFiCollector::class,
-    )</span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">reporter<span class="token operator">: </span><a href="-reporter/index.html">TrapConfig.Reporter</a><span class="token operator"> = </span>Reporter()<span class="token punctuation">, </span></span><span class="parameter ">defaultDataCollection<span class="token operator">: </span><a href="-data-collection/index.html">TrapConfig.DataCollection</a><span class="token operator"> = </span>DataCollection()<span class="token punctuation">, </span></span><span class="parameter ">lowBatteryDataCollection<span class="token operator">: </span><a href="-data-collection/index.html">TrapConfig.DataCollection</a><span class="token operator"> = </span>DataCollection(
+        collectCoalescedPointerEvents = false,
+        collectCoalescedStylusEvents = false,
+        collectCoalescedTouchEvents = false,
+        collectors = mutableListOf(
+            TrapMetadataCollector::class.qualifiedName,
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName).filterNotNull()
+    )<span class="token punctuation">, </span></span><span class="parameter ">lowDataDataCollection<span class="token operator">: </span><a href="-data-collection/index.html">TrapConfig.DataCollection</a><span class="token operator"> = </span>DataCollection(
+        collectCoalescedPointerEvents = false,
+        collectCoalescedStylusEvents = false,
+        collectCoalescedTouchEvents = false,
+        collectors = mutableListOf(
+            TrapMetadataCollector::class.qualifiedName,
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName).filterNotNull()
+    )<span class="token punctuation">, </span></span><span class="parameter ">queueSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">8192</span><span class="token punctuation">, </span></span><span class="parameter ">sessionIdFilter<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">lowBatteryThreshold<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">10.0f</span></span></span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -113,7 +135,35 @@
       </div>
       <div data-togglable="TYPE">
         <h2 class="">Types</h2>
-        <div class="table"><a data-name="1801416410%2FClasslikes%2F-233863329" anchor-label="Reporter" id="1801416410%2FClasslikes%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+        <div class="table"><a data-name="-2090052557%2FClasslikes%2F-233863329" anchor-label="DataCollection" id="-2090052557%2FClasslikes%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-data-collection/index.html"><span>Data</span><wbr></wbr><span><span>Collection</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2090052557%2FClasslikes%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-data-collection/index.html">DataCollection</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">var </span>maxNumberOfLogMessagesPerMinute<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">100</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>accelerationSamplingPeriodMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>accelerationMaxReportLatencyMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">200</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>gyroscopeSamplingPeriodMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>gyroscopeMaxReportLatencyMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">200</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>magnetometerSamplingPeriodMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>magnetometerMaxReportLatencyMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">200</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>gravitySamplingPeriodMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">10</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>gravityMaxReportLatencyMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">200</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>collectCoalescedPointerEvents<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>collectCoalescedStylusEvents<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>collectCoalescedTouchEvents<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>metadataSubmissionInterval<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>collectors<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token operator"> = </span>mutableListOf(
+            TrapAccelerometerCollector::class.qualifiedName,
+            TrapBluetoothCollector::class.qualifiedName,
+            TrapGravityCollector::class.qualifiedName,
+            TrapGyroscopeCollector::class.qualifiedName,
+            TrapCoarseLocationCollector::class.qualifiedName,
+            TrapMagnetometerCollector::class.qualifiedName,
+            TrapPointerCollector::class.qualifiedName,
+            TrapStylusCollector::class.qualifiedName,
+            TrapTouchCollector::class.qualifiedName,
+            TrapWiFiCollector::class.qualifiedName,
+            TrapBatteryCollector::class.qualifiedName,
+            TrapMetadataCollector::class.qualifiedName,
+        ).filterNotNull()</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1801416410%2FClasslikes%2F-233863329" anchor-label="Reporter" id="1801416410%2FClasslikes%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
@@ -123,7 +173,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-reporter/index.html">Reporter</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">var </span>url<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">&quot;https://example.com/api/post/{streamId}/{sessionId}&quot;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>interval<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">1000</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>cachedTransport<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>maxFileCacheSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>sessionId<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/UUID.html">UUID</a><span class="token operator"> = </span>UUID(0, 0)<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>connectTimeout<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">500</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>readTimeout<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">500</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The configuration for the reporter task serializing and sending the collected data through the transport.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-reporter/index.html">Reporter</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">var </span>url<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">&quot;https://example.com/api/post/{streamId}/{sessionId}&quot;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>interval<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">1000</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>cachedTransport<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>maxFileCacheSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>sessionId<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/UUID.html">UUID</a><span class="token operator"> = </span>UUID(0, 0)<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>connectTimeout<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">500</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>readTimeout<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">500</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>compress<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>apiKeyName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">&quot;graboxy-api-key&quot;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>apiKeyValue<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">&quot;api-key-value&quot;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The configuration for the reporter task serializing and sending the collected data through the transport.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -132,17 +182,62 @@
       </div>
       <div data-togglable="PROPERTY">
         <h2 class="">Properties</h2>
-        <div class="table"><a data-name="117878112%2FProperties%2F-233863329" anchor-label="collectors" id="117878112%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+        <div class="table"><a data-name="1290370379%2FProperties%2F-233863329" anchor-label="defaultDataCollection" id="1290370379%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="collectors.html"><span><span>collectors</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="117878112%2FProperties%2F-233863329"></span>
+                  <div><a href="default-data-collection.html"><span>default</span><wbr></wbr><span>Data</span><wbr></wbr><span><span>Collection</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1290370379%2FProperties%2F-233863329"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="collectors.html">collectors</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html">KClass</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The list of collectors to start at initialization.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="default-data-collection.html">defaultDataCollection</a><span class="token operator">: </span><a href="-data-collection/index.html">TrapConfig.DataCollection</a></div><div class="brief "><p class="paragraph">Default data collection options.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1847758117%2FProperties%2F-233863329" anchor-label="lowBatteryDataCollection" id="1847758117%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="low-battery-data-collection.html"><span>low</span><wbr></wbr><span>Battery</span><wbr></wbr><span>Data</span><wbr></wbr><span><span>Collection</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1847758117%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="low-battery-data-collection.html">lowBatteryDataCollection</a><span class="token operator">: </span><a href="-data-collection/index.html">TrapConfig.DataCollection</a></div><div class="brief "><p class="paragraph">Limited data collection in case of low battery</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1995073890%2FProperties%2F-233863329" anchor-label="lowBatteryThreshold" id="1995073890%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="low-battery-threshold.html"><span>low</span><wbr></wbr><span>Battery</span><wbr></wbr><span><span>Threshold</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1995073890%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="low-battery-threshold.html">lowBatteryThreshold</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Battery charge threshold for low battery status</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1981237198%2FProperties%2F-233863329" anchor-label="lowDataDataCollection" id="1981237198%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="low-data-data-collection.html"><span>low</span><wbr></wbr><span>Data</span><wbr></wbr><span>Data</span><wbr></wbr><span><span>Collection</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1981237198%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="low-data-data-collection.html">lowDataDataCollection</a><span class="token operator">: </span><a href="-data-collection/index.html">TrapConfig.DataCollection</a></div><div class="brief "><p class="paragraph">Limited data collection in case of low battery</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -173,6 +268,55 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="reporter.html">reporter</a><span class="token operator">: </span><a href="-reporter/index.html">TrapConfig.Reporter</a></div><div class="brief "><p class="paragraph">The configuration for the reporter task.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2008151061%2FProperties%2F-233863329" anchor-label="sessionIdFilter" id="-2008151061%2FProperties%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="session-id-filter.html"><span>session</span><wbr></wbr><span>Id</span><wbr></wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2008151061%2FProperties%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">var </span><a href="session-id-filter.html">sessionIdFilter</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">SessionId filter, if specified the data collection is only enabled if sessionId <= sessionIdFilter</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-38576309%2FFunctions%2F-233863329" anchor-label="initSessionId" id="-38576309%2FFunctions%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="init-session-id.html"><span>init</span><wbr></wbr><span>Session</span><wbr></wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-38576309%2FFunctions%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="init-session-id.html"><span class="token function">initSessionId</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">application<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/app/Application.html">Application</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1367848408%2FFunctions%2F-233863329" anchor-label="isDataCollectionDisabled" id="1367848408%2FFunctions%2F-233863329" data-filterable-set=":trap:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":trap:dokkaHtml/release" data-filterable-set=":trap:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-data-collection-disabled.html"><span>is</span><wbr></wbr><span>Data</span><wbr></wbr><span>Collection</span><wbr></wbr><span><span>Disabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1367848408%2FFunctions%2F-233863329"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":trap:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="is-data-collection-disabled.html"><span class="token function">isDataCollectionDisabled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
