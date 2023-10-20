@@ -70,7 +70,7 @@ class TrapReporterTest {
         every { anyConstructed<TrapHttpTransport>().stop() } returns Unit
         every { anyConstructed<TrapHttpTransport>().send(capture(msg), any()) } returns Unit
 
-        reporter.start(false)
+        reporter.start()
 
         assert(command.isCaptured)
         storage.add(with(JSONArray()) {

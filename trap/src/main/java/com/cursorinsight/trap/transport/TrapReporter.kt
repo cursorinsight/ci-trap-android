@@ -56,7 +56,7 @@ internal class TrapReporter(
      * Start the reporter task and all
      * necessary underlying systems.
      */
-    fun start(avoidSendingTooMuchData: Boolean) {
+    fun start(avoidSendingTooMuchData: Boolean = false) {
         if (task == null) {
             val url = URI(
                 config.reporter.url

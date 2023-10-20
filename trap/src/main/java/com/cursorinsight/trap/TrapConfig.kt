@@ -65,7 +65,7 @@ data class TrapConfig(
     /**
      * The size of the circular data queue.
      */
-     var queueSize: Int = 8192,
+    var queueSize: Int = 8192,
 
     /**
      * SessionId filter, if specified the data collection is only enabled

@@ -43,8 +43,8 @@ class TrapCachedTransportTest {
         verify(exactly = 1) { underlying.start(any(), any()) }
         transport.stop()
         verify(exactly = 1) { underlying.stop() }
-        transport.send("[[999,12345678]]", false)
-        verify(exactly = 1) { transport.send("[[999,12345678]]", false) }
+        transport.send("[[999,12345678]]")
+        verify(exactly = 1) { transport.send("[[999,12345678]]") }
     }
 
     @Test
@@ -60,10 +60,10 @@ class TrapCachedTransportTest {
         verify(exactly = 1) { underlying.start(any(), any()) }
         transport.stop()
         verify(exactly = 1) { underlying.stop() }
-        transport.send("[[999,12345678]]", false)
+        transport.send("[[999,12345678]]")
         assert(msg.isCaptured)
         msg.clear()
-        transport.send("[[888,12345678]]", false)
+        transport.send("[[888,12345678]]")
         assert(msg.isCaptured)
         assert(msg.captured == "[[888,12345678]]")
     }

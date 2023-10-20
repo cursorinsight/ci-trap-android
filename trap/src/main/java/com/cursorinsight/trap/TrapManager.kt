@@ -76,8 +76,11 @@ class TrapManager internal constructor(
     private val batteryReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             try {
-                hasLowBattery = getLowBatteryStatus()
-                maybeModifyConfigAndRestartCollection()
+                val newBatteryStatus = getLowBatteryStatus()
+                if (newBatteryStatus != hasLowBattery) {
+                    hasLowBattery = newBatteryStatus
+                    maybeModifyConfigAndRestartCollection()
+                }
             } catch (ex: Exception) {
                 Log.e(
                     TrapManager::class.simpleName,
@@ -94,10 +97,13 @@ class TrapManager internal constructor(
             networkCapabilities: NetworkCapabilities
         ) {
             try {
-                inLowDataMode = !networkCapabilities.hasCapability(
+                val newLowDataMode = !networkCapabilities.hasCapability(
                     NetworkCapabilities.NET_CAPABILITY_NOT_METERED
                 )
-                maybeModifyConfigAndRestartCollection()
+                if (newLowDataMode != inLowDataMode) {
+                    inLowDataMode = newLowDataMode
+                    maybeModifyConfigAndRestartCollection()
+                }
             } catch (ex: Exception) {
                 Log.e(
                     TrapManager::class.simpleName,
@@ -226,15 +232,15 @@ class TrapManager internal constructor(
                 Log.i(TrapManager::class.simpleName, "Data collection disabled")
                 return;
             }
+            hasLowBattery = getLowBatteryStatus()
+            currentDataCollectionConfig = getDataCollectionConfig()
             subscribeOnNotifications()
 
             val actualDataMode = inLowDataMode
             if (actualDataMode != null) {
                 isRunning = true
-                hasLowBattery = getLowBatteryStatus()
                 reporter.start(actualDataMode)
                 buffer.add(startMessage())
-                currentDataCollectionConfig = getDataCollectionConfig()
                 for (collectorQualifiedName in currentDataCollectionConfig.collectors) {
                     if (!collectors.containsKey(collectorQualifiedName)) {
                         createCollector(collectorQualifiedName)

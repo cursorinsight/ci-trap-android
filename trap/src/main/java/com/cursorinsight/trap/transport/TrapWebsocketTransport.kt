@@ -46,7 +46,7 @@ internal class TrapWebsocketTransport: TrapTransport {
         websocket = null
     }
 
-     override fun send(data: String, avoidSendingTooMuchData: Boolean) {
+    override fun send(data: String, avoidSendingTooMuchData: Boolean) {
         if (websocket == null) {
             Log.d(TrapWebsocketTransport::class.simpleName, "send(): Attempting to reconnect")
             url?.run {
