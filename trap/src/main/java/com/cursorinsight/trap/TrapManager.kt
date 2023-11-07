@@ -23,6 +23,7 @@ import com.cursorinsight.trap.util.TrapTime
 import org.apache.commons.collections4.queue.CircularFifoQueue
 import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
+import org.json.JSONObject
 import java.lang.ref.WeakReference
 
 /**
@@ -194,10 +195,14 @@ class TrapManager internal constructor(
     /**
      * Adds a custom key-value to the metadata event.
      */
-    @Suppress("unused")
-    fun addCustomMetadata(key: String, value: String) {
+    fun addCustomMetadata(key: String, value: JSONObject) {
         val metaDataCollector = collectors[TrapMetadataCollector::class.qualifiedName] as TrapMetadataCollector?
         metaDataCollector?.addCustom(key, value)
+    }
+
+    @Suppress("unused")
+    fun addCustomMetadata(key: String, value: String) {
+        addCustomMetadata(key, JSONObject(value))
     }
 
     /**
