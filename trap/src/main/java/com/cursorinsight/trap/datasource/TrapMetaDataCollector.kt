@@ -37,7 +37,7 @@ class TrapMetadataCollector (
 ) : TrapDatasource {
     private val metadataEventType = 11
 
-    private val customMap: MutableMap<String, String> = LinkedHashMap()
+    private val customMap: MutableMap<String, JSONObject> = LinkedHashMap()
 
     private var context: Context? = null
 
@@ -58,7 +58,7 @@ class TrapMetadataCollector (
     }
 
     @Suppress("unused")
-    fun addCustom(key: String, value: String) {
+    fun addCustom(key: String, value: JSONObject) {
         customMap[key] = value
         if (task != null) {
             sendMetadataEvent()

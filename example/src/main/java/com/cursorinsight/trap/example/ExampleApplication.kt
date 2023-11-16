@@ -25,7 +25,15 @@ class ExampleApplication : Application() {
         val trapManager = TrapManager.getInstance(this, config)
 
 // Add a custom metadata
-        trapManager.addCustomMetadata("uid", "some-uid")
+        trapManager.addCustomMetadata(
+            "uid",
+            with(JSONObject()) {
+                put("type", "text")
+                put("value", "uid-text")
+                this
+            })
+
+        trapManager.addCustomMetadata("someRandomMeta", "textValue")
 
 // Add a custom event
         trapManager.addCustomEvent(with(JSONObject()) {
