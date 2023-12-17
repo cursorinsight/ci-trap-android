@@ -37,7 +37,7 @@ class TrapMetadataCollector (
 ) : TrapDatasource {
     private val metadataEventType = 11
 
-    private val customMap: MutableMap<String, JSONObject> = LinkedHashMap()
+    private val customJSONObject: JSONObject = JSONObject()
 
     private var context: Context? = null
 
@@ -58,8 +58,8 @@ class TrapMetadataCollector (
     }
 
     @Suppress("unused")
-    fun addCustom(key: String, value: JSONObject) {
-        customMap[key] = value
+    fun addCustom(key: String, value: Any) {
+        customJSONObject.put(key, value)
         if (task != null) {
             sendMetadataEvent()
         }
@@ -67,7 +67,7 @@ class TrapMetadataCollector (
 
     @Suppress("unused")
     fun removeCustom(key: String) {
-        customMap.remove(key)
+        customJSONObject.remove(key)
         if (task != null) {
             sendMetadataEvent()
         }
@@ -82,7 +82,7 @@ class TrapMetadataCollector (
                 put(with(JSONObject()) {
                     put("build", buildData())
                     put("storage", storageData())
-                    put("custom", customMap)
+                    put("custom", customJSONObject)
                     put("screen", screenData())
                     put("hardware", hardwareData())
                     this
