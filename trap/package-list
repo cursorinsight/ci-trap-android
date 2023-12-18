@@ -100,7 +100,7 @@ $dokka.location:com.cursorinsight.trap.datasource/TrapDatasource/start/#android.
 $dokka.location:com.cursorinsight.trap.datasource/TrapDatasource/stop/#android.app.Activity/PointingToDeclaration/trap/com.cursorinsight.trap.datasource/-trap-datasource/stop.html
 $dokka.location:com.cursorinsight.trap.datasource/TrapMetadataCollector///PointingToDeclaration/trap/com.cursorinsight.trap.datasource/-trap-metadata-collector/index.html
 $dokka.location:com.cursorinsight.trap.datasource/TrapMetadataCollector/TrapMetadataCollector/#org.apache.commons.collections4.queue.SynchronizedQueue[org.json.JSONArray]/PointingToDeclaration/trap/com.cursorinsight.trap.datasource/-trap-metadata-collector/-trap-metadata-collector.html
-$dokka.location:com.cursorinsight.trap.datasource/TrapMetadataCollector/addCustom/#kotlin.String#kotlin.String/PointingToDeclaration/trap/com.cursorinsight.trap.datasource/-trap-metadata-collector/add-custom.html
+$dokka.location:com.cursorinsight.trap.datasource/TrapMetadataCollector/addCustom/#kotlin.String#kotlin.Any/PointingToDeclaration/trap/com.cursorinsight.trap.datasource/-trap-metadata-collector/add-custom.html
 $dokka.location:com.cursorinsight.trap.datasource/TrapMetadataCollector/removeCustom/#kotlin.String/PointingToDeclaration/trap/com.cursorinsight.trap.datasource/-trap-metadata-collector/remove-custom.html
 $dokka.location:com.cursorinsight.trap.datasource/TrapMetadataCollector/start/#android.app.Activity#com.cursorinsight.trap.TrapConfig.DataCollection/PointingToDeclaration/trap/com.cursorinsight.trap.datasource/-trap-metadata-collector/start.html
 $dokka.location:com.cursorinsight.trap.datasource/TrapMetadataCollector/stop/#android.app.Activity/PointingToDeclaration/trap/com.cursorinsight.trap.datasource/-trap-metadata-collector/stop.html
@@ -185,7 +185,7 @@ $dokka.location:com.cursorinsight.trap/TrapManager.Companion///PointingToDeclara
 $dokka.location:com.cursorinsight.trap/TrapManager.Companion/getInstance/#android.app.Application#com.cursorinsight.trap.TrapConfig?/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/-companion/get-instance.html
 $dokka.location:com.cursorinsight.trap/TrapManager///PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/index.html
 $dokka.location:com.cursorinsight.trap/TrapManager/addCustomEvent/#kotlin.Any/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/add-custom-event.html
-$dokka.location:com.cursorinsight.trap/TrapManager/addCustomMetadata/#kotlin.String#kotlin.String/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/add-custom-metadata.html
+$dokka.location:com.cursorinsight.trap/TrapManager/addCustomMetadata/#kotlin.String#kotlin.Any/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/add-custom-metadata.html
 $dokka.location:com.cursorinsight.trap/TrapManager/disableCollection/#/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/disable-collection.html
 $dokka.location:com.cursorinsight.trap/TrapManager/enableDataCollection/#/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/enable-data-collection.html
 $dokka.location:com.cursorinsight.trap/TrapManager/halt/#com.cursorinsight.trap.datasource.TrapDatasource/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/halt.html
