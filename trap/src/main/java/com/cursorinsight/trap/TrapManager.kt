@@ -195,14 +195,9 @@ class TrapManager internal constructor(
     /**
      * Adds a custom key-value to the metadata event.
      */
-    fun addCustomMetadata(key: String, value: JSONObject) {
+    fun addCustomMetadata(key: String, value: Any) {
         val metaDataCollector = collectors[TrapMetadataCollector::class.qualifiedName] as TrapMetadataCollector?
         metaDataCollector?.addCustom(key, value)
-    }
-
-    @Suppress("unused")
-    fun addCustomMetadata(key: String, value: String) {
-        addCustomMetadata(key, JSONObject(value))
     }
 
     /**
