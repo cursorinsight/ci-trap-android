@@ -233,27 +233,32 @@ class TrapManager internal constructor(
                 return;
             }
             hasLowBattery = getLowBatteryStatus()
+            inLowDataMode = null
             currentDataCollectionConfig = getDataCollectionConfig()
             subscribeOnNotifications()
 
-            val actualDataMode = inLowDataMode
-            if (actualDataMode != null) {
-                isRunning = true
-                reporter.start(actualDataMode)
-                buffer.add(startMessage())
-                for (collectorQualifiedName in currentDataCollectionConfig.collectors) {
-                    if (!collectors.containsKey(collectorQualifiedName)) {
-                        createCollector(collectorQualifiedName)
-                    }
-                    collectors[collectorQualifiedName]?.start(activity, currentDataCollectionConfig)
-                }
-            }
+            startReporterAndCollectors(activity)
         } catch (ex: Exception) {
             Log.e(
                 TrapManager::class.simpleName,
                 "Starting reporter and collectors in runAll() failed",
                 ex
             )
+        }
+    }
+
+    private fun startReporterAndCollectors(activity: Activity) {
+        val actualDataMode = inLowDataMode
+        if (actualDataMode != null) {
+            isRunning = true
+            reporter.start(actualDataMode)
+            buffer.add(startMessage())
+            for (collectorQualifiedName in currentDataCollectionConfig.collectors) {
+                if (!collectors.containsKey(collectorQualifiedName)) {
+                    createCollector(collectorQualifiedName)
+                }
+                collectors[collectorQualifiedName]?.start(activity, currentDataCollectionConfig)
+            }
         }
     }
 
@@ -299,15 +304,7 @@ class TrapManager internal constructor(
      */
     private fun haltAll(activity: Activity) {
         try {
-            if (isRunning) {
-                isRunning = false
-                for (collector in collectors.values) {
-                    collector.stop(activity)
-                }
-                buffer.add(stopMessage())
-                reporter.stop()
-                inLowDataMode = null
-            }
+            stopReporterAndCollectors(activity)
             unsubscribeFromNotifications()
         } catch (ex: Exception) {
             Log.e(
@@ -315,6 +312,17 @@ class TrapManager internal constructor(
                 "Stopping collectors and reporter in haltAll() failed",
                 ex
             )
+        }
+    }
+
+    private fun stopReporterAndCollectors(activity: Activity) {
+        if (isRunning) {
+            isRunning = false
+            for (collector in collectors.values) {
+                collector.stop(activity)
+            }
+            buffer.add(stopMessage())
+            reporter.stop()
         }
     }
 
@@ -408,11 +416,9 @@ class TrapManager internal constructor(
     private fun maybeModifyConfigAndRestartCollection() {
         val activity = currentActivity?.get()
         if (activity != null) {
-            if (!isRunning ||
-                getDataCollectionConfig() != currentDataCollectionConfig) {
-                haltAll(activity)
-                runAll(activity)
-            }
+            stopReporterAndCollectors(activity)
+            currentDataCollectionConfig = getDataCollectionConfig()
+            startReporterAndCollectors(activity)
         }
     }
 
