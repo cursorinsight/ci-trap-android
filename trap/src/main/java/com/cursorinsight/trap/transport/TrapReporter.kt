@@ -144,6 +144,7 @@ internal class TrapReporter(
                 put("version", "20230706T094422Z")
                 this
             })
+            put(com.cursorinsight.trap.BuildConfig.VERSION_NAME)
             this
         }
     }
