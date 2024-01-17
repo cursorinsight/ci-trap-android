@@ -89,22 +89,21 @@ internal class TrapReporter(
                 // they are not synchronized with the reporter thread,
                 // while between the .toArray() and .clear() calls
                 // the lock is released.
-                val packet: JSONArray = synchronized(storage) {
+                val packet: MutableList<JSONArray> = synchronized(storage) {
                     val packet = mutableListOf<JSONArray>()
                     while (!storage.isEmpty()) {
                         storage.poll()?.let { packet.add(it) }
                     }
 
                     packet.sortBy { it.get(1) as? Long }
-
-                    packet.add(0, header())
-                    JSONArray(packet)
+                    packet
                 }
 
                 try {
-                    if (packet.length() > 1) {
+                    if (packet.isNotEmpty()) {
+                        packet.add(0, header())
                         transport?.send(
-                            packet.toString(),
+                            JSONArray(packet).toString(),
                             avoidSendingTooMuchData
                         )
                     }
@@ -145,6 +144,7 @@ internal class TrapReporter(
                 put("version", "20230706T094422Z")
                 this
             })
+            put(com.cursorinsight.trap.BuildConfig.VERSION_NAME)
             this
         }
     }
