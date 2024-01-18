@@ -31,9 +31,9 @@ import org.json.JSONArray
  * @constructor
  * Sets up the data collector.
  */
-class TrapWiFiCollector(
-    private val storage: SynchronizedQueue<JSONArray>
-): TrapDatasource {
+class TrapWiFiCollector(): TrapDatasource {
+    private var storage: SynchronizedQueue<JSONArray>? = null
+
     /**
      * The Trap event type for wifi
      */
@@ -114,12 +114,16 @@ class TrapWiFiCollector(
             this
         }.let {
             if ((results?.size ?: 0) > 0) {
-                storage.add(it)
+                storage?.add(it)
             }
         }
     }
 
-    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
+    override fun start(
+        activity: Activity,
+        config: TrapConfig.DataCollection,
+        storage: SynchronizedQueue<JSONArray>) {
+        this.storage = storage
         wifiManager = activity.getSystemService(WIFI_SERVICE) as WifiManager
         connectivityManager = activity.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
 

@@ -20,10 +20,11 @@ import org.json.JSONArray
  * @constructor
  * Sets up the data collector.
  */
-class TrapMagnetometerCollector(
-    private val storage: SynchronizedQueue<JSONArray>
-) : TrapDatasource {
+class TrapMagnetometerCollector() : TrapDatasource {
     private val magneticEventType = 106
+
+    private var storage: SynchronizedQueue<JSONArray>? = null
+
     private lateinit var logger : TrapLogger
 
     private val handler = object : SensorEventListener {
@@ -35,7 +36,7 @@ class TrapMagnetometerCollector(
                 frame.put(event?.values?.get(0))
                 frame.put(event?.values?.get(1))
                 frame.put(event?.values?.get(2))
-                storage.add(frame)
+                storage?.add(frame)
             } catch (ex: Exception) {
                 logger.logException(
                     TrapMagnetometerCollector::class.simpleName,
@@ -48,7 +49,11 @@ class TrapMagnetometerCollector(
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
     }
 
-    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
+    override fun start(
+        activity: Activity,
+        config: TrapConfig.DataCollection,
+        storage: SynchronizedQueue<JSONArray>) {
+        this.storage = storage
         logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
         val sensorManager = activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)

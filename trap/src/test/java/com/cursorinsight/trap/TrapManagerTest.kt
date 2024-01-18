@@ -34,6 +34,7 @@ import io.mockk.spyk
 import io.mockk.unmockkAll
 import io.mockk.verify
 import org.apache.commons.collections4.queue.CircularFifoQueue
+import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertSame
@@ -106,18 +107,6 @@ class TrapManagerTest {
     }
 
     @Test
-    fun `test incorrect data collector is reported`() {
-        mockkConstructor(TrapDatasource::class)
-        val config = TrapConfig()
-        config.defaultDataCollection.collectors = mutableListOf(TrapDatasource::class.qualifiedName)
-            .filterNotNull()
-
-        TrapManager(application, config)
-
-        verify(exactly = 0) { anyConstructed<TrapDatasource>().start(any(), any()) }
-    }
-
-    @Test
     fun `test getInstance returns the same instance with the same config`() {
         val config = TrapConfig()
         val instance1 = TrapManager.getInstance(application, config)
@@ -132,7 +121,7 @@ class TrapManagerTest {
     @Test
     fun `test run adds collector and starts reporter`(@MockK activity: Activity) {
         val collector = mockkClass(TrapDatasource::class)
-        every { collector.start(any(), any()) } returns Unit
+        every { collector.start(any(), any(), any()) } returns Unit
         every { collector.getName() } returns (TrapDatasource::class.qualifiedName ?: "")
 
         val config = TrapConfig()
@@ -149,7 +138,11 @@ class TrapManagerTest {
 
         trapManager.run(collector)
 
-        verify(exactly = 1) { collector invoke "start" withArguments listOf(activity, config.defaultDataCollection) }
+        verify(exactly = 1) { collector invoke "start" withArguments listOf(
+                activity,
+                config.defaultDataCollection,
+                any<SynchronizedQueue<JSONArray>>())
+        }
         verify(exactly = 2) { anyConstructed<TrapReporter>().start(false) }
         verify(exactly = 1) { anyConstructed<CircularFifoQueue<JSONArray>>().add(withArg {
             assert(it.getInt(0) == 130)
@@ -160,7 +153,7 @@ class TrapManagerTest {
     @Test
     fun `test halt stops collector and reporter`(@MockK activity: Activity) {
         val collector = mockkClass(TrapDatasource::class)
-        every { collector.start(any(), any()) } returns Unit
+        every { collector.start(any(), any(), any()) } returns Unit
         every { collector.stop(any()) } returns Unit
         every { collector.getName() } returns (TrapDatasource::class.qualifiedName ?: "")
 
@@ -179,12 +172,11 @@ class TrapManagerTest {
     @Test
     fun `test onActivityResumed runs all collectors`(@MockK activity: Activity) {
         mockkConstructor(TrapGravityCollector::class)
-        every { anyConstructed<TrapGravityCollector>().start(activity, any()) } returns Unit
+        every { anyConstructed<TrapGravityCollector>().start(activity, any(), any()) } returns Unit
         every { anyConstructed<TrapGravityCollector>().stop(activity) } returns Unit
 
         val config = TrapConfig()
-        config.defaultDataCollection.collectors = mutableListOf(TrapGravityCollector::class.qualifiedName)
-            .filterNotNull()
+        config.defaultDataCollection.collectors = mutableListOf(TrapGravityCollector())
 
         val trapManager = TrapManager(application, config)
         trapManager.onActivityResumed(activity)
@@ -195,14 +187,17 @@ class TrapManagerTest {
             mockkClass(Network::class),
             capabilities)
 
-        verify(exactly = 1) { anyConstructed<TrapGravityCollector>().start(activity, config.defaultDataCollection) }
+        verify(exactly = 1) { anyConstructed<TrapGravityCollector>().start(
+            activity,
+            config.defaultDataCollection,
+            any()) }
         verify(exactly = 1) { anyConstructed<TrapReporter>().start(false) }
     }
 
     @Test
     fun `test onActivityPaused halts all collectors`(@MockK activity: Activity) {
         mockkConstructor(TrapGravityCollector::class)
-        every { anyConstructed<TrapGravityCollector>().start(activity, any()) } returns Unit
+        every { anyConstructed<TrapGravityCollector>().start(activity, any(), any()) } returns Unit
         every { anyConstructed<TrapGravityCollector>().stop(activity) } returns Unit
 
         every { activity.packageManager } answers {
@@ -217,8 +212,7 @@ class TrapManagerTest {
         }
 
         val config = TrapConfig()
-        config.defaultDataCollection.collectors = mutableListOf(TrapGravityCollector::class.qualifiedName)
-            .filterNotNull()
+        config.defaultDataCollection.collectors = mutableListOf(TrapGravityCollector())
 
         val trapManager = TrapManager(application, config)
         trapManager.onActivityResumed(activity)

@@ -111,8 +111,8 @@ class TouchCollectorTest {
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
         val config = TrapConfig.DataCollection()
         config.collectCoalescedTouchEvents = captureCoalescedEvents
-        val collector = TrapTouchCollector(storage)
-        collector.start(activity, config)
+        val collector = TrapTouchCollector()
+        collector.start(activity, config, storage)
 
         windowCallback.dispatchTouchEvent(
             getEvent(

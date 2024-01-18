@@ -33,9 +33,10 @@ import java.util.concurrent.TimeUnit
  * Sets up the data collector.
  */
 class TrapMetadataCollector (
-    private val storage: SynchronizedQueue<JSONArray>
 ) : TrapDatasource {
     private val metadataEventType = 11
+
+    private var storage: SynchronizedQueue<JSONArray>? = null
 
     private val customJSONObject: JSONObject = JSONObject()
 
@@ -43,7 +44,11 @@ class TrapMetadataCollector (
 
     private var task: Future<*>? = null
 
-    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
+    override fun start(
+        activity: Activity,
+        config: TrapConfig.DataCollection,
+        storage: SynchronizedQueue<JSONArray>) {
+        this.storage = storage
         if (task == null) {
             context = activity.applicationContext
             task = TrapBackgroundExecutor.runScheduled({
@@ -75,7 +80,7 @@ class TrapMetadataCollector (
 
     private fun sendMetadataEvent() {
         try {
-            storage.add(with(JSONArray())
+            storage?.add(with(JSONArray())
             {
                 put(metadataEventType)
                 put(TrapTime.getCurrentTime())

@@ -21,11 +21,11 @@ import org.json.JSONArray
  * @constructor
  * Sets up the data collector.
  */
-class TrapGyroscopeCollector(
-    private val storage: SynchronizedQueue<JSONArray>
-): TrapDatasource {
+class TrapGyroscopeCollector(): TrapDatasource {
     private val gyroscopeEventType = 104
     private lateinit var logger : TrapLogger
+
+    private var storage: SynchronizedQueue<JSONArray>? = null
 
     private val handler = object: SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
@@ -36,7 +36,7 @@ class TrapGyroscopeCollector(
                 frame.put(event?.values?.get(0))
                 frame.put(event?.values?.get(1))
                 frame.put(event?.values?.get(2))
-                storage.add(frame)
+                storage?.add(frame)
             } catch (ex: Exception) {
                 logger.logException(
                     TrapGravityCollector::class.simpleName,
@@ -49,7 +49,11 @@ class TrapGyroscopeCollector(
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { }
     }
 
-    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
+    override fun start(
+        activity: Activity,
+        config: TrapConfig.DataCollection,
+        storage: SynchronizedQueue<JSONArray>) {
+        this.storage = storage
         if (activity.packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE)) {
             logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
             val sensorManager = activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager

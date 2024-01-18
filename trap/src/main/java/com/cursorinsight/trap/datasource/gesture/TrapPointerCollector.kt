@@ -14,7 +14,6 @@ import android.view.MotionEvent.BUTTON_SECONDARY
 import android.view.MotionEvent.BUTTON_TERTIARY
 import android.view.MotionEvent.TOOL_TYPE_MOUSE
 import com.cursorinsight.trap.util.TrapTime
-import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
 
 /**
@@ -25,9 +24,7 @@ import org.json.JSONArray
  * @constructor
  * Sets up the data collector.
  */
-class TrapPointerCollector(
-    private val storage: SynchronizedQueue<JSONArray>,
-): TrapMotionEventCollector(storage) {
+class TrapPointerCollector(): TrapMotionEventCollector() {
 
     @OptIn(ExperimentalStdlibApi::class)
     override fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent) {

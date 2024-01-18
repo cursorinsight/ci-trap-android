@@ -17,11 +17,11 @@ import org.json.JSONArray
  * @constructor
  * Sets up the data collector.
  */
-abstract class TrapMotionEventCollector(
-    private val storage: SynchronizedQueue<JSONArray>
-): TrapDatasource {
+abstract class TrapMotionEventCollector(): TrapDatasource {
     protected var config: TrapConfig.DataCollection? = null
     internal lateinit var logger: TrapLogger
+
+    protected var storage: SynchronizedQueue<JSONArray>? = null
 
     @OptIn(ExperimentalStdlibApi::class)
     val handler = { event: MotionEvent? ->
@@ -34,7 +34,7 @@ abstract class TrapMotionEventCollector(
                 if (frames.isNotEmpty()) {
                     TrapBackgroundExecutor.run {
                         for (frame in frames) {
-                            storage.add(frame)
+                            storage?.add(frame)
                         }
                     }
                 }
@@ -51,7 +51,11 @@ abstract class TrapMotionEventCollector(
 
     abstract fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent)
 
-    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
+    override fun start(
+        activity: Activity,
+        config: TrapConfig.DataCollection,
+        storage: SynchronizedQueue<JSONArray>) {
+        this.storage = storage
         this.config = config
         logger = TrapLogger(config.maxNumberOfLogMessagesPerMinute)
         TrapWindowCallback.addTouchHandler(handler)

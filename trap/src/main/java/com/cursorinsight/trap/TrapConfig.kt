@@ -3,6 +3,7 @@ package com.cursorinsight.trap
 import android.app.Application
 import com.cursorinsight.trap.datasource.TrapBluetoothCollector
 import com.cursorinsight.trap.datasource.TrapCoarseLocationCollector
+import com.cursorinsight.trap.datasource.TrapDatasource
 import com.cursorinsight.trap.datasource.TrapMetadataCollector
 import com.cursorinsight.trap.datasource.TrapWiFiCollector
 import com.cursorinsight.trap.datasource.gesture.TrapPointerCollector
@@ -38,12 +39,13 @@ data class TrapConfig(
         collectCoalescedStylusEvents = false,
         collectCoalescedTouchEvents = false,
         collectors = mutableListOf(
-            TrapMetadataCollector::class.qualifiedName,
-            TrapCoarseLocationCollector::class.qualifiedName,
-            TrapPointerCollector::class.qualifiedName,
-            TrapStylusCollector::class.qualifiedName,
-            TrapTouchCollector::class.qualifiedName,
-            TrapBatteryCollector::class.qualifiedName).filterNotNull()
+            TrapMetadataCollector(),
+            TrapCoarseLocationCollector(),
+            TrapPointerCollector(),
+            TrapStylusCollector(),
+            TrapTouchCollector(),
+            TrapBatteryCollector()
+        )
     ),
 
     /**
@@ -54,12 +56,13 @@ data class TrapConfig(
         collectCoalescedStylusEvents = false,
         collectCoalescedTouchEvents = false,
         collectors = mutableListOf(
-            TrapMetadataCollector::class.qualifiedName,
-            TrapCoarseLocationCollector::class.qualifiedName,
-            TrapPointerCollector::class.qualifiedName,
-            TrapStylusCollector::class.qualifiedName,
-            TrapTouchCollector::class.qualifiedName,
-            TrapBatteryCollector::class.qualifiedName).filterNotNull()
+            TrapMetadataCollector(),
+            TrapCoarseLocationCollector(),
+            TrapPointerCollector(),
+            TrapStylusCollector(),
+            TrapTouchCollector(),
+            TrapBatteryCollector()
+        )
     ),
 
     /**
@@ -217,20 +220,20 @@ data class TrapConfig(
         /**
          * The list of collectors to start at initialization.
          */
-        var collectors: List<String> = mutableListOf(
-            TrapAccelerometerCollector::class.qualifiedName,
-            TrapBluetoothCollector::class.qualifiedName,
-            TrapGravityCollector::class.qualifiedName,
-            TrapGyroscopeCollector::class.qualifiedName,
-            TrapCoarseLocationCollector::class.qualifiedName,
-            TrapMagnetometerCollector::class.qualifiedName,
-            TrapPointerCollector::class.qualifiedName,
-            TrapStylusCollector::class.qualifiedName,
-            TrapTouchCollector::class.qualifiedName,
-            TrapWiFiCollector::class.qualifiedName,
-            TrapBatteryCollector::class.qualifiedName,
-            TrapMetadataCollector::class.qualifiedName,
-        ).filterNotNull(),
+        var collectors: List<TrapDatasource> = mutableListOf(
+            TrapAccelerometerCollector(),
+            TrapBluetoothCollector(),
+            TrapGravityCollector(),
+            TrapGyroscopeCollector(),
+            TrapCoarseLocationCollector(),
+            TrapMagnetometerCollector(),
+            TrapPointerCollector(),
+            TrapStylusCollector(),
+            TrapTouchCollector(),
+            TrapWiFiCollector(),
+            TrapBatteryCollector(),
+            TrapMetadataCollector(),
+        )
     )
 
     fun initSessionId(application: Application) {
