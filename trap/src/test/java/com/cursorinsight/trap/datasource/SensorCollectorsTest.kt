@@ -98,8 +98,8 @@ class SensorCollectorsTest {
     @Test
     fun `test accelerometer data is collected`() {
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapAccelerometerCollector(storage)
-        collector.start(activity, TrapConfig.DataCollection())
+        val collector = TrapAccelerometerCollector()
+        collector.start(activity, TrapConfig.DataCollection(), storage)
         assert(handler.isCaptured)
 
         handler.captured.onSensorChanged(getEvent(-1L, 1.0F, 2.0F, -2.0F))
@@ -129,8 +129,8 @@ class SensorCollectorsTest {
     @Test
     fun `test gravity data is collected`() {
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapGravityCollector(storage)
-        collector.start(activity, TrapConfig.DataCollection())
+        val collector = TrapGravityCollector()
+        collector.start(activity, TrapConfig.DataCollection(), storage)
         assert(handler.isCaptured)
 
         handler.captured.onSensorChanged(getEvent(-1L, 1.0F, 2.0F, -2.0F))
@@ -160,8 +160,8 @@ class SensorCollectorsTest {
     @Test
     fun `test gyroscope data is collected`() {
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapGyroscopeCollector(storage)
-        collector.start(activity, TrapConfig.DataCollection())
+        val collector = TrapGyroscopeCollector()
+        collector.start(activity, TrapConfig.DataCollection(), storage)
         assert(handler.isCaptured)
 
         handler.captured.onSensorChanged(getEvent(-1L, 1.0F, 2.0F, -2.0F))
@@ -191,8 +191,8 @@ class SensorCollectorsTest {
     @Test
     fun `test magnetometer data is collected`() {
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapMagnetometerCollector(storage)
-        collector.start(activity, TrapConfig.DataCollection())
+        val collector = TrapMagnetometerCollector()
+        collector.start(activity, TrapConfig.DataCollection(), storage)
         assert(handler.isCaptured)
 
         handler.captured.onSensorChanged(getEvent(-1L, 1.0F, 2.0F, -2.0F))

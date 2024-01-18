@@ -38,12 +38,12 @@ import java.lang.reflect.Method
  * @constructor
  * Sets up the data collector.
  */
-class TrapBluetoothCollector(
-    private val storage: SynchronizedQueue<JSONArray>
-) : TrapDatasource {
+class TrapBluetoothCollector() : TrapDatasource {
     val bluetoothEventType = 108
 
     private var registered = false
+
+    private var storage: SynchronizedQueue<JSONArray>? = null
 
     private val receiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
@@ -80,7 +80,7 @@ class TrapBluetoothCollector(
                                 this
                             })
                             this
-                        }.let { storage.add(it) }
+                        }.let { storage?.add(it) }
                     }
                 }
             } catch (ex: Exception) {
@@ -94,7 +94,11 @@ class TrapBluetoothCollector(
     }
 
     @SuppressLint("MissingPermission")
-    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
+    override fun start(
+        activity: Activity,
+        config: TrapConfig.DataCollection,
+        storage: SynchronizedQueue<JSONArray>) {
+        this.storage = storage
         if (checkPermissions(activity) && activity.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)) {
             val bluetoothManager = activity.getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
 

@@ -139,7 +139,7 @@ class TrapManager internal constructor(
         // Init the collector collection
         collectors = mutableMapOf()
         for (collector in currentDataCollectionConfig.collectors) {
-            createCollector(collector)
+             collectors[collector.getName()] = collector
         }
     }
 
@@ -159,7 +159,7 @@ class TrapManager internal constructor(
                 reporter.start(inLowDataMode ?: false)
                 val activity = currentActivity?.get()
                 if (activity != null) {
-                    collector.start(activity, currentDataCollectionConfig)
+                    collector.start(activity, currentDataCollectionConfig, buffer)
                 }
                 collectors[collector.getName()] = collector
             }
@@ -253,11 +253,15 @@ class TrapManager internal constructor(
             isRunning = true
             reporter.start(actualDataMode)
             buffer.add(startMessage())
-            for (collectorQualifiedName in currentDataCollectionConfig.collectors) {
-                if (!collectors.containsKey(collectorQualifiedName)) {
-                    createCollector(collectorQualifiedName)
+            for (collector in currentDataCollectionConfig.collectors) {
+                val collectorKey = collector.getName()
+                if (!collectors.containsKey(collectorKey)) {
+                    collectors[collectorKey] = collector
                 }
-                collectors[collectorQualifiedName]?.start(activity, currentDataCollectionConfig)
+                collectors[collectorKey]?.start(
+                    activity,
+                    currentDataCollectionConfig,
+                    buffer)
             }
         }
     }
@@ -419,28 +423,6 @@ class TrapManager internal constructor(
             stopReporterAndCollectors(activity)
             currentDataCollectionConfig = getDataCollectionConfig()
             startReporterAndCollectors(activity)
-        }
-    }
-
-    /*
-     * Initializes a collector
-     */
-    private fun createCollector(collectorQualifiedName: String) {
-        val instance = try {
-            val constructor = Class.forName(collectorQualifiedName).getConstructor(
-                SynchronizedQueue::class.java
-            )
-            constructor.newInstance(buffer) as? TrapDatasource
-        } catch (_: Exception) {
-            Log.e(
-                TrapManager::class.simpleName,
-                "The provided class '${collectorQualifiedName}' doesn't have a proper constructor signature"
-            )
-            null
-        }
-
-        if (instance != null) {
-            collectors[collectorQualifiedName] = instance
         }
     }
 

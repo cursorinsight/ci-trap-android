@@ -67,7 +67,7 @@ class MyConfig: TrapConfigProvider {
         config.reporter.url = "https://my.server.com"
         
         // Use a special set of data collectors
-        config.collectors = mutableListOf(TrapCoarseLocationCollector::class)
+        config.collectors = mutableListOf(TrapCoarseLocationCollector())
 
         // Set session id
         config.initSessionId(application)
@@ -113,7 +113,7 @@ val config = TrapConfig()
 config.reporter.url = "https://example.com/api/post/{streamId}/{sessionId}"
 
 // Use a special set of data collectors
-config.collectors = mutableListOf(TrapCoarseLocationCollector::class)
+config.collectors = mutableListOf(TrapCoarseLocationCollector())
 
 // Set session id
 config.initSessionId(application)

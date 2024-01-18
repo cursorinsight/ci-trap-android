@@ -10,7 +10,6 @@ import android.view.MotionEvent.ACTION_POINTER_UP
 import android.view.MotionEvent.ACTION_UP
 import android.view.MotionEvent.TOOL_TYPE_UNKNOWN
 import com.cursorinsight.trap.util.TrapTime
-import org.apache.commons.collections4.queue.SynchronizedQueue
 import org.json.JSONArray
 
 /**
@@ -21,9 +20,7 @@ import org.json.JSONArray
  * @constructor
  * Sets up the data collector.
  */
-class TrapTouchCollector(
-    private val storage: SynchronizedQueue<JSONArray>,
-) : TrapMotionEventCollector(storage) {
+class TrapTouchCollector(): TrapMotionEventCollector() {
     @OptIn(ExperimentalStdlibApi::class)
     override fun processEvent(frames: MutableList<JSONArray>, event: MotionEvent) {
         if (event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER || event.getToolType(0) == TOOL_TYPE_UNKNOWN) {

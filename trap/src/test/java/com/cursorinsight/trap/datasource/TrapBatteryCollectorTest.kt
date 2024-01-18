@@ -61,7 +61,7 @@ class TrapBatteryCollectorTest {
     @Test
     fun `test battery`() {
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapBatteryCollector(storage)
+        val collector = TrapBatteryCollector()
 
         var batteryReceiver: CapturingSlot<BroadcastReceiver> = slot()
         var activity = mockkClass(Activity::class)
@@ -88,7 +88,7 @@ class TrapBatteryCollectorTest {
         every { intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, any()) } returns 3
         every { intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, any()) } returns 4
         every { intent.getBooleanExtra(any(), any()) } returns false
-        collector.start(activity, TrapConfig.DataCollection())
+        collector.start(activity, TrapConfig.DataCollection(), storage)
 
         assert(batteryReceiver.isCaptured)
         batteryReceiver.captured.onReceive(mockk(), intent)

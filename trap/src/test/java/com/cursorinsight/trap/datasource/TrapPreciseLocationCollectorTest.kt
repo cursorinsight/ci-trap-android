@@ -72,9 +72,9 @@ class TrapPreciseLocationCollectorTest {
         }
 
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapPreciseLocationCollector(storage)
+        val collector = TrapPreciseLocationCollector()
 
-        collector.start(activity, TrapConfig.DataCollection())
+        collector.start(activity, TrapConfig.DataCollection(), storage)
 
         assert(request.isCaptured)
         assert(callback.isCaptured)

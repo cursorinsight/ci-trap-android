@@ -24,9 +24,7 @@ import org.json.JSONObject
  * @constructor
  * Sets up the data collector.
  */
-class TrapBatteryCollector(
-    private val storage: SynchronizedQueue<JSONArray>
-): TrapDatasource {
+class TrapBatteryCollector(): TrapDatasource {
     /**
      * The Trap event type for battery status
      */
@@ -36,6 +34,8 @@ class TrapBatteryCollector(
      * The system service for battery.
      */
     private var batteryManager: BatteryManager? = null
+
+    private var storage: SynchronizedQueue<JSONArray>? = null
 
     /**
      * If true, then we have a registered location handler we need to
@@ -111,11 +111,15 @@ class TrapBatteryCollector(
             })
             this
         }.let {
-            storage.add(it)
+            storage?.add(it)
         }
     }
 
-    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
+    override fun start(
+        activity: Activity,
+        config: TrapConfig.DataCollection,
+        storage: SynchronizedQueue<JSONArray>) {
+        this.storage = storage
         batteryManager = activity.getSystemService(BATTERY_SERVICE) as BatteryManager
         activity.registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
         registered = true

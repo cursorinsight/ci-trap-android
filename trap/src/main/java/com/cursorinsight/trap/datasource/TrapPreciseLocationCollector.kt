@@ -31,10 +31,10 @@ import org.json.JSONArray
  * @constructor
  * Sets up the data collector.
  */
-class TrapPreciseLocationCollector(
-    private val storage: SynchronizedQueue<JSONArray>
-) : TrapDatasource {
+class TrapPreciseLocationCollector() : TrapDatasource {
     private val locationEventType = 109
+
+    private var storage: SynchronizedQueue<JSONArray>? = null
 
     private var fusedLocationClient: FusedLocationProviderClient? = null
 
@@ -52,7 +52,7 @@ class TrapPreciseLocationCollector(
                     this
                 }.let {
                     if (locationResult.locations.size > 0) {
-                        storage.add(it)
+                        storage?.add(it)
                     }
                 }
             }
@@ -60,7 +60,11 @@ class TrapPreciseLocationCollector(
     }
 
     @SuppressLint("MissingPermission")
-    override fun start(activity: Activity, config: TrapConfig.DataCollection) {
+    override fun start(
+        activity: Activity,
+        config: TrapConfig.DataCollection,
+        storage: SynchronizedQueue<JSONArray>) {
+        this.storage = storage
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,

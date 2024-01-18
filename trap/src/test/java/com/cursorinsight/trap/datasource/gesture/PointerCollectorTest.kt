@@ -109,8 +109,8 @@ class PointerCollectorTest {
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
         val config = TrapConfig.DataCollection()
         config.collectCoalescedPointerEvents = captureCoalescedEvents
-        val collector = TrapPointerCollector(storage)
-        collector.start(activity, config)
+        val collector = TrapPointerCollector()
+        collector.start(activity, config, storage)
 
         windowCallback.dispatchTouchEvent(
             getEvent(

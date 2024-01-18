@@ -93,9 +93,9 @@ class TrapBluetoothCollectorTest {
         }
 
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapBluetoothCollector(storage)
+        val collector = TrapBluetoothCollector()
 
-        collector.start(activity, TrapConfig.DataCollection())
+        collector.start(activity, TrapConfig.DataCollection(), storage)
         assertSame(storage.size, 1)
         val record1 = storage.first()
         assert(record1.getInt(0) == 108)
@@ -169,9 +169,9 @@ class TrapBluetoothCollectorTest {
         }
 
         val storage = SynchronizedQueue.synchronizedQueue(CircularFifoQueue<JSONArray>(100))
-        val collector = TrapBluetoothCollector(storage)
+        val collector = TrapBluetoothCollector()
 
-        collector.start(activity, TrapConfig.DataCollection())
+        collector.start(activity, TrapConfig.DataCollection(), storage)
         assertSame(storage.size, 0)
         collector.stop(activity)
     }
