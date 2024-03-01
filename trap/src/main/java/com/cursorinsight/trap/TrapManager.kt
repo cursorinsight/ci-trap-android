@@ -334,7 +334,7 @@ class TrapManager internal constructor(
      * Stop and disable the data collection
      */
     @Suppress("unused")
-    fun disableCollection() {
+    fun disableDataCollection() {
         isEnabled = false
         val activity = currentActivity?.get()
         if (activity != null) {
