@@ -182,11 +182,11 @@ $dokka.location:com.cursorinsight.trap/TrapConfig/sessionIdFilter/#/PointingToDe
 $dokka.location:com.cursorinsight.trap/TrapConfigProvider///PointingToDeclaration/trap/com.cursorinsight.trap/-trap-config-provider/index.html
 $dokka.location:com.cursorinsight.trap/TrapConfigProvider/getConfig/#android.app.Application/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-config-provider/get-config.html
 $dokka.location:com.cursorinsight.trap/TrapManager.Companion///PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/-companion/index.html
-$dokka.location:com.cursorinsight.trap/TrapManager.Companion/getInstance/#android.app.Application#com.cursorinsight.trap.TrapConfig?/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/-companion/get-instance.html
+$dokka.location:com.cursorinsight.trap/TrapManager.Companion/getInstance/#android.app.Application#com.cursorinsight.trap.TrapConfig?#android.app.Activity?/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/-companion/get-instance.html
 $dokka.location:com.cursorinsight.trap/TrapManager///PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/index.html
 $dokka.location:com.cursorinsight.trap/TrapManager/addCustomEvent/#kotlin.Any/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/add-custom-event.html
 $dokka.location:com.cursorinsight.trap/TrapManager/addCustomMetadata/#kotlin.String#kotlin.Any/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/add-custom-metadata.html
-$dokka.location:com.cursorinsight.trap/TrapManager/disableCollection/#/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/disable-collection.html
+$dokka.location:com.cursorinsight.trap/TrapManager/disableDataCollection/#/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/disable-data-collection.html
 $dokka.location:com.cursorinsight.trap/TrapManager/enableDataCollection/#/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/enable-data-collection.html
 $dokka.location:com.cursorinsight.trap/TrapManager/halt/#com.cursorinsight.trap.datasource.TrapDatasource/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/halt.html
 $dokka.location:com.cursorinsight.trap/TrapManager/onActivityCreated/#android.app.Activity#android.os.Bundle?/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-manager/on-activity-created.html
