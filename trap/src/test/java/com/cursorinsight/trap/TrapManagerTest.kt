@@ -43,6 +43,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.io.File
+import java.lang.ref.WeakReference
 
 @ExtendWith(MockKExtension::class)
 class TrapManagerTest {
@@ -127,7 +128,7 @@ class TrapManagerTest {
         val config = TrapConfig()
         config.defaultDataCollection.collectors = mutableListOf()
 
-        val trapManager = TrapManager(application, config)
+        val trapManager = TrapManager(application, config, WeakReference(null))
 
         trapManager.onActivityResumed(activity)
         var capabilities = mockkClass(NetworkCapabilities::class)
@@ -178,7 +179,7 @@ class TrapManagerTest {
         val config = TrapConfig()
         config.defaultDataCollection.collectors = mutableListOf(TrapGravityCollector())
 
-        val trapManager = TrapManager(application, config)
+        val trapManager = TrapManager(application, config, WeakReference(null))
         trapManager.onActivityResumed(activity)
 
         var capabilities = mockkClass(NetworkCapabilities::class)
@@ -214,7 +215,7 @@ class TrapManagerTest {
         val config = TrapConfig()
         config.defaultDataCollection.collectors = mutableListOf(TrapGravityCollector())
 
-        val trapManager = TrapManager(application, config)
+        val trapManager = TrapManager(application, config, WeakReference(null))
         trapManager.onActivityResumed(activity)
 
         var capabilities = mockkClass(NetworkCapabilities::class)
@@ -245,7 +246,7 @@ class TrapManagerTest {
         val config = TrapConfig()
         config.defaultDataCollection.collectors = mutableListOf()
 
-        val trapManager = TrapManager(application, config)
+        val trapManager = TrapManager(application, config, WeakReference(null))
         trapManager.onActivityCreated(activity, null)
 
         verify { window.callback }
@@ -256,7 +257,7 @@ class TrapManagerTest {
         val config = TrapConfig()
         config.defaultDataCollection.collectors = mutableListOf()
 
-        val trapManager = TrapManager(application, config)
+        val trapManager = TrapManager(application, config, WeakReference(null))
 
         trapManager.onActivityStopped(activity)
         trapManager.onActivityStarted(activity)

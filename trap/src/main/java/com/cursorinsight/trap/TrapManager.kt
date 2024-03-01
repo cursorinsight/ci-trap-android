@@ -39,6 +39,7 @@ import java.lang.ref.WeakReference
 class TrapManager internal constructor(
     private val application: Application,
     private var config: TrapConfig,
+    private var currentActivity: WeakReference<Activity?>
 ) : Application.ActivityLifecycleCallbacks {
     /**
      * Represents the common storage for all collectors
@@ -57,12 +58,6 @@ class TrapManager internal constructor(
      * instances.
      */
     private var collectors: MutableMap<String, TrapDatasource>
-
-    /**
-     * The cached current activity the run and halt methods
-     * can use to mange individual collectors.
-     */
-    private var currentActivity: WeakReference<Activity>? = null
 
     private var hasLowBattery: Boolean = false
 
@@ -121,19 +116,26 @@ class TrapManager internal constructor(
         /**
          * Get the singleton instance of the manager.
          */
-        fun getInstance(application: Application, configuration: TrapConfig? = null): TrapManager {
+        fun getInstance(
+            application: Application,
+            configuration: TrapConfig? = null,
+            activity: Activity? = null): TrapManager {
             if (configuration != null && instance?.config != configuration) {
-                instance = TrapManager(application, configuration)
+                instance = TrapManager(application, configuration, WeakReference(activity))
             }
 
-            return instance ?: TrapManager(application, TrapConfig()).also { instance = it }
+            return instance ?: TrapManager(
+                application, TrapConfig(), WeakReference(activity)).also { instance = it }
         }
     }
 
     init {
         // Register the activity collection and lifecycle dispatch.
         application.registerActivityLifecycleCallbacks(this)
-
+        val activity = currentActivity?.get()
+        if (activity != null) {
+            setWindowCallback(activity)
+        }
         currentDataCollectionConfig = config.defaultDataCollection
 
         // Init the collector collection
@@ -334,7 +336,7 @@ class TrapManager internal constructor(
      * Stop and disable the data collection
      */
     @Suppress("unused")
-    fun disableCollection() {
+    fun disableDataCollection() {
         isEnabled = false
         val activity = currentActivity?.get()
         if (activity != null) {
@@ -427,6 +429,10 @@ class TrapManager internal constructor(
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        setWindowCallback(activity)
+    }
+
+    private fun setWindowCallback(activity: Activity) {
         try {
             activity.window.callback = TrapWindowCallback(activity.window.callback)
         } catch (ex: Exception) {
