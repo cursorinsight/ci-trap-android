@@ -79,8 +79,13 @@ data class TrapConfig(
     /**
      * Battery charge threshold for low battery status
      */
-    var lowBatteryThreshold: Float = 10.0f
+    var lowBatteryThreshold: Float = 10.0f,
 
+    /**
+     * Is data collection enabled automatically when the TrapManager
+     * is instantiated with this config
+     */
+    var enableDataCollection: Boolean = true
 ) {
     /**
      * The configuration for the reporter task serializing
