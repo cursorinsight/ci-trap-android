@@ -169,8 +169,9 @@ $dokka.location:com.cursorinsight.trap/TrapConfig.Reporter/readTimeout/#/Pointin
 $dokka.location:com.cursorinsight.trap/TrapConfig.Reporter/sessionId/#/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-config/-reporter/session-id.html
 $dokka.location:com.cursorinsight.trap/TrapConfig.Reporter/url/#/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-config/-reporter/url.html
 $dokka.location:com.cursorinsight.trap/TrapConfig///PointingToDeclaration/trap/com.cursorinsight.trap/-trap-config/index.html
-$dokka.location:com.cursorinsight.trap/TrapConfig/TrapConfig/#com.cursorinsight.trap.TrapConfig.Reporter#com.cursorinsight.trap.TrapConfig.DataCollection#com.cursorinsight.trap.TrapConfig.DataCollection#com.cursorinsight.trap.TrapConfig.DataCollection#kotlin.Int#kotlin.String?#kotlin.Float/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-config/-trap-config.html
+$dokka.location:com.cursorinsight.trap/TrapConfig/TrapConfig/#com.cursorinsight.trap.TrapConfig.Reporter#com.cursorinsight.trap.TrapConfig.DataCollection#com.cursorinsight.trap.TrapConfig.DataCollection#com.cursorinsight.trap.TrapConfig.DataCollection#kotlin.Int#kotlin.String?#kotlin.Float#kotlin.Boolean/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-config/-trap-config.html
 $dokka.location:com.cursorinsight.trap/TrapConfig/defaultDataCollection/#/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-config/default-data-collection.html
+$dokka.location:com.cursorinsight.trap/TrapConfig/enableDataCollection/#/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-config/enable-data-collection.html
 $dokka.location:com.cursorinsight.trap/TrapConfig/initSessionId/#android.app.Application/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-config/init-session-id.html
 $dokka.location:com.cursorinsight.trap/TrapConfig/isDataCollectionDisabled/#/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-config/is-data-collection-disabled.html
 $dokka.location:com.cursorinsight.trap/TrapConfig/lowBatteryDataCollection/#/PointingToDeclaration/trap/com.cursorinsight.trap/-trap-config/low-battery-data-collection.html
