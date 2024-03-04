@@ -130,6 +130,7 @@ class TrapManager internal constructor(
     }
 
     init {
+        isEnabled = config.enableDataCollection
         // Register the activity collection and lifecycle dispatch.
         application.registerActivityLifecycleCallbacks(this)
         val activity = currentActivity?.get()
