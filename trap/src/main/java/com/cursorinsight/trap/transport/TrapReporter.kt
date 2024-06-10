@@ -1,6 +1,8 @@
 package com.cursorinsight.trap.transport
 
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import com.cursorinsight.trap.TrapConfig
 import com.cursorinsight.trap.util.TrapBackgroundExecutor
@@ -51,6 +53,11 @@ internal class TrapReporter(
      * The sequenceId of the data packet.
      */
     private var sequenceId: Long = 0
+
+    /**
+     * Application version (for the embedding application)
+     */
+    private val appVersion: String = getAppVersion(ctx)
 
     /**
      * Start the reporter task and all
@@ -145,7 +152,28 @@ internal class TrapReporter(
                 this
             })
             put(com.cursorinsight.trap.BuildConfig.VERSION_NAME)
+            put(appVersion)
             this
+        }
+    }
+
+    /**
+     * Gets the application version
+     */
+    fun getAppVersion(
+        context: Context,
+    ): String {
+        return try {
+            val packageManager = context.packageManager
+            val packageName = context.packageName
+            val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
+            } else {
+                packageManager.getPackageInfo(packageName, 0)
+            }
+            "${packageInfo.packageName} (${packageInfo.versionName})"
+        } catch (e: Exception) {
+            "Unknown"
         }
     }
 }
